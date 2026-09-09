@@ -1,0 +1,144 @@
+/* =========================================================
+   Design tokens — WeWallet
+   Ver DESIGN.md. Base neutra; el color se reserva para
+   cuentas, deudas e inversiones. Soporta claro/oscuro desde
+   el inicio vía [data-theme], con fallback a prefers-color-scheme.
+   ========================================================= */
+
+:root {
+  color-scheme: light;
+
+  /* ---------- Tipografía ---------- */
+  --font-sans: 'Ubuntu', system-ui, sans-serif;
+  --font-mono: 'Ubuntu Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --text-2xs: 0.6875rem; /* 11px — etiquetas */
+  --text-xs:  0.75rem;   /* 12px */
+  --text-sm:  0.875rem;  /* 14px */
+  --text-md:  1rem;      /* 16px — base */
+  --text-lg:  1.25rem;   /* 20px */
+  --text-xl:  1.75rem;   /* 28px */
+  --text-2xl: 2.5rem;    /* 40px — saldo principal */
+
+  --weight-light: 300;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+
+  --leading-tight: 1.15;
+  --leading-normal: 1.5;
+  --tracking-label: 0.06em;
+
+  /* ---------- Superficies y texto (neutros) — claro ---------- */
+  --surface-page:    #ffffff;
+  --surface-card:    #f5f5f0;
+  --surface-sunken:  #efefe8;
+  --surface-inverse: #1a1a1a;
+
+  --text-primary:   #1a1a1a;
+  --text-secondary: #5f5e5a;
+  --text-muted:     #888780;
+  --text-inverse:   #ffffff;
+
+  --border:        #e0e0da;
+  --border-strong: #c7c6be;
+
+  /* ---------- Categorías financieras (constantes en ambos modos) ---------- */
+  --account-a-bg:   #EAF3DE;
+  --account-a-text: #173404;
+  --account-b-bg:   #EEEDFE;
+  --account-b-text: #26215C;
+  /* Tono base (no bg/text) — fondo de auth y efectos como RippleBackground. */
+  --account-b: #7F77DD;
+
+  --debt-a-bg:   #FAECE7;
+  --debt-a-text: #4A1B0C;
+  --debt-a-fill: #D85A30;
+  --debt-b-bg:   #FBEAF0;
+  --debt-b-text: #4B1528;
+  --debt-b-fill: #D4537E;
+
+  --investment-a-bg:   #EEEDFE;
+  --investment-a-text: #26215C;
+  /* Reutiliza el verde de --account-a — misma familia de tono, no un color nuevo. */
+  --investment-b-bg:   #EAF3DE;
+  --investment-b-text: #173404;
+  --gain-color: #639922;
+  --loss-color: #D85A30;
+
+  /* ---------- Espaciado y bordes ---------- */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+  --radius-card:    12px;
+  --radius-control: 8px;
+  --radius-full:    999px;
+
+  /* ---------- Sombras ---------- */
+  --shadow-sm: 0 1px 2px rgba(26, 26, 26, 0.06);
+  --shadow-md: 0 2px 12px rgba(26, 26, 26, 0.08);
+
+  /* ---------- Layout ---------- */
+  --container-max: 1120px;
+  --header-height: 64px;
+
+  /* ---------- Movimiento ----------
+     Animar solo transform/opacity. 150–250ms, nunca > 400ms. */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --duration-fast: 150ms;
+  --duration-base: 220ms;
+}
+
+/* ---------- Oscuro: toggle manual ---------- */
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --surface-page:    #121212;
+  --surface-card:    #1e1e1e;
+  --surface-sunken:  #262626;
+  --surface-inverse: #f0f0f0;
+
+  --text-primary:   #f0f0f0;
+  --text-secondary: #a8a8a4;
+  --text-muted:     #6f6f6b;
+  --text-inverse:   #121212;
+
+  --border:        #2e2e2e;
+  --border-strong: #3d3d3a;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* ---------- Oscuro: preferencia del sistema (sin elección manual) ---------- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+
+    --surface-page:    #121212;
+    --surface-card:    #1e1e1e;
+    --surface-sunken:  #262626;
+    --surface-inverse: #f0f0f0;
+
+    --text-primary:   #f0f0f0;
+    --text-secondary: #a8a8a4;
+    --text-muted:     #6f6f6b;
+    --text-inverse:   #121212;
+
+    --border:        #2e2e2e;
+    --border-strong: #3d3d3a;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+  }
+}

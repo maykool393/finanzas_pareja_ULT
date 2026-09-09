@@ -1,0 +1,120 @@
+.splash {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--surface-page);
+}
+
+/* Esta pantalla es la única con foto de fondo: usa blanco fijo (no los tokens
+   --text-primary/--text-secondary, pensados para fondos neutros claros/oscuros)
+   y el mismo asset en ambos modos — ver instrucción del usuario. */
+.screen {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.backgroundImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.topScrim {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 160px;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.35) 0%, transparent 100%);
+  z-index: 1;
+}
+
+.bottomOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 55%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.15) 40%, transparent 70%);
+  z-index: 1;
+}
+
+.header {
+  position: relative;
+  z-index: 2;
+  padding: var(--space-lg);
+  padding-top: calc(var(--space-lg) + env(safe-area-inset-top));
+}
+
+.logo {
+  height: 28px;
+  width: auto;
+  /* logo.svg es negro; se fuerza a blanco siempre en esta pantalla (foto, no superficie de tema) */
+  filter: brightness(0) invert(1);
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-lg);
+  padding: var(--space-xl) var(--space-lg);
+  padding-bottom: calc(var(--space-xl) + env(safe-area-inset-bottom));
+}
+
+.title {
+  font-size: clamp(26px, 7.5vw, 34px);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
+  color: #ffffff;
+  max-width: 22ch;
+}
+
+.actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.primary {
+  width: 100%;
+  max-width: 360px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-control);
+  background: #ffffff;
+  color: #1a1a1a;
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.primary:hover {
+  opacity: 0.9;
+}
+
+.secondary {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.85);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.secondary:hover {
+  color: #ffffff;
+}

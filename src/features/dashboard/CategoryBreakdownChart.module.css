@@ -1,0 +1,41 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.legend {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.legendRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid;
+  flex-shrink: 0;
+}
+
+.legendName {
+  flex: 1;
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+}
+
+.legendAmount {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.empty {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}

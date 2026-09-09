@@ -1,0 +1,16 @@
+.dangerRow {
+  display: flex;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border);
+}
+
+.dangerRow button {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.dangerRow button:hover {
+  color: var(--text-primary);
+}

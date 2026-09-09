@@ -1,0 +1,9 @@
+.filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+}

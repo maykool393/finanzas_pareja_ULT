@@ -1,0 +1,17 @@
+.wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.prefix {
+  position: absolute;
+  left: var(--space-md);
+  color: var(--text-muted);
+  font-size: var(--text-md);
+  pointer-events: none;
+}
+
+.withPrefix {
+  padding-left: calc(var(--space-md) + 14px);
+}

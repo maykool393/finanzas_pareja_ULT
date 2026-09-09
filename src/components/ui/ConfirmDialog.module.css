@@ -1,0 +1,55 @@
+.description {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: var(--leading-normal);
+  margin-bottom: var(--space-lg);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+}
+
+.cancel {
+  height: 40px;
+  padding: 0 var(--space-md);
+  border-radius: var(--radius-control);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.cancel:hover {
+  color: var(--text-primary);
+}
+
+.confirmArchive,
+.confirmDelete {
+  height: 40px;
+  padding: 0 var(--space-md);
+  border-radius: var(--radius-control);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.confirmArchive {
+  background: var(--surface-inverse);
+  color: var(--text-inverse);
+}
+
+.confirmDelete {
+  background: var(--loss-color);
+  color: #ffffff;
+}
+
+.confirmArchive:disabled,
+.confirmDelete:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.confirmArchive:not(:disabled):hover,
+.confirmDelete:not(:disabled):hover {
+  opacity: 0.9;
+}

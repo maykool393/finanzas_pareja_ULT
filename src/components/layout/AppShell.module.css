@@ -1,0 +1,139 @@
+.shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  background: var(--surface-card);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding-top: env(safe-area-inset-top);
+  transition: background-color var(--duration-base) var(--ease-out),
+              border-color var(--duration-base) var(--ease-out);
+}
+
+.headerInner {
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.brand {
+  height: 20px;
+  width: auto;
+}
+
+/* El logo es negro; se invierte para mantenerse legible sobre fondo oscuro. */
+[data-theme='dark'] .brand {
+  filter: invert(1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .brand {
+    filter: invert(1);
+  }
+}
+
+.nav {
+  display: flex;
+  gap: var(--space-lg);
+  margin-left: auto;
+}
+
+.link {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  padding: var(--space-sm) 0;
+  border-bottom: 2px solid transparent;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.link:hover { color: var(--text-primary); }
+
+.linkActive {
+  color: var(--text-primary);
+  font-weight: var(--weight-medium);
+  border-bottom-color: var(--text-primary);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.signOut {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.signOut:hover {
+  color: var(--text-primary);
+}
+
+.main {
+  flex: 1;
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: var(--space-lg) var(--space-lg) var(--space-xl);
+}
+
+.tabBar {
+  display: none;
+}
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: var(--text-2xs);
+  color: var(--text-muted);
+  padding: var(--space-xs) 0;
+}
+
+.tabIcon {
+  width: 22px;
+  height: 22px;
+}
+
+.tabActive {
+  color: var(--text-primary);
+}
+
+@media (max-width: 640px) {
+  .headerInner { gap: var(--space-md); justify-content: space-between; }
+  .nav { display: none; }
+  .main {
+    padding: var(--space-lg) var(--space-md)
+      calc(var(--space-xl) + 56px + env(safe-area-inset-bottom));
+  }
+
+  .tabBar {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--surface-card);
+    border-top: 1px solid var(--border);
+    padding: var(--space-sm) var(--space-sm) calc(var(--space-sm) + env(safe-area-inset-bottom));
+    z-index: 10;
+  }
+
+  .tab {
+    flex: 1;
+    text-align: center;
+  }
+}

@@ -1,0 +1,53 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--border);
+  background: var(--surface-sunken);
+  color: var(--text-secondary);
+  transition: border-color var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out);
+}
+
+.option svg {
+  width: 18px;
+  height: 18px;
+}
+
+.option:hover {
+  color: var(--text-primary);
+}
+
+.optionSelected {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  background: var(--surface-card);
+}
+
+.swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  border: 2px solid transparent;
+  outline: 1px solid var(--border);
+  outline-offset: 2px;
+}
+
+.swatchSelected {
+  border-color: var(--text-primary);
+}

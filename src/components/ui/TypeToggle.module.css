@@ -1,0 +1,25 @@
+.toggle {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  overflow: hidden;
+}
+
+.option {
+  flex: 1;
+  height: 40px;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  transition: background-color var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out);
+}
+
+.option:not(:first-child) {
+  border-left: 1px solid var(--border);
+}
+
+.selected {
+  background: var(--surface-inverse);
+  color: var(--text-inverse);
+  font-weight: var(--weight-medium);
+}
