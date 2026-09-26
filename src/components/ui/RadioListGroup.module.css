@@ -13,7 +13,18 @@
   border: 2px solid var(--border);
   background: var(--surface-page);
   text-align: left;
-  transition: border-color var(--duration-base) var(--ease-out);
+  transition: border-color var(--duration-fast) ease, transform var(--duration-fast) var(--ease-out);
+}
+
+/* Fila ancha: escala más sutil que un botón. */
+.row:active {
+  transform: scale(var(--press-scale-large));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .row:not(.selected):hover {
+    border-color: var(--border-strong);
+  }
 }
 
 .icon {
@@ -80,11 +91,4 @@
   inset: 4px;
   border-radius: var(--radius-full);
   background: var(--text-primary);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .row,
-  .radio {
-    transition: none;
-  }
 }

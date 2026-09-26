@@ -26,10 +26,18 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-control);
   text-align: left;
+  transition: border-color var(--duration-fast) ease,
+              transform var(--duration-fast) var(--ease-out);
 }
 
-button.row:hover {
-  border-color: var(--border-strong);
+button.row:active {
+  transform: scale(var(--press-scale-large));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  button.row:hover {
+    border-color: var(--border-strong);
+  }
 }
 
 .icon {

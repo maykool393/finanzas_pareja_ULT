@@ -10,6 +10,7 @@
   align-items: center;
   gap: var(--space-sm);
   padding: var(--space-sm) 0;
+  min-height: 44px;
 }
 
 .title {
@@ -35,7 +36,15 @@
   transform: rotate(180deg);
 }
 
+/* Girar es movimiento: con reducir movimiento el chevron cambia sin animar. */
+@media (prefers-reduced-motion: reduce) {
+  .chevron {
+    transition: none;
+  }
+}
+
 .add {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -44,11 +53,28 @@
   border-radius: var(--radius-full);
   color: var(--text-secondary);
   flex-shrink: 0;
+  transition: background-color var(--duration-fast) ease,
+              color var(--duration-fast) ease,
+              transform var(--duration-fast) var(--ease-out);
 }
 
-.add:hover {
-  background: var(--surface-sunken);
-  color: var(--text-primary);
+/* Se ve de 28px, se toca en 44px. El gap del header (8px) evita que se
+   superponga con el botón de la fila. */
+.add::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+}
+
+.add:active {
+  transform: scale(var(--press-scale));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .add:hover {
+    background: var(--surface-sunken);
+    color: var(--text-primary);
+  }
 }
 
 .add svg {

@@ -102,11 +102,19 @@
   color: #1a1a1a;
   font-size: var(--text-md);
   font-weight: var(--weight-medium);
-  transition: opacity var(--duration-fast) var(--ease-out);
+  transition: background-color var(--duration-fast) ease,
+              transform var(--duration-fast) var(--ease-out);
 }
 
-.primary:hover {
-  opacity: 0.9;
+.primary:active {
+  transform: scale(var(--press-scale));
+}
+
+/* Fijo como el resto de esta pantalla (foto, no superficie de tema). */
+@media (hover: hover) and (pointer: fine) {
+  .primary:hover {
+    background: #e6e6e6;
+  }
 }
 
 .secondary {

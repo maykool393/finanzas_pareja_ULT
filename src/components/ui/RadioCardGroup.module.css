@@ -13,11 +13,17 @@
   gap: var(--space-sm);
   border: 2px solid var(--border);
   background: var(--surface-page);
-  transition: border-color var(--duration-base) var(--ease-out), transform var(--duration-fast) var(--ease-out);
+  transition: border-color var(--duration-fast) ease, transform var(--duration-fast) var(--ease-out);
 }
 
 .card:active {
-  transform: scale(0.97);
+  transform: scale(var(--press-scale));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card:not(.selected):hover {
+    border-color: var(--border-strong);
+  }
 }
 
 .icon {
@@ -42,10 +48,4 @@
   background:
     linear-gradient(var(--surface-page), var(--surface-page)) padding-box,
     var(--gradient-brand-dark) border-box;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .card {
-    transition: none;
-  }
 }

@@ -1,3 +1,6 @@
+/* Entrada con --duration-base, salida con --duration-fast (más rápida: el
+   usuario ya decidió). La salida la sostiene Dialog.tsx con EXIT_MS. */
+
 .overlay {
   position: fixed;
   inset: 0;
@@ -7,8 +10,23 @@
   justify-content: center;
   padding: 0;
   z-index: 100;
+  opacity: 1;
+  transition: opacity var(--duration-base) var(--ease-out);
 }
 
+@starting-style {
+  .overlay {
+    opacity: 0;
+  }
+}
+
+.overlay[data-state='closing'] {
+  opacity: 0;
+  pointer-events: none;
+  transition-duration: var(--duration-fast);
+}
+
+/* Móvil: hoja inferior que sube desde el borde. */
 .panel {
   width: 100%;
   max-width: 480px;
@@ -19,6 +37,19 @@
   box-shadow: var(--shadow-md);
   padding: var(--space-lg);
   padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom));
+  transform: translateY(0);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+@starting-style {
+  .panel {
+    transform: translateY(100%);
+  }
+}
+
+.overlay[data-state='closing'] .panel {
+  transform: translateY(100%);
+  transition-duration: var(--duration-fast);
 }
 
 .header {
@@ -35,7 +66,14 @@
   color: var(--text-primary);
 }
 
+/* Recibe el foco solo como respaldo (sin campos, o en táctil): el diálogo
+   abierto ya indica dónde está el foco, un anillo alrededor sobra. */
+.panel:focus {
+  outline: none;
+}
+
 .close {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -43,11 +81,27 @@
   height: 32px;
   border-radius: var(--radius-full);
   color: var(--text-secondary);
+  transition: background-color var(--duration-fast) ease,
+              color var(--duration-fast) ease,
+              transform var(--duration-fast) var(--ease-out);
 }
 
-.close:hover {
-  background: var(--surface-sunken);
-  color: var(--text-primary);
+/* Se ve de 32px, se toca en 44px. */
+.close::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+}
+
+.close:active {
+  transform: scale(var(--press-scale));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .close:hover {
+    background: var(--surface-sunken);
+    color: var(--text-primary);
+  }
 }
 
 .close svg {
@@ -55,6 +109,7 @@
   height: 16px;
 }
 
+/* Escritorio: diálogo centrado, aparece con fundido y una escala mínima. */
 @media (min-width: 640px) {
   .overlay {
     align-items: center;
@@ -64,5 +119,36 @@
   .panel {
     border-radius: var(--radius-card);
     padding-bottom: var(--space-lg);
+    transform: scale(1);
+    opacity: 1;
+    transition: transform var(--duration-base) var(--ease-out),
+                opacity var(--duration-base) var(--ease-out);
+  }
+
+  @starting-style {
+    .panel {
+      transform: scale(0.97);
+      opacity: 0;
+    }
+  }
+
+  .overlay[data-state='closing'] .panel {
+    transform: scale(0.97);
+    opacity: 0;
+    transition-duration: var(--duration-fast);
+  }
+}
+
+/* Reducir movimiento: sin desplazamiento ni escala, solo el fundido. */
+@media (prefers-reduced-motion: reduce) {
+  .panel,
+  .overlay[data-state='closing'] .panel {
+    transform: none;
+  }
+
+  @starting-style {
+    .panel {
+      transform: none;
+    }
   }
 }

@@ -7,11 +7,15 @@
 
 .option {
   flex: 1;
-  height: 40px;
+  height: 44px;
   font-size: var(--text-sm);
   color: var(--text-secondary);
-  transition: background-color var(--duration-fast) var(--ease-out),
-              color var(--duration-fast) var(--ease-out);
+  transition: background-color var(--duration-fast) ease,
+              color var(--duration-fast) ease;
+}
+
+.option:not(.selected):hover {
+  color: var(--text-primary);
 }
 
 .option:not(:first-child) {

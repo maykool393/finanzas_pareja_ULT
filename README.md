@@ -48,8 +48,8 @@ Cada etapa termina con su propio commit, verificado con `tsc`, lint y build. Se 
 | M0 | Preparar: liberar disco, commitear el trabajo pendiente | — | ✅ Completo |
 | M1 | DESIGN.md como fuente de verdad | impeccable | ✅ Completo |
 | M2 | Contraste de color (WCAG AA) | impeccable | ✅ Completo |
-| M3 | Accesibilidad de interacción: diálogo y áreas táctiles | impeccable | ⬜ Pendiente |
-| M4 | Movimiento e interacción | emil-design-eng | ⬜ Pendiente |
+| M3 | Accesibilidad de interacción: diálogo y áreas táctiles | impeccable | ✅ Completo |
+| M4 | Movimiento e interacción | emil-design-eng | ✅ Completo |
 | M5 | Rendimiento: imágenes, bundle, animación de fondo, fuente | impeccable | ⬜ Pendiente |
 | M6 | Pulido | impeccable | ⬜ Pendiente |
 
@@ -78,16 +78,23 @@ Las reglas que el código todavía no cumple quedan marcadas en DESIGN.md con la
 - [x] Regla global para `::placeholder`: antes cada navegador usaba su gris por defecto, bajo 4.5:1.
 - [x] Medidos y documentados los pares que ya cumplían: tarjetas de categoría, texto sobre el degradado del onboarding.
 
-### M3 — Accesibilidad de interacción ⬜
-- [ ] `Dialog`: foco contenido mientras está abierto, devuelto al disparador al cerrar, primer foco en el primer campo.
-- [ ] Área táctil de 44px: ThemeToggle, cerrar diálogo, "+" de secciones, `TypeToggle`, `ConfirmDialog`.
+### M3 — Accesibilidad de interacción ✅
+- [x] `Dialog`: foco contenido mientras está abierto (Tab y Shift+Tab), devuelto al disparador al cerrar, primer foco en el primer campo. En táctil el foco va al panel, para no abrir el teclado apenas aparece la hoja.
+- [x] `Dialog`: el efecto de foco ya no se reinicia en cada render del padre (antes le quitaba el foco al campo en uso cuando el padre se volvía a renderizar). *(Detectado al implementar.)*
+- [x] Área táctil de 44px: ThemeToggle, cerrar diálogo y "+" de secciones (zona invisible, se ven igual), `TypeToggle` y `ConfirmDialog` (de 40 a 44px), fila de encabezado de sección.
+- [x] Selector de ícono (de 40 a 44px) y de color (zona invisible de 44px, espacio entre muestras de 8 a 12px). *(No estaban en la auditoría.)*
+- [x] Piso de 24px (WCAG 2.5.8) para todos los botones de texto, y para "¿Olvidaste tu contraseña?".
+- [ ] Verificar en el navegador: Tab dentro de un diálogo, cerrar con Escape y ver que el foco vuelva, y tocar los botones pequeños en el celular.
 
-### M4 — Movimiento e interacción ⬜
-- [ ] `:active` con `scale(0.97)` en todo lo que se presiona.
-- [ ] `ProgressBar`: `scaleX` en vez de animar `width`.
-- [ ] `Dialog` entra y sale deslizándose, la salida más rápida que la entrada.
-- [ ] Reducir movimiento: mantener opacidad y color, quitar solo el desplazamiento.
-- [ ] Hover condicionado a `(hover: hover) and (pointer: fine)`.
+### M4 — Movimiento e interacción ✅
+- [x] `:active` en todo lo que se presiona: `--press-scale` (0.97) en botones y controles, `--press-scale-large` (0.99) en tarjetas y filas anchas.
+- [x] `ProgressBar`: `translateX` en vez de animar `width`. Se descartó `scaleX`, que aplastaba el extremo redondeado.
+- [x] `Dialog` entra deslizándose (hoja en móvil) o con fundido y escala (centrado), y sale más rápido que entra (150 contra 220ms).
+- [x] Reducir movimiento: se mantienen fundidos y color; se quitan escalas y desplazamientos. Antes todas las duraciones pasaban a 0ms.
+- [x] Hover condicionado a `(hover: hover) and (pointer: fine)` en todo lo que cambia fondo, borde, sombra o posición.
+- [x] **Hover visible en todos los botones**: primario, eliminar y confirmar con token de fondo propio; CTA con degradado con una capa blanca (aclara porque el texto es oscuro, así sube el contraste); tarjetas de selección y filas con borde más marcado; toggle Gasto/Ingreso con color. Se agregó el hover que faltaba en enviar de login y registro.
+- [x] **Foco al cerrar un diálogo**: volvía al botón pero sin anillo visible, porque el diálogo desaparecía antes y el foco pasaba por `<body>`. Ahora el diálogo sigue montado durante la salida mostrando su último contenido. *(Reportado al probar la M3.)*
+- [ ] Verificar en el navegador: hover en cada tipo de botón, cerrar un diálogo con Escape y ver el anillo en el botón que lo abrió, y activar "reducir movimiento" en el sistema operativo.
 
 ### M5 — Rendimiento ⬜
 - [ ] Fondos del login a WebP/AVIF (hoy 2.2 MB cada uno) y revisar el precache de la PWA (hoy ≈5.4 MB).

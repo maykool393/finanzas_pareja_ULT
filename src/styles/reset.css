@@ -24,6 +24,10 @@ input, button, textarea, select { font: inherit; color: inherit; }
 
 button { background: none; border: none; padding: 0; cursor: pointer; }
 
+/* Piso de WCAG 2.5.8 (24px) para botones de texto sueltos, que con 14px de
+   fuente miden 21px. Los controles principales llevan 44px en su módulo. */
+button { min-height: 24px; }
+
 h1, h2, h3, h4 { line-height: var(--leading-tight); font-weight: var(--weight-medium); }
 
 a { color: inherit; text-decoration: none; }

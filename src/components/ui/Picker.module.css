@@ -4,24 +4,27 @@
   gap: var(--space-sm);
 }
 
+/* 12px: las muestras de color agrandan su zona táctil 6px por lado, así
+   dos vecinas se tocan sin superponerse. */
 .grid {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-sm);
+  gap: calc(var(--space-sm) + var(--space-xs));
 }
 
 .option {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: var(--radius-control);
   border: 1px solid var(--border);
   background: var(--surface-sunken);
   color: var(--text-secondary);
-  transition: border-color var(--duration-fast) var(--ease-out),
-              color var(--duration-fast) var(--ease-out);
+  transition: border-color var(--duration-fast) ease,
+              color var(--duration-fast) ease,
+              transform var(--duration-fast) var(--ease-out);
 }
 
 .option svg {
@@ -33,6 +36,11 @@
   color: var(--text-primary);
 }
 
+.option:active,
+.swatch:active {
+  transform: scale(var(--press-scale));
+}
+
 .optionSelected {
   border-color: var(--text-primary);
   color: var(--text-primary);
@@ -40,12 +48,23 @@
 }
 
 .swatch {
+  position: relative;
   width: 32px;
   height: 32px;
   border-radius: var(--radius-full);
   border: 2px solid transparent;
   outline: 1px solid var(--border);
   outline-offset: 2px;
+  transition: border-color var(--duration-fast) ease,
+              transform var(--duration-fast) var(--ease-out);
+}
+
+/* Se ve de 32px, se toca en 44px. */
+.swatch::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: var(--radius-full);
 }
 
 .swatchSelected {

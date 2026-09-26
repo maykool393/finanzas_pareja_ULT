@@ -21,10 +21,18 @@
   border-radius: var(--radius-control);
   font-size: var(--text-sm);
   color: var(--text-primary);
+  transition: border-color var(--duration-fast) ease,
+              transform var(--duration-fast) var(--ease-out);
 }
 
-.link:hover {
-  border-color: var(--border-strong);
+.link:active {
+  transform: scale(var(--press-scale-large));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .link:hover {
+    border-color: var(--border-strong);
+  }
 }
 
 .chevron {

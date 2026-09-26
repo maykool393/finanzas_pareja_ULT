@@ -9,8 +9,16 @@
   transition: transform var(--duration-fast) var(--ease-out);
 }
 
-.card:hover {
-  transform: translateY(-1px);
+/* Solo las tarjetas que abren algo reaccionan: una que no hace nada no
+   debería insinuar que se puede tocar. */
+.clickable:active {
+  transform: scale(var(--press-scale-large));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .clickable:hover {
+    transform: translateY(var(--hover-lift));
+  }
 }
 
 .clickable {

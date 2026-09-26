@@ -2,7 +2,7 @@
 
 Documento de referencia para desarrollo. Úsalo como contexto al pedirle a Claude Code que construya componentes. Es la fuente de verdad: si el código y este documento no coinciden, se corrige uno de los dos a propósito, nunca se deja la diferencia.
 
-Algunas reglas de este documento todavía no están aplicadas en el código. Cada una indica la etapa del plan que la resuelve (M3 a M6, ver README § Plan de mejoras).
+Algunas reglas de este documento todavía no están aplicadas en el código. Cada una indica la etapa del plan que la resuelve (M5 y M6, ver README § Plan de mejoras).
 
 ## Stack
 
@@ -79,6 +79,7 @@ Debe soportarse desde el inicio, no agregarse después. Usar `[data-theme="dark"
 | `--surface-card` | `#FAFAFA` | `#1e1e1e` | Tarjetas, diálogos |
 | `--surface-sunken` | `#efefe8` | `#262626` | Inputs; feedback de hover |
 | `--surface-inverse` | `#1a1a1a` | `#f0f0f0` | Botón primario |
+| `--surface-inverse-hover` | `#404040` | `#d0d0d0` | Hover del botón primario (10.4:1 / 12.2:1 con su texto) |
 | `--text-primary` | `#1a1a1a` | `#f0f0f0` | Texto principal |
 | `--text-secondary` | `#5f5e5a` | `#a8a8a4` | Texto de apoyo |
 | `--text-muted` | `#6d6c66` | `#8d8d8a` | Etiquetas, hints, placeholders (`::placeholder` en `global.css`) |
@@ -134,6 +135,7 @@ Cada color de estado tiene dos usos con requisitos distintos: como relleno (barr
 | `--gain-text` | `#4d771b` | `#669b26` | Montos positivos y texto de éxito |
 | `--loss-text` | `#b54c28` | `#dc6c47` | Montos negativos y mensajes de error |
 | `--danger-bg` | `#b14a28` | `#b14a28` | Fondo de botones destructivos |
+| `--danger-bg-hover` | `#923b1f` | `#923b1f` | Hover del botón destructivo (7.3:1: el hover sube el contraste) |
 | `--text-on-danger` | `#ffffff` | `#ffffff` | Texto sobre `--danger-bg` |
 
 - Nunca usar `--gain-color` ni `--loss-color` como color de texto: dan 3.4:1 y 3.9:1 sobre fondo claro.
@@ -188,19 +190,22 @@ Mismos dos tonos (rosa → azul) y mismo ángulo en las tres variantes — solo 
 
 ## Botones
 
-| Variante | Fondo | Texto | Borde |
-|---|---|---|---|
-| Primario | `--surface-inverse` | `--text-inverse` | — |
-| Secundario | `--surface-page` | `--text-primary` | 1px `--border-strong` |
-| Destructivo | `--danger-bg` | `--text-on-danger` | — |
-| CTA de onboarding | `--gradient-brand-dark` | `#1a1a1a` fijo | — |
+| Variante | Fondo | Texto | Borde | Hover |
+|---|---|---|---|---|
+| Primario | `--surface-inverse` | `--text-inverse` | — | `--surface-inverse-hover` |
+| Secundario | `--surface-page` | `--text-primary` | 1px `--border-strong` | `--surface-sunken` |
+| Destructivo | `--danger-bg` | `--text-on-danger` | — | `--danger-bg-hover` |
+| CTA de onboarding | `--gradient-brand-dark` | `#1a1a1a` fijo | — | Capa blanca al 16% |
+
+**Hover = cambio de color de fondo, nunca de opacidad.** Bajar la opacidad casi no se nota en un botón oscuro, y en uno de color aclara el fondo y baja el contraste del texto. El CTA con degradado es la excepción de técnica: un degradado no transiciona de color, así que el hover es una sombra interna blanca al 16% (`inset 0 0 0 100px`), que se pinta sobre el fondo y debajo del texto y sí se puede animar. Aclara en vez de oscurecer porque el texto es oscuro, y así sube el contraste (5.3 → 6.7:1). Cada color de hover se mide con su texto igual que el de reposo.
 
 - **Radio:** `--radius-control` (8px) para todo botón con texto, incluidas las tarjetas de selección tipo radio.
 - **Excepción, botones de solo ícono** (cambiar tema, cerrar diálogo, agregar): pueden ser circulares (`--radius-full`). Son controles pequeños sin texto, y un círculo es la forma esperada para ellos.
-- **Área táctil mínima de 44×44px** para todo lo que se presiona. Un botón de ícono puede verse de 28–32px, pero su zona de toque llega a 44px con padding o con un pseudo-elemento. *(Hoy hay botones de 28 a 40px; se corrige en M3.)*
+- **Área táctil mínima de 44×44px** para todo control independiente: botones, opciones, toggles. Un botón de ícono puede verse de 28–32px; su zona de toque llega a 44px con un pseudo-elemento invisible (`::before` con `inset` negativo), sin cambiar cómo se ve. Las zonas de dos controles vecinos no se superponen: el espacio entre ellos tiene que ser al menos la suma de lo que cada uno se agranda.
+- **Enlaces de texto** dentro de una fila o formulario (volver, copiar, editar, archivar): mínimo 24px de alto, el piso de WCAG 2.5.8. Lo asegura `button { min-height: 24px }` en `reset.css`; un enlace `<a>` suelto lo necesita en su propio módulo (ej. "¿Olvidaste tu contraseña?").
 - **Botón secundario: nunca relleno gris**, se confunde con un estado deshabilitado. `--surface-sunken` queda reservado para el feedback de hover.
 - **Enlaces de texto** (copiar, volver, "¿Tienes un código?") no llevan fondo ni radio, solo color de texto que se oscurece en hover.
-- **Estados obligatorios:** default, hover, `:active`, `:focus-visible` (anillo global de `reset.css`), deshabilitado (`opacity: 0.6`) y cargando (texto de acción en gerundio, ej. "Guardando…").
+- **Estados obligatorios:** default, hover, `:active` (escala, ver Transiciones), `:focus-visible` (anillo global de `reset.css`), deshabilitado (`opacity: 0.6`, exento de contraste) y cargando (texto de acción en gerundio, ej. "Guardando…").
 
 ## Fondo — pantallas de autenticación (login, recuperar contraseña, crear cuenta)
 
@@ -247,7 +252,7 @@ Estas tres pantallas comparten el mismo fondo: un degradado difuminado en tonos 
 **Barra de progreso (deudas, presupuestos)**
 - Altura 5px, radio `--radius-full`.
 - Fondo en el tono claro de la categoría, relleno en el tono `fill`.
-- Largo proporcional a pagos completados / pagos totales, animado con `transform: scaleX()` y `transform-origin: left`, nunca con `width`. *(Hoy anima `width`; se corrige en M4.)*
+- Largo proporcional a pagos completados / pagos totales. El relleno mide siempre el 100% del riel y se desplaza con `transform: translateX(-(1 − proporción) × 100%)`; el riel (`overflow: hidden`) recorta lo que sobra. Nunca animar `width` (recalcula layout). Tampoco `scaleX`: aplasta el extremo redondeado, que se ve casi recto cuando la barra está poco llena.
 
 **Encabezado de sección (Cuentas / Deudas / Inversiones)**
 - Nombre de sección en `--text-primary`, monto total alineado a la derecha en `--text-secondary`.
@@ -255,8 +260,11 @@ Estas tres pantallas comparten el mismo fondo: un degradado difuminado en tonos 
 
 **Diálogo**
 - En móvil es una hoja inferior (bottom sheet); desde 640px, un diálogo centrado.
-- Al abrir, el foco va al primer campo del contenido, no al botón de cerrar. Mientras está abierto, el foco no puede salir del diálogo con Tab. Al cerrar, vuelve al elemento que lo abrió. Escape cierra. *(Hoy el foco inicial va al botón de cerrar y no queda contenido ni se devuelve; se corrige en M3.)*
-- Entra deslizándose desde abajo (hoja) o con fundido y escala desde 0.97 (centrado); la salida es más rápida que la entrada. *(Se agrega en M4.)*
+- Al abrir con teclado o mouse, el foco va al primer campo del contenido, no al botón de cerrar. En pantallas táctiles (`pointer: coarse`) va al panel: enfocar un input abriría el teclado encima de la hoja apenas aparece.
+- Mientras está abierto, Tab y Shift+Tab no salen del diálogo: desde un extremo saltan al otro. Al cerrar, el foco vuelve al elemento que lo abrió. Escape cierra.
+- El efecto que maneja el foco depende solo de `open`. `onClose` se lee desde una ref: como suele ser una función nueva en cada render del padre, si fuera dependencia el efecto se reiniciaría y le quitaría el foco al campo en el que se está escribiendo.
+- Entra deslizándose desde abajo (hoja) o con fundido y escala desde 0.97 (centrado), con `@starting-style` y `--duration-base`. Sale con `--duration-fast`: más rápido que la entrada.
+- Al cerrar, sigue montado `EXIT_MS` (150ms, igual a `--duration-fast`) mostrando el último contenido que tuvo abierto. Así la animación de salida tiene qué animar aunque el padre ya haya puesto su estado en `null`, y el foco vuelve al disparador mientras el campo enfocado todavía existe. Si el diálogo desapareciera primero, el foco pasaría por `<body>` y Chrome no mostraría el anillo al devolverlo: el foco volvía, pero invisible.
 
 **Toggle de modo oscuro**
 - Debe estar accesible desde la pantalla principal.
@@ -288,19 +296,22 @@ Esta es una app de uso diario: el movimiento comunica un cambio de estado, no de
 **Tokens:**
 ```css
 --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
---duration-fast: 150ms;   /* presión, hover, color */
---duration-base: 220ms;   /* diálogos, expandir, entradas */
+--duration-fast: 150ms;         /* presión, hover, color, salidas */
+--duration-base: 220ms;         /* entradas, expandir */
+--press-scale: 0.97;            /* :active de botones y controles */
+--press-scale-large: 0.99;      /* :active de tarjetas y filas anchas */
+--hover-lift: -1px;             /* hover de tarjetas que se pueden abrir */
 ```
 
 **Reglas:**
 - Animar solo `transform` y `opacity`. El color se puede transicionar (hover, cambio de tema). Nunca `width`, `height`, `top`, `left`, `margin` ni `padding`.
 - Duración entre 150 y 250ms; ningún elemento de interfaz pasa de 300ms.
-- Entradas y salidas con `--ease-out`. Nunca `ease-in` ni `transition: all`.
+- Movimiento (entradas, salidas, presión) con `--ease-out`; cambios de color con `ease`. Nunca `ease-in` ni `transition: all`: cada transición nombra sus propiedades.
 - La salida es más rápida que la entrada: el sistema responde rápido cuando el usuario ya decidió.
 - Nada aparece desde `scale(0)`: se parte de `scale(0.95)` o más, junto con `opacity: 0`.
-- **Presión:** todo lo que se presiona responde en `:active` con `transform: scale(0.97)` y una transición de `transform` de `--duration-fast`. *(Hoy solo lo tienen el CTA del onboarding y las tarjetas de selección; se extiende en M4.)*
-- **Hover solo con puntero fino:** los efectos de hover van dentro de `@media (hover: hover) and (pointer: fine)`, para que en pantallas táctiles no queden pegados después de tocar. *(M4.)*
-- **Reducir movimiento** (`prefers-reduced-motion: reduce`) significa menos movimiento, no ninguno: se quitan desplazamientos y escalas, pero se mantienen los fundidos de opacidad y las transiciones de color, que ayudan a entender el cambio. *(Hoy se ponen todas las duraciones en 0ms; se corrige en M4.)*
+- **Presión:** todo lo que se presiona responde en `:active` con `transform: scale(var(--press-scale))`, y las tarjetas y filas anchas con `--press-scale-large`, porque 0.97 en algo de todo el ancho se mueve demasiado. Los enlaces de texto no escalan: cambian de color. Una tarjeta que no abre nada no reacciona.
+- **Hover solo con puntero fino:** todo hover que cambia fondo, borde, sombra o posición va dentro de `@media (hover: hover) and (pointer: fine)`. En pantallas táctiles el hover se "pega" después de tocar, y un fondo gris pegado se nota. El hover que solo cambia el color del texto puede quedar fuera: pegado no se distingue de haberlo tocado.
+- **Reducir movimiento** (`prefers-reduced-motion: reduce`) significa menos movimiento, no ninguno: se quitan desplazamientos y escalas, pero se mantienen los fundidos de opacidad y las transiciones de color, que ayudan a entender el cambio. Cómo: `tokens.css` lleva `--press-scale`, `--press-scale-large` y `--hover-lift` a valores neutros, y cada movimiento propio de un componente (hoja del diálogo, barra de progreso, chevron) tiene su excepción en su módulo. Las duraciones no se ponen en 0.
 - Preferir transiciones CSS antes que `@keyframes` en todo lo que se puede interrumpir (abrir y cerrar rápido): una transición se retoma desde donde está, un keyframe reinicia.
 - Casos de uso: expandir/colapsar secciones, aparición de nuevas transacciones (fundido/deslizamiento), conteo animado al actualizar montos, transición de color al cambiar entre modo claro/oscuro, entrada y salida de diálogos.
 

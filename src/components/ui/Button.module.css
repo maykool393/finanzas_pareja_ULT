@@ -8,7 +8,8 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-sm);
-  transition: opacity var(--duration-fast) var(--ease-out);
+  transition: background-color var(--duration-fast) ease,
+              transform var(--duration-fast) var(--ease-out);
 }
 
 .base:disabled {
@@ -16,8 +17,8 @@
   cursor: default;
 }
 
-.base:not(:disabled):hover {
-  opacity: 0.9;
+.base:not(:disabled):active {
+  transform: scale(var(--press-scale));
 }
 
 .primary {
@@ -31,11 +32,23 @@
   border: 1px solid var(--border-strong);
 }
 
-.secondary:not(:disabled):hover {
-  background: var(--surface-sunken);
-}
-
 .danger {
   background: var(--danger-bg);
   color: var(--text-on-danger);
+}
+
+/* Hover como cambio de fondo, no de opacidad: la opacidad casi no se nota en
+   el botón oscuro y en el de color aclara el fondo y baja el contraste. */
+@media (hover: hover) and (pointer: fine) {
+  .primary:not(:disabled):hover {
+    background: var(--surface-inverse-hover);
+  }
+
+  .secondary:not(:disabled):hover {
+    background: var(--surface-sunken);
+  }
+
+  .danger:not(:disabled):hover {
+    background: var(--danger-bg-hover);
+  }
 }

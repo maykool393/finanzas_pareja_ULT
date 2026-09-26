@@ -12,11 +12,12 @@
 }
 
 .cancel {
-  height: 40px;
+  height: 44px;
   padding: 0 var(--space-md);
   border-radius: var(--radius-control);
   font-size: var(--text-sm);
   color: var(--text-secondary);
+  transition: color var(--duration-fast) ease;
 }
 
 .cancel:hover {
@@ -25,12 +26,13 @@
 
 .confirmArchive,
 .confirmDelete {
-  height: 40px;
+  height: 44px;
   padding: 0 var(--space-md);
   border-radius: var(--radius-control);
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
-  transition: opacity var(--duration-fast) var(--ease-out);
+  transition: background-color var(--duration-fast) ease,
+              transform var(--duration-fast) var(--ease-out);
 }
 
 .confirmArchive {
@@ -49,7 +51,17 @@
   cursor: default;
 }
 
-.confirmArchive:not(:disabled):hover,
-.confirmDelete:not(:disabled):hover {
-  opacity: 0.9;
+.confirmArchive:not(:disabled):active,
+.confirmDelete:not(:disabled):active {
+  transform: scale(var(--press-scale));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .confirmArchive:not(:disabled):hover {
+    background: var(--surface-inverse-hover);
+  }
+
+  .confirmDelete:not(:disabled):hover {
+    background: var(--danger-bg-hover);
+  }
 }

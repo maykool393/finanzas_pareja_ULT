@@ -34,6 +34,7 @@
   --surface-card:    #FAFAFA;
   --surface-sunken:  #efefe8;
   --surface-inverse: #1a1a1a;
+  --surface-inverse-hover: #404040;
 
   --text-primary:   #1a1a1a;
   --text-secondary: #5f5e5a;
@@ -73,6 +74,7 @@
   /* Botón destructivo. Blanco fijo encima, también en oscuro: 5.4:1 en reposo
      y ≥4.5:1 en hover (el hover baja la opacidad a 0.9 y aclara el fondo). */
   --danger-bg: #b14a28;
+  --danger-bg-hover: #923b1f;   /* más oscuro: el hover sube el contraste (7.3:1) */
   --text-on-danger: #ffffff;
 
   /* ---------- Identidad de marca — onboarding (ver DESIGN.md) ---------- */
@@ -104,8 +106,14 @@
   /* ---------- Movimiento ----------
      Animar solo transform/opacity. 150–250ms, nunca > 300ms (ver DESIGN.md). */
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --duration-fast: 150ms;
-  --duration-base: 220ms;
+  --duration-fast: 150ms;   /* presión, hover, color, salidas */
+  --duration-base: 220ms;   /* entradas, expandir */
+
+  /* Presión y hover. Con reducir movimiento pasan a valores neutros (abajo),
+     así los componentes no necesitan su propia excepción. */
+  --press-scale: 0.97;        /* botones y controles */
+  --press-scale-large: 0.99;  /* tarjetas y filas anchas: 0.97 se movería demasiado */
+  --hover-lift: -1px;
 }
 
 /* ---------- Oscuro: toggle manual ---------- */
@@ -116,6 +124,7 @@
   --surface-card:    #1e1e1e;
   --surface-sunken:  #262626;
   --surface-inverse: #f0f0f0;
+  --surface-inverse-hover: #d0d0d0;
 
   --text-primary:   #f0f0f0;
   --text-secondary: #a8a8a4;
@@ -141,6 +150,7 @@
     --surface-card:    #1e1e1e;
     --surface-sunken:  #262626;
     --surface-inverse: #f0f0f0;
+    --surface-inverse-hover: #d0d0d0;
 
     --text-primary:   #f0f0f0;
     --text-secondary: #a8a8a4;
@@ -158,9 +168,15 @@
   }
 }
 
+/* Reducir movimiento = sin desplazamientos ni escalas, pero con fundidos y
+   transiciones de color (ayudan a entender el cambio). Las duraciones se
+   mantienen; lo que se anula es el movimiento. Las animaciones de posición
+   propias de un componente (diálogo, barra de progreso, chevron) tienen su
+   excepción en su módulo. */
 @media (prefers-reduced-motion: reduce) {
   :root {
-    --duration-fast: 0ms;
-    --duration-base: 0ms;
+    --press-scale: 1;
+    --press-scale-large: 1;
+    --hover-lift: 0px;
   }
 }

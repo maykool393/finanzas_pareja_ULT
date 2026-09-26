@@ -7,7 +7,8 @@ interface ProgressBarProps {
 }
 
 export function ProgressBar({ ratio, trackColor, fillColor }: ProgressBarProps) {
-  const percent = Math.round(Math.min(1, Math.max(0, ratio)) * 100)
+  const clamped = Math.min(1, Math.max(0, ratio))
+  const percent = Math.round(clamped * 100)
 
   return (
     <div
@@ -18,7 +19,10 @@ export function ProgressBar({ ratio, trackColor, fillColor }: ProgressBarProps) 
       aria-valuemin={0}
       aria-valuemax={100}
     >
-      <div className={styles.fill} style={{ width: `${percent}%`, background: fillColor }} />
+      {/* Relleno de ancho completo desplazado a la izquierda: animar translateX
+          no recalcula layout (como width) ni aplasta el extremo redondeado
+          (como scaleX). El riel recorta lo que sobra. */}
+      <div className={styles.fill} style={{ transform: `translateX(${(clamped - 1) * 100}%)`, background: fillColor }} />
     </div>
   )
 }
