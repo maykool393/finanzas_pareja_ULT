@@ -12,7 +12,7 @@ Ya construido y en producción de desarrollo:
 - **Onboarding**: `Welcome.tsx` en `/`, solo la primera vez (`hasSeenOnboarding` en `localStorage`).
 - **Sistema de diseño**: tokens claro/oscuro (`src/styles/tokens.css`), `RippleBackground`, `AppShell` con nav de 5 secciones, `Card`, `ItemCard`, `SectionHeader`, `ProgressBar`.
 - **Esquema base en Supabase**: `households`, `profiles`, `categories`, `accounts`, `debts`, `investments`, `transactions` (columnas mínimas — este plan las extiende), con RLS por household en todas.
-- **Dashboard** (`src/pages/Dashboard.tsx`): usa datos `MOCK`, pendiente de conectar a Supabase — es el primer punto de integración real de cada módulo.
+- **Dashboard** (`src/pages/Dashboard.tsx`): todo con datos reales de Supabase. La sección "Ahorro" con una meta de ejemplo fija en el código (900.000) se eliminó el 2026-09-27; si se quiere un módulo de metas de ahorro, se construye como los demás (tabla propia + `src/features/`).
 
 Este documento es el plan de los 7 módulos que faltan. Se actualiza el **Estado** de cada fase a medida que se completa — no se implementa nada de lo descrito aquí hasta acordarlo fase por fase.
 
@@ -51,7 +51,7 @@ Cada etapa termina con su propio commit, verificado con `tsc`, lint y build. Se 
 | M3 | Accesibilidad de interacción: diálogo y áreas táctiles | impeccable | ✅ Completo |
 | M4 | Movimiento e interacción | emil-design-eng | ✅ Completo |
 | M5 | Rendimiento: imágenes, bundle, animación de fondo, fuente | impeccable | ✅ Completo |
-| M6 | Pulido | impeccable | ⬜ Pendiente |
+| M6 | Pulido | impeccable | ✅ Completo |
 
 ### M0 — Preparar ✅
 - [x] Liberar espacio en C: (estaba al 100%, causaba fallos intermitentes del build).
@@ -114,11 +114,20 @@ Las reglas que el código todavía no cumple quedan marcadas en DESIGN.md con la
 - [ ] Pendiente, fuera del alcance original: el JS inicial sigue sobre el aviso de 500 KB de Vite (lo pesado es React, Supabase y el router). Bajar de ahí requiere cargar las pantallas por ruta.
 - [ ] Verificar en el navegador: el dashboard carga los gráficos sin saltos, la app abre sin conexión con la fuente correcta y los fondos se ven sin bandas.
 
-### M6 — Pulido ⬜
-- [ ] Quitar los guiones largos del texto visible.
-- [ ] Tema para la selección de texto y las barras de scroll.
-- [ ] Íconos de `AppShell` y `Dialog` al registro de `icons.tsx`, con trazo de 1.5.
-- [ ] `Card` con una sola elevación (borde o sombra) y sin tarjeta anidada en el QR.
+### M6 — Pulido ✅
+- [x] Sin guiones largos en el texto visible (4 casos).
+- [x] El texto de "Invitar a tu pareja" mandaba a buscar "¿Tu pareja ya tiene un espacio?", un enlace que ya no existe desde el rediseño del onboarding. Ahora dice "¿Tienes un código? Únete aquí". *(Detectado al implementar.)*
+- [x] Tema para selección de texto, barras de scroll y calendario de fecha nativo. El pulgar de scroll usa `--text-muted` (con `--border-strong` quedaba en 1.7:1).
+- [x] Íconos al registro de `icons.tsx` con trazo 1.5: no solo `AppShell` y `Dialog`, también `SectionHeader`, `ThemeToggle` y `More` (11 íconos). La pestaña "Finanzas" reusa el `WalletIcon` existente. Solo quedan fuera los logos de Google y Apple, que son marcas.
+- [x] Una sola elevación: `Card` y la tarjeta del login quedan con borde, sin sombra.
+- [x] QR sin tarjeta anidada: el margen blanco va dentro de la imagen, con la zona de silencio de 4 módulos que pide la especificación (antes era 1, compensada con la caja).
+- [ ] Verificar en el navegador: íconos de la navegación y del encabezado, escanear el QR en modo claro y oscuro, seleccionar texto y ver la barra de scroll.
+
+### Cierre del plan
+Las seis etapas están implementadas. Falta:
+- Las verificaciones en el navegador marcadas en M3, M4, M5 y M6.
+- Volver a correr la auditoría para medir el puntaje contra el 13/20 inicial.
+- Pendiente fuera del plan (M5): cargar las pantallas por ruta, para bajar el JS inicial de los 500 KB.
 
 **Fuera de este plan:** skeletons de carga y estados vacíos que guíen al usuario. Es trabajo de diseño, no de corrección; va como tarea propia con `impeccable onboard`.
 

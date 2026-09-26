@@ -289,7 +289,7 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
     <OnboardingLayout step={1} total={totalSteps} titleLine1="¡Comencemos su" titleLine2="viaje juntos!">
       <p className={styles.lead}>
         {createMode === 'individual'
-          ? 'Lleva tus finanzas solo — luego podrás invitar a tu pareja cuando quieras.'
+          ? 'Lleva tus finanzas solo. Si luego quieres, puedes invitar a tu pareja.'
           : 'Crea tu espacio compartido para empezar a registrar cuentas y movimientos.'}
       </p>
 

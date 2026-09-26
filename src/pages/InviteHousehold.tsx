@@ -16,7 +16,7 @@ export function InviteHousehold() {
     <div>
       <h1 className={styles.title}>Invitar a tu pareja</h1>
       <p className={styles.lead}>
-        Comparte este código o el QR — tu pareja lo usa al registrarse o desde "¿Tu pareja ya tiene un espacio?".
+        Comparte este código o el QR. Tu pareja lo usa al registrarse o desde "¿Tienes un código? Únete aquí".
       </p>
 
       <div className={styles.codeRow}>

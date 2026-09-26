@@ -42,7 +42,7 @@ export default function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/presupuesto" element={<Budgets />} />
         <Route path="/mover" element={<Transactions />} />
-        <Route path="/estadisticas" element={<p>Estadísticas — pendiente</p>} />
+        <Route path="/estadisticas" element={<p>Estadísticas: próximamente</p>} />
         <Route path="/mas" element={<More />} />
         <Route path="/categorias" element={<Categories />} />
         <Route path="/invitar" element={<InviteHousehold />} />

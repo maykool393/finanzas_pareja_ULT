@@ -17,7 +17,6 @@
   background: color-mix(in srgb, var(--surface-card) 60%, transparent);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
-  box-shadow: var(--shadow-md);
   padding: var(--space-xl) var(--space-lg);
   display: flex;
   flex-direction: column;

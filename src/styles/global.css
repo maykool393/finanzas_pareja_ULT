@@ -11,6 +11,21 @@
   color: var(--text-muted);
 }
 
+/* Lo que dibuja el navegador también toma la paleta, no sus colores por
+   defecto (selección azul, calendario de fecha azul, scrollbar gris del
+   sistema). Neutros, como el resto de la interfaz. */
+:root {
+  accent-color: var(--text-primary);
+  /* --text-muted y no --border-strong: el pulgar es un control que se
+     arrastra y necesita 3:1 contra el fondo (--border-strong da 1.7:1). */
+  scrollbar-color: var(--text-muted) transparent;
+}
+
+::selection {
+  background: var(--border-strong);
+  color: var(--text-primary);
+}
+
 /* Sin esta regla cada navegador usa su gris (Chrome ≈#757575, bajo 4.5:1
    sobre los inputs), y Firefox además le baja la opacidad. */
 ::placeholder {

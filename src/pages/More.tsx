@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { ChevronRightIcon } from '../components/ui/icons'
 import styles from './More.module.css'
 
 // Cada módulo que sume una pantalla de gestión (Fases 1–4) agrega su enlace aquí.
@@ -15,9 +16,7 @@ export function More() {
         {LINKS.map(({ to, label }) => (
           <Link key={to} to={to} className={styles.link}>
             {label}
-            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={styles.chevron}>
-              <path d="m8 5 5 5-5 5" />
-            </svg>
+            <ChevronRightIcon className={styles.chevron} aria-hidden="true" />
           </Link>
         ))}
       </nav>

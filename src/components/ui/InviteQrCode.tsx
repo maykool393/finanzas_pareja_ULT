@@ -15,7 +15,11 @@ export function InviteQrCode({ url }: InviteQrCodeProps) {
     // "Ver QR" y no tiene por qué viajar en la carga inicial de la app.
     import('qrcode')
       .then(({ default: QRCode }) =>
-        QRCode.toDataURL(url, { margin: 1, width: 220, color: { dark: '#1a1a1a', light: '#ffffff' } }),
+        // margin: 4 = la zona de silencio que pide la especificación de QR.
+        // El margen blanco va dentro de la imagen, así no hace falta una caja
+        // alrededor (sería una tarjeta dentro de otra) y se escanea igual
+        // sobre la tarjeta oscura.
+        QRCode.toDataURL(url, { margin: 4, width: 220, color: { dark: '#1a1a1a', light: '#ffffff' } }),
       )
       .then((result) => {
         if (!cancelled) setDataUrl(result)

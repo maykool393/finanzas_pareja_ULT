@@ -1,6 +1,7 @@
 import { type ReactNode, useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import styles from './Dialog.module.css'
+import { CloseIcon } from './icons'
 
 /** Igual a --duration-fast: lo que dura la animación de salida en Dialog.module.css. */
 const EXIT_MS = 150
@@ -14,14 +15,6 @@ interface DialogProps {
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-
-function CloseIcon() {
-  return (
-    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
-      <path d="m5 5 10 10M15 5 5 15" />
-    </svg>
-  )
-}
 
 export function Dialog({ open, onClose, title, children }: DialogProps) {
   const panelRef = useRef<HTMLDivElement>(null)

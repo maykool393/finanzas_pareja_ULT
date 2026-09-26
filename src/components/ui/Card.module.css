@@ -3,7 +3,8 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   padding: var(--space-lg);
-  box-shadow: var(--shadow-sm);
+  /* Una sola elevación: borde, sin sombra. En oscuro la sombra casi no se
+     ve y el borde es lo que marca el contorno. */
   transition: background-color var(--duration-base) var(--ease-out),
               border-color var(--duration-base) var(--ease-out);
 }

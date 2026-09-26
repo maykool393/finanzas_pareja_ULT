@@ -63,7 +63,7 @@ export function DebtForm({ initial, onSubmit, onCancel }: DebtFormProps) {
         label="Monto de la cuota"
         value={installmentAmount}
         onChange={setInstallmentAmount}
-        hint="Opcional — déjalo vacío si no tiene cuotas fijas."
+        hint="Opcional. Déjalo vacío si no tiene cuotas fijas."
       />
       <NumberField
         label="Cuotas pendientes"

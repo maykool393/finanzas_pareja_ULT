@@ -2,8 +2,6 @@
 
 Documento de referencia para desarrollo. Úsalo como contexto al pedirle a Claude Code que construya componentes. Es la fuente de verdad: si el código y este documento no coinciden, se corrige uno de los dos a propósito, nunca se deja la diferencia.
 
-Algunas reglas de este documento todavía no están aplicadas en el código. Cada una indica la etapa del plan que la resuelve (M6, ver README § Plan de mejoras).
-
 ## Stack
 
 - React + TypeScript
@@ -160,8 +158,8 @@ Cada color de estado tiene dos usos con requisitos distintos: como relleno (barr
 --shadow-md: 0 2px 12px rgba(26, 26, 26, 0.08);
 ```
 
-- **Una sola elevación por superficie:** borde o sombra, no ambos. Un borde de 1px bajo una sombra difusa se lee como una tarjeta fantasma. *(Hoy `Card` tiene los dos; se corrige en M6.)*
-- **Nada de tarjetas dentro de tarjetas.** Si algo necesita separarse dentro de una tarjeta, se usa espacio o un divisor.
+- **Una sola elevación por superficie:** borde o sombra, no ambos. Un borde de 1px bajo una sombra difusa se lee como una tarjeta fantasma. Las tarjetas (`Card`, la del login) llevan **borde**: en modo oscuro una sombra sobre fondo oscuro casi no se ve, y el borde es lo que marca el contorno. Lo que flota sobre un fondo oscurecido o de otro color (diálogo, hoja del onboarding) lleva **sombra**.
+- **Nada de tarjetas dentro de tarjetas.** Si algo necesita separarse dentro de una tarjeta, se usa espacio o un divisor. Ejemplo: el QR de invitación lleva su margen blanco dentro de la propia imagen (zona de silencio de 4 módulos, la que pide la especificación), en vez de una caja con borde alrededor.
 - Layout: `--container-max` 1120px, `--header-height` 64px.
 
 ## Identidad de marca — flujos de varios pasos (onboarding)
@@ -328,7 +326,8 @@ Esta es una app de uso diario: el movimiento comunica un cambio de estado, no de
 
 Estilo outline (contorno), no relleno. Consistente en todos los íconos de la app — cuentas, navegación inferior, indicadores de categoría.
 
-- **Íconos propios, no de librería.** Viven todos en `src/components/ui/icons.tsx`, sobre una grilla de 20×20 (`viewBox="0 0 20 20"`), trazo de 1.5 (`strokeWidth="1.5"`), extremos y uniones redondeados, color `currentColor`. Un ícono nuevo se agrega ahí, no dentro del componente que lo usa. *(`AppShell` y `Dialog` todavía tienen íconos propios con trazo 1.6; se unifican en M6.)*
+- **Íconos propios, no de librería.** Viven todos en `src/components/ui/icons.tsx`, sobre una grilla de 20×20 (`viewBox="0 0 20 20"`), trazo de 1.5 (`strokeWidth="1.5"`), extremos y uniones redondeados, color `currentColor`. Un ícono nuevo se agrega ahí, no dentro del componente que lo usa. Si ya existe uno para la misma idea, se reusa en vez de dibujar otro (ej. la pestaña "Finanzas" usa el mismo `WalletIcon` que el tipo de cuenta "Billetera").
+- Los logos de Google y Apple en `SocialAuthButtons` no son íconos de interfaz sino marcas, con sus colores oficiales: quedan fuera del registro.
 - Ningún emoji ni carácter Unicode en lugar de un ícono.
 
 **Excepción:** los íconos del componente `AvatarPair` (persona, corazón) van rellenos. Son un acento decorativo puntual de los flujos de onboarding, no íconos estructurales o de navegación.
@@ -337,11 +336,20 @@ Estilo outline (contorno), no relleno. Consistente en todos los íconos de la ap
 
 - Los botones nombran su acción ("Crear", "Unirme", "Guardar contraseña"), no "Aceptar" ni "Enviar".
 - Los errores dicen qué pasó y cómo seguir: "Ese código no es válido. Pídele a tu pareja que lo copie de nuevo desde 'Ver más'."
-- Sin guion largo (—) en el texto visible: se reemplaza por punto, coma, dos puntos o paréntesis. *(Quedan 4 casos; se corrigen en M6.)*
+- Sin guion largo (—) en el texto visible: se reemplaza por punto, coma, dos puntos o paréntesis. En los comentarios del código no importa.
+- Un texto que menciona otro elemento de la interfaz ("desde '¿Tienes un código?'") se revisa cuando ese elemento cambia de nombre: si no, apunta a algo que ya no existe.
 
 ## Superficies del navegador
 
-Lo que dibuja el navegador también es parte del diseño: la selección de texto, las barras de scroll y el anillo de foco toman colores de la paleta, no los del navegador. El anillo de foco ya está definido en `reset.css` (2px `--text-primary`). *(Selección y barras de scroll se agregan en M6.)*
+Lo que dibuja el navegador también es parte del diseño: toma colores de la paleta, neutros como el resto de la interfaz, no los del navegador.
+
+| Qué | Dónde | Valor |
+|---|---|---|
+| Anillo de foco | `reset.css` | 2px `--text-primary` |
+| Selección de texto | `global.css`, `::selection` | fondo `--border-strong`, texto `--text-primary` (≈10:1) |
+| Barras de scroll | `global.css`, `scrollbar-color` | pulgar `--text-muted`, riel transparente. El pulgar es un control que se arrastra: necesita 3:1 contra el fondo, y `--border-strong` solo daba 1.7:1 |
+| Controles nativos (calendario de fecha) | `global.css`, `accent-color` | `--text-primary` |
+| Placeholders | `global.css`, `::placeholder` | `--text-muted` |
 
 ## Navegación inferior
 

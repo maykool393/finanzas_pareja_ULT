@@ -1,8 +1,5 @@
-import { lazy, Suspense, useState } from 'react'
+import { lazy, Suspense } from 'react'
 import { Card } from '../components/ui/Card'
-import { PiggyIcon } from '../components/ui/icons'
-import { ItemCard } from '../components/ui/ItemCard'
-import { SectionHeader } from '../components/ui/SectionHeader'
 import { AccountsSection } from '../features/accounts/AccountsSection'
 import { useAccounts } from '../features/accounts/useAccounts'
 import { useCategories } from '../features/categories/useCategories'
@@ -30,21 +27,7 @@ const NetWorthTrendChart = lazy(() =>
   import('../features/dashboard/NetWorthTrendChart').then((m) => ({ default: m.NetWorthTrendChart })),
 )
 
-interface MockItem {
-  id: string
-  name: string
-  value: number
-  owner: string | null
-}
-
-// TODO: reemplazar por datos de Supabase (src/features/*) cuando exista un módulo de metas de ahorro.
-const MOCK = {
-  savings: [{ id: 's1', name: 'Meta: viaje', value: 900_000, owner: null }] satisfies MockItem[],
-}
-
 const sum = (values: number[]) => values.reduce((acc, v) => acc + v, 0)
-
-type SectionKey = 'savings'
 
 export function Dashboard() {
   const currency = useCurrency()
@@ -62,16 +45,10 @@ export function Dashboard() {
     categories,
   )
 
-  const [expanded, setExpanded] = useState<Record<SectionKey, boolean>>({
-    savings: true,
-  })
-
-  const toggle = (key: SectionKey) => setExpanded((prev) => ({ ...prev, [key]: !prev[key] }))
-
   const accountsTotal = sum(accounts.filter((a) => !a.archivedAt).map((a) => a.balance))
   const debtsTotal = sum(debts.filter((d) => !d.archivedAt).map((d) => d.remaining))
   const investmentsTotal = sum(investments.filter((i) => !i.archivedAt).map((i) => i.currentValue))
-  const netWorth = accountsTotal + investmentsTotal + sum(MOCK.savings.map((s) => s.value)) - debtsTotal
+  const netWorth = accountsTotal + investmentsTotal - debtsTotal
 
   return (
     <>
@@ -84,29 +61,6 @@ export function Dashboard() {
       <AccountsSection />
       <DebtsSection />
       <InvestmentsSection />
-
-      <section className={styles.section}>
-        <SectionHeader
-          title="Ahorro"
-          total={formatCurrency(sum(MOCK.savings.map((s) => s.value)), currency)}
-          expanded={expanded.savings}
-          onToggle={() => toggle('savings')}
-        />
-        {expanded.savings && (
-          <div className={styles.cardRow}>
-            {MOCK.savings.map((goal) => (
-              <ItemCard
-                key={goal.id}
-                name={goal.name}
-                amount={formatCurrency(goal.value, currency)}
-                variant="investment-a"
-                icon={<PiggyIcon />}
-                owner={goal.owner}
-              />
-            ))}
-          </div>
-        )}
-      </section>
 
       {!chartsLoading && (
         <>
