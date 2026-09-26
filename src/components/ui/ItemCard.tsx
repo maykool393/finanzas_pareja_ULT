@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { PeopleIcon } from './icons'
 import { ProgressBar } from './ProgressBar'
 import styles from './ItemCard.module.css'
 
@@ -14,16 +15,6 @@ interface ItemCardProps {
   /** Solo para deudas: proporción de pagos completados (0–1). */
   progress?: number
   onClick?: () => void
-}
-
-function SharedIcon() {
-  return (
-    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="7" cy="7.5" r="2.3" />
-      <circle cx="14" cy="7.5" r="2.3" />
-      <path d="M2.5 16c.6-2.4 2.3-3.7 4.5-3.7s3.9 1.3 4.5 3.7M9 16c.6-2.4 2.3-3.7 4.5-3.7s3.9 1.3 4.5 3.7" />
-    </svg>
-  )
 }
 
 export function ItemCard({ name, amount, variant, icon, owner, progress, onClick }: ItemCardProps) {
@@ -56,7 +47,7 @@ export function ItemCard({ name, amount, variant, icon, owner, progress, onClick
       )}
 
       <span className={styles.avatar} aria-label={owner ? `Cuenta de ${owner}` : 'Cuenta compartida'}>
-        {owner ? owner.slice(0, 2).toUpperCase() : <SharedIcon />}
+        {owner ? owner.slice(0, 2).toUpperCase() : <PeopleIcon />}
       </span>
     </article>
   )

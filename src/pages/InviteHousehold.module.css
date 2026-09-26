@@ -12,32 +12,15 @@
 }
 
 .codeRow {
+  margin-bottom: var(--space-md);
+}
+
+.qrToggle {
   display: flex;
-  gap: var(--space-sm);
+  flex-direction: column;
+  gap: var(--space-md);
+  align-items: flex-start;
   margin-bottom: var(--space-xl);
-}
-
-.code {
-  flex: 1;
-  height: 44px;
-  padding: 0 var(--space-md);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-control);
-  background: var(--surface-sunken);
-  color: var(--text-primary);
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-}
-
-.copy {
-  height: 44px;
-  padding: 0 var(--space-lg);
-  border-radius: var(--radius-control);
-  background: var(--surface-inverse);
-  color: var(--text-inverse);
-  font-size: var(--text-sm);
-  font-weight: var(--weight-medium);
-  flex-shrink: 0;
 }
 
 .membersLabel {

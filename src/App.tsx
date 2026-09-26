@@ -7,6 +7,7 @@ import { Categories } from './pages/Categories'
 import { Dashboard } from './pages/Dashboard'
 import { ForgotPassword } from './pages/ForgotPassword'
 import { InviteHousehold } from './pages/InviteHousehold'
+import { JoinRedirect } from './pages/JoinRedirect'
 import { Login } from './pages/Login'
 import { More } from './pages/More'
 import { ResetPassword } from './pages/ResetPassword'
@@ -33,6 +34,7 @@ export default function App() {
       <Route path="/registro" element={<Login />} />
       <Route path="/recuperar" element={<ForgotPassword />} />
       <Route path="/restablecer" element={<ResetPassword />} />
+      <Route path="/unirse/:householdId" element={<JoinRedirect />} />
       <Route element={<ProtectedLayout />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/presupuesto" element={<Budgets />} />

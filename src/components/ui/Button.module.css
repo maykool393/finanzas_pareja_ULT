@@ -26,8 +26,13 @@
 }
 
 .secondary {
-  background: var(--surface-sunken);
+  background: var(--surface-page);
   color: var(--text-primary);
+  border: 1px solid var(--border-strong);
+}
+
+.secondary:not(:disabled):hover {
+  background: var(--surface-sunken);
 }
 
 .danger {

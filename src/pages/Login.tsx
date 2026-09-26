@@ -3,9 +3,10 @@ import { Link, Navigate, useLocation } from 'react-router-dom'
 import { AuthLayout } from '../components/auth/AuthLayout'
 import { SocialAuthButtons } from '../components/auth/SocialAuthButtons'
 import styles from '../components/auth/authForm.module.css'
-import { supabase } from '../lib/supabase'
-import { translateAuthError } from '../lib/authErrors'
 import { useSession } from '../hooks/useSession'
+import { translateAuthError } from '../lib/authErrors'
+import { getPendingInvite } from '../lib/pendingInvite'
+import { supabase } from '../lib/supabase'
 
 type Mode = 'signin' | 'signup'
 
@@ -44,10 +45,18 @@ export function Login() {
       const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
       if (signInError) setError(translateAuthError(signInError.message))
     } else {
+      const pendingInvite = getPendingInvite()
       const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { display_name: displayName } },
+        options: {
+          data: { display_name: displayName },
+          // Si venía de un link/QR de invitación, el correo de confirmación
+          // debe traer de vuelta a /unirse/:id (ver JoinRedirect) en vez de
+          // al destino por defecto — así funciona aunque el link se abra en
+          // otro navegador donde no exista el localStorage de esta sesión.
+          emailRedirectTo: pendingInvite ? `${window.location.origin}/unirse/${pendingInvite}` : undefined,
+        },
       })
       if (signUpError) {
         setError(translateAuthError(signUpError.message))

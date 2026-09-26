@@ -1,0 +1,16 @@
+/* Fondo blanco fijo, no --surface-page: un QR necesita contraste claro/oscuro
+   constante para poder escanearse, sin importar el tema de la app. */
+.wrap {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-md);
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+
+.wrap img {
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+}

@@ -39,7 +39,7 @@ Debe soportarse desde el inicio, no agregarse después. Usar `[data-theme="dark"
 | Variable | Claro | Oscuro |
 |---|---|---|
 | `--surface-page` | `#ffffff` | `#121212` |
-| `--surface-card` | `#f5f5f0` | `#1e1e1e` |
+| `--surface-card` | `#FAFAFA` | `#1e1e1e` |
 | `--text-primary` | `#1a1a1a` | `#f0f0f0` |
 | `--text-secondary` | `#5f5e5a` | `#a8a8a4` |
 | `--text-muted` | `#888780` | `#6f6f6b` |
@@ -89,6 +89,34 @@ Cada categoría tiene un color de fondo claro (`bg`) y su versión oscura de tex
 --space-xl: 32px;
 ```
 
+## Identidad de marca — flujos de varios pasos (onboarding)
+
+Distinto del fondo de Login/recuperar contraseña/crear cuenta (sección siguiente): ese es un asset estático de manchas difuminadas para pantallas de un solo formulario. Esto es un degradado CSS para flujos que avanzan por pasos (ej. configurar hogar), donde sí se permite salir de la base neutra porque el degradado *es* la identidad visual del flujo, no un elemento decorativo de fondo.
+
+```css
+--brand-pink: #FFB4E2;
+--brand-blue: #89BBF0;
+--gradient-brand:       linear-gradient(94.58deg, var(--brand-pink) -18.95%, var(--brand-blue) 111.62%);
+--gradient-brand-light: linear-gradient(94.58deg, #FFDDF2 -18.95%, #CAE0F8 111.62%);
+--gradient-brand-dark:  linear-gradient(94.58deg, #C78CB0 -18.95%, #6B92BB 111.62%);
+```
+
+Mismos dos tonos (rosa → azul) y mismo ángulo en las tres variantes — solo cambia cuánto blanco/negro se mezcla. `-light` y `-dark` existen para que un elemento pueda distinguirse de otro que también usa el degradado (ej. la barra de progreso sobre el fondo del encabezado): nunca se inventa un tono nuevo, se aclara u oscurece el mismo par.
+
+**Reglas de uso:**
+- Encabezado del flujo (`--gradient-brand-light`): cubre desde el borde superior de la pantalla — nunca debe quedar una franja de fondo neutro por encima.
+- Segmento(s) completados de la barra de progreso, botón de acción principal del flujo y borde de la opción seleccionada en tarjetas de elección: `--gradient-brand-dark` — todos más oscuros que el encabezado para distinguirse de él.
+- `--brand-pink` / `--brand-blue` sólidos (sin degradado): avatares del componente `AvatarPair`.
+- `--gradient-brand` (variante base): no se aplica directo a ningún elemento; es el par de origen del que salen `-light` y `-dark`.
+- Texto sobre cualquiera de las tres variantes: siempre `--text-primary` (oscuro) — el texto blanco no llega al contraste mínimo de accesibilidad (AA) contra ninguna de ellas. Excepción: son colores fijos que no cambian con `[data-theme="dark"]`, así que en la práctica el texto/íconos sobre ellos usan `#1a1a1a` literal, no la variable (que sí se invierte en modo oscuro).
+- No sustituye los colores de categorías financieras ni se usa fuera de flujos de onboarding.
+- Pendiente: no tiene variante para modo oscuro — hoy se ve igual en claro y oscuro. Definir si corresponde antes de extenderlo a más pantallas.
+
+## Botones
+
+- Radio de todos los botones de la aplicación: `--radius-control` (8px), sin excepciones — incluidas las tarjetas de selección tipo radio, aunque visualmente parezcan tarjetas.
+- Botón secundario: nunca relleno gris — se confunde con un estado deshabilitado. Fondo transparente o `--surface-page`, borde 1px `--border-strong`, texto `--text-primary`. `--surface-sunken` queda reservado para retroalimentación de `hover`, nunca como relleno permanente del botón.
+
 ## Fondo — pantallas de autenticación (login, recuperar contraseña, crear cuenta)
 
 Estas tres pantallas comparten el mismo fondo: un degradado difuminado en tonos pastel sobre base clara, generado a partir de los mismos colores de categoría del sistema (no introduce paleta nueva).
@@ -134,6 +162,16 @@ Estas tres pantallas comparten el mismo fondo: un degradado difuminado en tonos 
 **Toggle de modo oscuro**
 - Debe estar accesible desde la pantalla principal.
 
+**Barra de progreso por pasos (onboarding)**
+- Un segmento por paso, dentro del área del degradado de marca (ver "Identidad de marca") — nunca sobre una franja neutra separada.
+- Segmento(s) completados: relleno con `--gradient-brand-dark`. Pendientes: tono oscuro translúcido (`rgba(26, 26, 26, 0.18)`) sobre el degradado del encabezado.
+- Mismo patrón para cualquier flujo de varios pasos, no solo vincular hogar.
+
+**Tarjeta de selección (radio-card)**
+- Cada opción es un `<button>` real y accesible, con `aria-pressed`.
+- Estado activo: borde 2px con `--gradient-brand-dark`. Estado inactivo: borde 1px `--border`.
+- El fondo no cambia entre estados — seleccionar nunca rellena la tarjeta de color, la marca solo el borde.
+
 ## Transiciones y animación
 
 - Animar solo `transform` y `opacity` (evitar `width`, `height`, `top`, `left` para no forzar recálculo de layout).
@@ -144,6 +182,8 @@ Estas tres pantallas comparten el mismo fondo: un degradado difuminado en tonos 
 ## Iconografía
 
 Estilo outline (contorno), no relleno. Consistente en todos los íconos de la app — cuentas, navegación inferior, indicadores de categoría.
+
+**Excepción:** los íconos del componente `AvatarPair` (persona, corazón) van rellenos. Son un acento decorativo puntual de los flujos de onboarding, no íconos estructurales o de navegación.
 
 ## Navegación inferior
 

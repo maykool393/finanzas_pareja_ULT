@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import { Button } from '../components/ui/Button'
+import { InviteCodeBadge } from '../components/ui/InviteCodeBadge'
+import { InviteQrCode } from '../components/ui/InviteQrCode'
 import { useHouseholdId } from '../hooks/useHouseholdId'
 import { useHouseholdMembers } from '../hooks/useHouseholdMembers'
 import styles from './InviteHousehold.module.css'
@@ -6,27 +9,25 @@ import styles from './InviteHousehold.module.css'
 export function InviteHousehold() {
   const { householdId } = useHouseholdId()
   const { members } = useHouseholdMembers()
-  const [copied, setCopied] = useState(false)
-
-  async function copyCode() {
-    if (!householdId) return
-    await navigator.clipboard.writeText(householdId)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
+  const [showQr, setShowQr] = useState(false)
+  const inviteUrl = `${window.location.origin}/unirse/${householdId ?? ''}`
 
   return (
     <div>
       <h1 className={styles.title}>Invitar a tu pareja</h1>
       <p className={styles.lead}>
-        Comparte este código — lo pega en "¿Tu pareja ya tiene un espacio?" al registrarse.
+        Comparte este código o el QR — tu pareja lo usa al registrarse o desde "¿Tu pareja ya tiene un espacio?".
       </p>
 
       <div className={styles.codeRow}>
-        <input className={styles.code} readOnly value={householdId ?? ''} onFocus={(e) => e.target.select()} />
-        <button type="button" className={styles.copy} onClick={copyCode}>
-          {copied ? 'Copiado' : 'Copiar'}
-        </button>
+        <InviteCodeBadge code={householdId ?? ''} />
+      </div>
+
+      <div className={styles.qrToggle}>
+        <Button type="button" variant="secondary" onClick={() => setShowQr((v) => !v)}>
+          {showQr ? 'Ocultar QR' : 'Ver QR'}
+        </Button>
+        {showQr && <InviteQrCode url={inviteUrl} />}
       </div>
 
       <p className={`label ${styles.membersLabel}`}>Miembros</p>

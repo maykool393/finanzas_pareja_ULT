@@ -168,6 +168,61 @@ export function OtherIcon(props: SVGProps<SVGSVGElement>) {
   )
 }
 
+/** Dos personas — cuenta compartida (ItemCard) y "crear una pareja" (HouseholdSetup). */
+export function PeopleIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <circle cx="7" cy="7.5" r="2.3" />
+      <circle cx="14" cy="7.5" r="2.3" />
+      <path d="M2.5 16c.6-2.4 2.3-3.7 4.5-3.7s3.9 1.3 4.5 3.7M9 16c.6-2.4 2.3-3.7 4.5-3.7s3.9 1.3 4.5 3.7" />
+    </svg>
+  )
+}
+
+export function LinkIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M8.3 11.7a3.3 3.3 0 0 0 4.8 0l2.4-2.4a3.3 3.3 0 0 0-4.8-4.8l-.8.8" />
+      <path d="M11.7 8.3a3.3 3.3 0 0 0-4.8 0l-2.4 2.4a3.3 3.3 0 0 0 4.8 4.8l.8-.8" />
+    </svg>
+  )
+}
+
+export function CopyIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <rect x="7.5" y="7.5" width="9" height="9" rx="1.5" />
+      <path d="M4.5 12.5v-7A1.5 1.5 0 0 1 6 4h7" />
+    </svg>
+  )
+}
+
+export function ArrowRightIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M4 10h12M11 5.5 16 10l-5 4.5" />
+    </svg>
+  )
+}
+
+/** Rellenos (excepción al estilo outline — ver DESIGN.md § Iconografía): acentos decorativos, no estructurales. */
+export function PersonFilledIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="currentColor" {...props}>
+      <circle cx="10" cy="7" r="3.3" />
+      <path d="M3.5 17c0-3.7 3-6 6.5-6s6.5 2.3 6.5 6" />
+    </svg>
+  )
+}
+
+export function HeartFilledIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="currentColor" {...props}>
+      <path d="M10 17.2s-6.3-3.8-8.3-7.8C.6 6.7 2 3.8 5 3.8c1.7 0 2.9.9 3.3 2 .4-1.1 1.6-2 3.3-2 3 0 4.4 2.9 3.3 5.6-2 4-8.3 7.8-8.3 7.8z" />
+    </svg>
+  )
+}
+
 export const ICONS: Record<IconKey, (props: SVGProps<SVGSVGElement>) => ReactElement> = {
   bank: BankIcon,
   cash: CashIcon,

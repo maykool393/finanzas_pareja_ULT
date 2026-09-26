@@ -31,7 +31,7 @@
 
   /* ---------- Superficies y texto (neutros) — claro ---------- */
   --surface-page:    #ffffff;
-  --surface-card:    #f5f5f0;
+  --surface-card:    #FAFAFA;
   --surface-sunken:  #efefe8;
   --surface-inverse: #1a1a1a;
 
@@ -65,6 +65,13 @@
   --investment-b-text: #173404;
   --gain-color: #639922;
   --loss-color: #D85A30;
+
+  /* ---------- Identidad de marca — onboarding (ver DESIGN.md) ---------- */
+  --brand-pink: #FFB4E2;
+  --brand-blue: #89BBF0;
+  --gradient-brand:       linear-gradient(94.58deg, var(--brand-pink) -18.95%, var(--brand-blue) 111.62%);
+  --gradient-brand-light: linear-gradient(94.58deg, #FFDDF2 -18.95%, #CAE0F8 111.62%);
+  --gradient-brand-dark:  linear-gradient(94.58deg, #C78CB0 -18.95%, #6B92BB 111.62%);
 
   /* ---------- Espaciado y bordes ---------- */
   --space-xs: 4px;

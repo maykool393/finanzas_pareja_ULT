@@ -1,0 +1,76 @@
+.lead {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.codeLabel {
+  display: block;
+  margin-bottom: var(--space-sm);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.actionsRow {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.actionsRow > * {
+  flex: 1;
+}
+
+.error {
+  font-size: var(--text-sm);
+  color: var(--loss-color);
+}
+
+/* Botón de acción principal del flujo — degradado de marca, ver DESIGN.md
+   § Identidad de marca. Excepción intencional: no usa el componente Button
+   compartido (esos estilos son neutros y app-wide; este es un caso puntual
+   de un flujo de onboarding). Color fijo #1a1a1a: el fondo es siempre claro,
+   no sigue var(--text-inverse) que se invierte en modo oscuro. */
+.cta {
+  height: 52px;
+  width: 100%;
+  border-radius: var(--radius-control);
+  background: var(--gradient-brand-dark);
+  color: #1a1a1a;
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  box-shadow: 0 10px 22px rgba(199, 140, 176, 0.35), 0 6px 16px rgba(107, 146, 187, 0.3);
+  transition: opacity var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
+}
+
+.cta:not(:disabled):hover {
+  opacity: 0.92;
+}
+
+.cta:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+.cta:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta {
+    transition: none;
+  }
+}

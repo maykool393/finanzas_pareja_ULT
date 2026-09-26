@@ -1,0 +1,8 @@
+.row {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.segment {
+  flex: 1;
+}

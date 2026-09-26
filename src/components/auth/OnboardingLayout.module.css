@@ -1,0 +1,44 @@
+.page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  background: var(--gradient-brand-light);
+  padding: var(--space-md) var(--space-lg) var(--space-xl);
+  padding-top: calc(var(--space-md) + env(safe-area-inset-top));
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* Colores fijos, no tokens de tema: el degradado de marca no cambia con
+   [data-theme="dark"] (ver DESIGN.md § Identidad de marca), así que el texto
+   tampoco puede seguir var(--text-primary) o perdería contraste en oscuro. */
+.title {
+  text-align: center;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  color: #1a1a1a;
+}
+
+.titleAccent {
+  color: #3D5FA8;
+}
+
+.sheet {
+  background: var(--surface-page);
+  border-radius: 20px 20px 0 0;
+  margin-top: calc(var(--space-lg) * -1);
+  position: relative;
+  flex: 1;
+  padding: var(--space-lg) var(--space-md);
+  padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  box-shadow: 0 -10px 24px rgba(26, 26, 26, 0.06);
+}
