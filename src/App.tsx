@@ -2,6 +2,7 @@ import { Outlet, Route, Routes } from 'react-router-dom'
 import { RequireAuth } from './components/auth/RequireAuth'
 import { RequireHousehold } from './components/auth/RequireHousehold'
 import { AppShell } from './components/layout/AppShell'
+import { CurrencyProvider } from './components/CurrencyProvider'
 import { Budgets } from './pages/Budgets'
 import { Categories } from './pages/Categories'
 import { Dashboard } from './pages/Dashboard'
@@ -18,9 +19,11 @@ function ProtectedLayout() {
   return (
     <RequireAuth>
       <RequireHousehold>
-        <AppShell>
-          <Outlet />
-        </AppShell>
+        <CurrencyProvider>
+          <AppShell>
+            <Outlet />
+          </AppShell>
+        </CurrencyProvider>
       </RequireHousehold>
     </RequireAuth>
   )

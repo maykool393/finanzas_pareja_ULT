@@ -15,6 +15,12 @@
   margin-bottom: var(--space-sm);
 }
 
+.sectionLabel {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  margin-top: calc(var(--space-sm) * -1);
+}
+
 .panel {
   display: flex;
   flex-direction: column;

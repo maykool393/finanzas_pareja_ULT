@@ -16,6 +16,7 @@ import { InvestmentsSection } from '../features/investments/InvestmentsSection'
 import { useInvestments } from '../features/investments/useInvestments'
 import { TransactionList } from '../features/transactions/TransactionList'
 import { useTransactions } from '../features/transactions/useTransactions'
+import { useCurrency } from '../hooks/useCurrency'
 import { useHouseholdMembers } from '../hooks/useHouseholdMembers'
 import { formatCurrency, formatMonth } from '../lib/format'
 import styles from './Dashboard.module.css'
@@ -37,6 +38,7 @@ const sum = (values: number[]) => values.reduce((acc, v) => acc + v, 0)
 type SectionKey = 'savings'
 
 export function Dashboard() {
+  const currency = useCurrency()
   const { accounts } = useAccounts()
   const { debts } = useDebts()
   const { investments } = useInvestments()
@@ -66,7 +68,7 @@ export function Dashboard() {
     <>
       <header className={styles.hero}>
         <p className="label">Patrimonio neto · {formatMonth(new Date())}</p>
-        <p className={`amount ${styles.heroTotal}`}>{formatCurrency(netWorth)}</p>
+        <p className={`amount ${styles.heroTotal}`}>{formatCurrency(netWorth, currency)}</p>
         <p className={styles.heroMeta}>Actualizado hoy</p>
       </header>
 
@@ -77,7 +79,7 @@ export function Dashboard() {
       <section className={styles.section}>
         <SectionHeader
           title="Ahorro"
-          total={formatCurrency(sum(MOCK.savings.map((s) => s.value)))}
+          total={formatCurrency(sum(MOCK.savings.map((s) => s.value)), currency)}
           expanded={expanded.savings}
           onToggle={() => toggle('savings')}
         />
@@ -87,7 +89,7 @@ export function Dashboard() {
               <ItemCard
                 key={goal.id}
                 name={goal.name}
-                amount={formatCurrency(goal.value)}
+                amount={formatCurrency(goal.value, currency)}
                 variant="investment-a"
                 icon={<PiggyIcon />}
                 owner={goal.owner}

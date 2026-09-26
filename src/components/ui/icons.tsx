@@ -215,6 +215,37 @@ export function ArrowRightIcon(props: SVGProps<SVGSVGElement>) {
   )
 }
 
+/** Reparto proporcional al ingreso — paso de preferencias en HouseholdSetup. */
+export function SlidersIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M3 6h14M3 10h14M3 14h14" />
+      <circle cx="8" cy="6" r="1.6" fill="currentColor" stroke="none" />
+      <circle cx="13" cy="10" r="1.6" fill="currentColor" stroke="none" />
+      <circle cx="6.5" cy="14" r="1.6" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
+/** Reparto indiferente/conjunto — paso de preferencias en HouseholdSetup. */
+export function ClockIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <circle cx="10" cy="10" r="7" />
+      <path d="M10 6.2v4l3 1.8" />
+    </svg>
+  )
+}
+
+/** Reparto 50/50 — paso de preferencias en HouseholdSetup. */
+export function BoltIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M11 2.5 4.5 11h4.2l-.7 6.5 6.5-8.5h-4.2z" />
+    </svg>
+  )
+}
+
 /** Rellenos (excepción al estilo outline — ver DESIGN.md § Iconografía): acentos decorativos, no estructurales. */
 export function PersonFilledIcon(props: SVGProps<SVGSVGElement>) {
   return (

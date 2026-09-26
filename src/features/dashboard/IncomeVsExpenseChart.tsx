@@ -1,9 +1,11 @@
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { useCurrency } from '../../hooks/useCurrency'
+import { formatCurrency } from '../../lib/format'
 import styles from './charts.module.css'
-import { formatTooltipCurrency } from './tooltipFormat'
 import type { MonthlyTotals } from './useDashboardCharts'
 
 export function IncomeVsExpenseChart({ data }: { data: MonthlyTotals[] }) {
+  const currency = useCurrency()
   const hasData = data.some((d) => d.income > 0 || d.expense > 0)
   if (!hasData) {
     return <p className={styles.empty}>Sin movimientos en los últimos meses.</p>
@@ -21,7 +23,7 @@ export function IncomeVsExpenseChart({ data }: { data: MonthlyTotals[] }) {
         />
         <YAxis hide />
         <Tooltip
-          formatter={formatTooltipCurrency}
+          formatter={(value: unknown) => formatCurrency(Number(value), currency)}
           contentStyle={{ background: 'var(--surface-card)', border: '1px solid var(--border)', borderRadius: 8 }}
         />
         <Bar dataKey="income" name="Ingresos" fill="var(--gain-color)" radius={[4, 4, 0, 0]} />

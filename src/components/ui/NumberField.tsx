@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { formatAmount } from '../../lib/format'
+import { useMemo, useState } from 'react'
+import { useCurrency } from '../../hooks/useCurrency'
+import { formatAmount, getCurrencySymbol } from '../../lib/format'
 import styles from './formField.module.css'
 import numberFieldStyles from './NumberField.module.css'
 
@@ -12,7 +13,7 @@ interface NumberFieldProps {
   required?: boolean
   placeholder?: string
   hint?: string
-  /** Antepone "$" al campo — para montos en pesos. */
+  /** Antepone el símbolo de la moneda del household (€, S/, $...) — para campos de monto. */
   currency?: boolean
 }
 
@@ -44,13 +45,16 @@ export function NumberField({
   const [focused, setFocused] = useState(false)
   const [raw, setRaw] = useState('')
 
+  const currencyCode = useCurrency()
+  const symbol = useMemo(() => getCurrencySymbol(currencyCode), [currencyCode])
+
   const displayValue = focused ? raw : value === null ? '' : formatAmount(value)
 
   return (
     <label className={styles.field}>
       <span className="label">{label}</span>
       <div className={numberFieldStyles.wrapper}>
-        {currency && <span className={numberFieldStyles.prefix}>$</span>}
+        {currency && <span className={numberFieldStyles.prefix}>{symbol}</span>}
         <input
           className={`${styles.input} ${currency ? numberFieldStyles.withPrefix : ''}`}
           type="text"

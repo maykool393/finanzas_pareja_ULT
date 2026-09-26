@@ -2,20 +2,51 @@ import { type FormEvent, useState } from 'react'
 import { OnboardingLayout } from '../components/auth/OnboardingLayout'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
-import { ArrowRightIcon, PeopleIcon, PersonIcon } from '../components/ui/icons'
+import { ArrowRightIcon, BoltIcon, ClockIcon, PeopleIcon, PersonIcon, SlidersIcon } from '../components/ui/icons'
 import { InviteCodeBadge } from '../components/ui/InviteCodeBadge'
 import { InviteQrCode } from '../components/ui/InviteQrCode'
 import { RadioCardGroup } from '../components/ui/RadioCardGroup'
+import { RadioListGroup } from '../components/ui/RadioListGroup'
+import { Select } from '../components/ui/Select'
 import { TextField } from '../components/ui/TextField'
 import { useSession } from '../hooks/useSession'
+import { getCurrencySymbol, SUPPORTED_CURRENCIES } from '../lib/format'
 import { supabase } from '../lib/supabase'
 import styles from './HouseholdSetup.module.css'
 
 type CreateMode = 'individual' | 'pareja'
+type ExpenseSplit = 'proporcional' | 'indiferente' | '50-50'
+type Step = 'choose' | 'join' | 'invite' | 'preferences'
 
 const CREATE_MODE_OPTIONS = [
   { value: 'individual', label: 'Cuenta individual', icon: <PersonIcon /> },
   { value: 'pareja', label: 'Cuentas en pareja', icon: <PeopleIcon /> },
+] as const
+
+const CURRENCY_OPTIONS = SUPPORTED_CURRENCIES.map((code) => ({
+  value: code,
+  label: `${code} ${getCurrencySymbol(code)}`,
+}))
+
+const SPLIT_OPTIONS = [
+  {
+    value: 'proporcional',
+    label: 'Proporcional',
+    description: 'Ajustado según el nivel de ingresos de cada uno para una contribución justa.',
+    icon: <SlidersIcon />,
+  },
+  {
+    value: 'indiferente',
+    label: 'Indiferente',
+    description: 'Todo se maneja de forma conjunta, sin divisiones entre los dos.',
+    icon: <ClockIcon />,
+  },
+  {
+    value: '50-50',
+    label: '50 / 50',
+    description: 'Ambos aportan exactamente el mismo porcentaje a las cuentas del hogar.',
+    icon: <BoltIcon />,
+  },
 ] as const
 
 interface HouseholdSetupProps {
@@ -26,18 +57,23 @@ interface HouseholdSetupProps {
 
 export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
   const { user } = useSession()
+  const [step, setStep] = useState<Step>('choose')
   const [createMode, setCreateMode] = useState<CreateMode>('pareja')
-  const [showJoinForm, setShowJoinForm] = useState(false)
   const [name, setName] = useState('')
   const [code, setCode] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showQr, setShowQr] = useState(false)
 
+  const [currency, setCurrency] = useState('CLP')
+  const [expenseSplit, setExpenseSplit] = useState<ExpenseSplit>('indiferente')
+
   // Solo se llena tras crear el household de verdad — antes de eso no hay
   // fila en la base y compartir el código/QR llevaría a un link roto
   // (quien lo abra intentaría unirse a un household que no existe).
   const [createdHouseholdId, setCreatedHouseholdId] = useState<string | null>(null)
+
+  const totalSteps = createMode === 'pareja' ? 3 : 2
 
   async function handleShare(inviteUrl: string) {
     if (navigator.share) {
@@ -66,10 +102,15 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
       return
     }
 
+    // .select().single() a propósito: sin esto, si la política de RLS
+    // filtrara la fila (0 filas afectadas), Supabase no lanza error — el
+    // update "tendría éxito" sin vincular nada, en silencio.
     const { error: linkError } = await supabase
       .from('profiles')
       .update({ household_id: householdId })
       .eq('id', user.id)
+      .select()
+      .single()
 
     if (linkError) {
       setError(linkError.message)
@@ -78,13 +119,10 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
     }
 
     setSubmitting(false)
-
-    if (createMode === 'pareja') {
-      // El household ya existe: ahora sí se puede mostrar/compartir el código.
-      setCreatedHouseholdId(householdId)
-    } else {
-      await onDone()
-    }
+    setCreatedHouseholdId(householdId)
+    // El household ya existe: para "pareja" primero se comparte el código,
+    // "individual" no tiene con quién compartirlo y va directo a preferencias.
+    setStep(createMode === 'pareja' ? 'invite' : 'preferences')
   }
 
   async function handleJoin(event: FormEvent) {
@@ -97,6 +135,8 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
       .from('profiles')
       .update({ household_id: code.trim() })
       .eq('id', user.id)
+      .select()
+      .single()
 
     if (joinUpdateError) {
       setError('Ese código no es válido. Pídele a tu pareja que lo copie de nuevo desde "Ver más".')
@@ -104,16 +144,84 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
       return
     }
 
+    // El household ya existía (lo creó y configuró la otra persona) — no hay
+    // preferencias que pedir de nuevo, se entra directo.
     await onDone()
   }
 
-  // Paso 2 (solo "cuentas en pareja"): el household ya existe, se comparte
-  // el código/QR reales antes de entrar al dashboard.
-  if (createdHouseholdId) {
+  async function handlePreferences(event: FormEvent) {
+    event.preventDefault()
+    if (!createdHouseholdId) return
+    setError(null)
+    setSubmitting(true)
+
+    const update: { currency: string; expense_split?: ExpenseSplit } = { currency }
+    if (createMode === 'pareja') update.expense_split = expenseSplit
+
+    const { error: prefsError } = await supabase
+      .from('households')
+      .update(update)
+      .eq('id', createdHouseholdId)
+      .select()
+      .single()
+
+    if (prefsError) {
+      setError(prefsError.message)
+      setSubmitting(false)
+      return
+    }
+
+    await onDone()
+    setSubmitting(false)
+  }
+
+  if (step === 'preferences') {
+    return (
+      <OnboardingLayout
+        step={totalSteps}
+        total={totalSteps}
+        titleLine1={createMode === 'pareja' ? 'Configuren sus' : 'Configura tus'}
+        titleLine2="preferencias financieras"
+      >
+        <form className={styles.form} onSubmit={handlePreferences}>
+          {createMode === 'individual' && (
+            <p className={styles.lead}>Elige la moneda en la que quieres ver tus cuentas y movimientos.</p>
+          )}
+
+          <Select label="Moneda principal" value={currency} onChange={setCurrency} options={CURRENCY_OPTIONS} required />
+
+          {createMode === 'individual' && (
+            <p className={styles.lead}>Podrás cambiarla más adelante desde los ajustes de tu hogar.</p>
+          )}
+
+          {createMode === 'pareja' && (
+            <>
+              <p className={styles.sectionLabel}>¿Cómo prefieren repartir los gastos compartidos?</p>
+              <RadioListGroup
+                value={expenseSplit}
+                onChange={setExpenseSplit}
+                options={SPLIT_OPTIONS}
+                label="¿Cómo prefieren repartir los gastos compartidos?"
+              />
+            </>
+          )}
+
+          {error && <p className={styles.error}>{error}</p>}
+
+          <button type="submit" className={styles.cta} disabled={submitting}>
+            <span>{submitting ? 'Guardando…' : 'Continuar'}</span>
+            {!submitting && <ArrowRightIcon width={18} height={18} />}
+          </button>
+        </form>
+      </OnboardingLayout>
+    )
+  }
+
+  if (step === 'invite' && createdHouseholdId) {
     const inviteUrl = `${window.location.origin}/unirse/${createdHouseholdId}`
 
     return (
-      <OnboardingLayout step={2} total={2} titleLine1="¡Ya casi!" titleLine2="invita a tu pareja">
+      <OnboardingLayout step={2} total={totalSteps} titleLine1="¡Ya casi!" titleLine2="invita a tu pareja">
         <p className={styles.lead}>Comparte este código o QR para que se una a su espacio compartido.</p>
 
         <Card className={styles.panel}>
@@ -132,7 +240,7 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
           {showQr && <InviteQrCode url={inviteUrl} />}
         </Card>
 
-        <button type="button" className={styles.cta} onClick={onDone}>
+        <button type="button" className={styles.cta} onClick={() => setStep('preferences')}>
           <span>Continuar</span>
           <ArrowRightIcon width={18} height={18} />
         </button>
@@ -140,8 +248,7 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
     )
   }
 
-  // "Tengo un código": pantalla aparte, no compite con la elección de arriba.
-  if (showJoinForm) {
+  if (step === 'join') {
     return (
       <OnboardingLayout step={1} total={1} titleLine1="¡Comencemos su" titleLine2="viaje juntos!">
         <p className={styles.lead}>Pégalo tal como te lo compartió tu pareja desde "Ver más" en la app.</p>
@@ -168,7 +275,7 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
           type="button"
           className={styles.backLink}
           onClick={() => {
-            setShowJoinForm(false)
+            setStep('choose')
             setError(null)
           }}
         >
@@ -179,12 +286,7 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
   }
 
   return (
-    <OnboardingLayout
-      step={1}
-      total={createMode === 'pareja' ? 2 : 1}
-      titleLine1="¡Comencemos su"
-      titleLine2="viaje juntos!"
-    >
+    <OnboardingLayout step={1} total={totalSteps} titleLine1="¡Comencemos su" titleLine2="viaje juntos!">
       <p className={styles.lead}>
         {createMode === 'individual'
           ? 'Lleva tus finanzas solo — luego podrás invitar a tu pareja cuando quieras.'
@@ -217,7 +319,7 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
         </button>
       </form>
 
-      <button type="button" className={styles.joinToggle} onClick={() => setShowJoinForm(true)}>
+      <button type="button" className={styles.joinToggle} onClick={() => setStep('join')}>
         ¿Tienes un código? Únete aquí
       </button>
     </OnboardingLayout>

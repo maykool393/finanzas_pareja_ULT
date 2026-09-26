@@ -1,4 +1,5 @@
 import { ICONS, type IconKey } from '../../components/ui/icons'
+import { useCurrency } from '../../hooks/useCurrency'
 import { formatCurrency, formatDate } from '../../lib/format'
 import type { Account, Category, Profile, Transaction } from '../../types/domain'
 import { CATEGORY_COLOR_TOKENS } from '../categories/colors'
@@ -25,6 +26,8 @@ function groupByDay(transactions: Transaction[]) {
 }
 
 export function TransactionList({ transactions, accounts, categories, members, onSelect }: TransactionListProps) {
+  const currency = useCurrency()
+
   if (transactions.length === 0) {
     return <p className={styles.empty}>Aún no hay movimientos registrados.</p>
   }
@@ -61,7 +64,7 @@ export function TransactionList({ transactions, accounts, categories, members, o
                     style={{ color: isIncome ? 'var(--gain-color)' : 'var(--loss-color)' }}
                   >
                     {isIncome ? '+' : ''}
-                    {formatCurrency(transaction.amount)}
+                    {formatCurrency(transaction.amount, currency)}
                   </span>
                 </>
               )

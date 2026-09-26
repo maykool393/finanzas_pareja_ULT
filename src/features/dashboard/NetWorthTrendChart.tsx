@@ -1,9 +1,11 @@
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { formatDate } from '../../lib/format'
-import { formatTooltipCurrency, formatTooltipDate } from './tooltipFormat'
+import { useCurrency } from '../../hooks/useCurrency'
+import { formatCurrency, formatDate } from '../../lib/format'
+import { formatTooltipDate } from './tooltipFormat'
 import type { NetWorthPoint } from './useDashboardCharts'
 
 export function NetWorthTrendChart({ data }: { data: NetWorthPoint[] }) {
+  const currency = useCurrency()
   const tickInterval = Math.max(Math.floor(data.length / 6), 1)
 
   return (
@@ -26,7 +28,7 @@ export function NetWorthTrendChart({ data }: { data: NetWorthPoint[] }) {
         />
         <YAxis hide domain={['auto', 'auto']} />
         <Tooltip
-          formatter={formatTooltipCurrency}
+          formatter={(value: unknown) => formatCurrency(Number(value), currency)}
           labelFormatter={formatTooltipDate}
           contentStyle={{ background: 'var(--surface-card)', border: '1px solid var(--border)', borderRadius: 8 }}
         />

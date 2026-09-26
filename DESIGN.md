@@ -171,6 +171,7 @@ Estas tres pantallas comparten el mismo fondo: un degradado difuminado en tonos 
 - Cada opción es un `<button>` real y accesible, con `aria-pressed`.
 - Estado activo: borde 2px con `--gradient-brand-dark`. Estado inactivo: borde 1px `--border`.
 - El fondo no cambia entre estados — seleccionar nunca rellena la tarjeta de color, la marca solo el borde.
+- Variante en fila (ícono + título + descripción + radio circular a la derecha) para listas de opciones con más texto, ej. cómo repartir gastos. Mismo borde degradado en el estado activo; el punto del radio interno sí se rellena en `--text-primary` (afordance estándar de radio, no "color de marca").
 
 ## Transiciones y animación
 

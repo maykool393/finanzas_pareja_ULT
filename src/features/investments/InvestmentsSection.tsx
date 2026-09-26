@@ -6,6 +6,7 @@ import { ACCOUNT_ICON_OPTIONS, ICONS, type AccountIconKey } from '../../componen
 import { ItemCard, type ItemVariant } from '../../components/ui/ItemCard'
 import { SectionHeader } from '../../components/ui/SectionHeader'
 import styles from '../../components/ui/sectionGrid.module.css'
+import { useCurrency } from '../../hooks/useCurrency'
 import { useHouseholdMembers } from '../../hooks/useHouseholdMembers'
 import { formatCurrency } from '../../lib/format'
 import type { Investment } from '../../types/domain'
@@ -18,6 +19,7 @@ const DEFAULT_ICON = ACCOUNT_ICON_OPTIONS.find((o) => o.key === 'trend-up')!.key
 export function InvestmentsSection() {
   const { investments, loading, create, update, toggleArchived, remove } = useInvestments()
   const { members } = useHouseholdMembers()
+  const currency = useCurrency()
 
   const [expanded, setExpanded] = useState(true)
   const [showArchived, setShowArchived] = useState(false)
@@ -40,7 +42,7 @@ export function InvestmentsSection() {
     <section className={styles.section}>
       <SectionHeader
         title="Inversiones"
-        total={formatCurrency(total)}
+        total={formatCurrency(total, currency)}
         expanded={expanded}
         onToggle={() => setExpanded((e) => !e)}
         onAdd={() => setFormOpen(true)}
@@ -58,7 +60,7 @@ export function InvestmentsSection() {
               <ItemCard
                 key={investment.id}
                 name={investment.name}
-                amount={formatCurrency(investment.currentValue)}
+                amount={formatCurrency(investment.currentValue, currency)}
                 variant={(investment.colorVariant === 'b' ? 'investment-b' : 'investment-a') satisfies ItemVariant}
                 icon={<Icon />}
                 owner={ownerName(investment.ownerId)}

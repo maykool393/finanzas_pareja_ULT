@@ -1,5 +1,6 @@
 import { ProgressBar } from '../../components/ui/ProgressBar'
 import { ICONS, type IconKey } from '../../components/ui/icons'
+import { useCurrency } from '../../hooks/useCurrency'
 import { formatCurrency } from '../../lib/format'
 import type { BudgetProgress, Category, CategoryType } from '../../types/domain'
 import { CATEGORY_COLOR_TOKENS } from '../categories/colors'
@@ -27,6 +28,8 @@ function fillColorFor(ratio: number, type: CategoryType, categoryTextColor: stri
 }
 
 export function BudgetList({ budgets, categories, onEdit, onDelete }: BudgetListProps) {
+  const currency = useCurrency()
+
   if (budgets.length === 0) {
     return <p className={styles.empty}>Sin presupuestos este mes.</p>
   }
@@ -62,7 +65,7 @@ export function BudgetList({ budgets, categories, onEdit, onDelete }: BudgetList
             />
 
             <p className={styles.amounts}>
-              {formatCurrency(budget.spent)} de {formatCurrency(budget.amount)}
+              {formatCurrency(budget.spent, currency)} de {formatCurrency(budget.amount, currency)}
             </p>
           </li>
         )

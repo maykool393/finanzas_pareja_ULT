@@ -7,6 +7,7 @@ import { ItemCard, type ItemVariant } from '../../components/ui/ItemCard'
 import { SectionHeader } from '../../components/ui/SectionHeader'
 import styles from '../../components/ui/sectionGrid.module.css'
 import sectionStyles from './AccountsSection.module.css'
+import { useCurrency } from '../../hooks/useCurrency'
 import { useHouseholdMembers } from '../../hooks/useHouseholdMembers'
 import { formatCurrency } from '../../lib/format'
 import type { Account } from '../../types/domain'
@@ -18,6 +19,7 @@ const DEFAULT_ICON = ACCOUNT_ICON_OPTIONS[0].key
 export function AccountsSection() {
   const { accounts, loading, create, update, toggleArchived, remove } = useAccounts()
   const { members } = useHouseholdMembers()
+  const currency = useCurrency()
 
   const [expanded, setExpanded] = useState(true)
   const [showArchived, setShowArchived] = useState(false)
@@ -40,7 +42,7 @@ export function AccountsSection() {
     <section className={styles.section}>
       <SectionHeader
         title="Cuentas"
-        total={formatCurrency(total)}
+        total={formatCurrency(total, currency)}
         expanded={expanded}
         onToggle={() => setExpanded((e) => !e)}
         onAdd={() => setFormOpen(true)}
@@ -58,7 +60,7 @@ export function AccountsSection() {
               <ItemCard
                 key={account.id}
                 name={account.name}
-                amount={formatCurrency(account.balance)}
+                amount={formatCurrency(account.balance, currency)}
                 variant={(account.colorVariant === 'b' ? 'account-b' : 'account-a') satisfies ItemVariant}
                 icon={<Icon />}
                 owner={ownerName(account.ownerId)}

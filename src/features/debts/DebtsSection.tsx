@@ -6,6 +6,7 @@ import { ACCOUNT_ICON_OPTIONS, ICONS, type AccountIconKey } from '../../componen
 import { ItemCard, type ItemVariant } from '../../components/ui/ItemCard'
 import { SectionHeader } from '../../components/ui/SectionHeader'
 import styles from '../../components/ui/sectionGrid.module.css'
+import { useCurrency } from '../../hooks/useCurrency'
 import { useHouseholdMembers } from '../../hooks/useHouseholdMembers'
 import { formatCurrency } from '../../lib/format'
 import type { Debt } from '../../types/domain'
@@ -18,6 +19,7 @@ const DEFAULT_ICON = ACCOUNT_ICON_OPTIONS.find((o) => o.key === 'card')!.key
 export function DebtsSection() {
   const { debts, loading, create, update, toggleArchived, remove } = useDebts()
   const { members } = useHouseholdMembers()
+  const currency = useCurrency()
 
   const [expanded, setExpanded] = useState(true)
   const [showArchived, setShowArchived] = useState(false)
@@ -40,7 +42,7 @@ export function DebtsSection() {
     <section className={styles.section}>
       <SectionHeader
         title="Deudas"
-        total={formatCurrency(total)}
+        total={formatCurrency(total, currency)}
         expanded={expanded}
         onToggle={() => setExpanded((e) => !e)}
         onAdd={() => setFormOpen(true)}
@@ -58,7 +60,7 @@ export function DebtsSection() {
               <ItemCard
                 key={debt.id}
                 name={debt.name}
-                amount={formatCurrency(debt.remaining)}
+                amount={formatCurrency(debt.remaining, currency)}
                 variant={(debt.colorVariant === 'b' ? 'debt-b' : 'debt-a') satisfies ItemVariant}
                 icon={<Icon />}
                 owner={ownerName(debt.ownerId)}

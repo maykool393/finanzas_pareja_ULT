@@ -1,10 +1,12 @@
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
+import { useCurrency } from '../../hooks/useCurrency'
 import { formatCurrency } from '../../lib/format'
 import styles from './CategoryBreakdownChart.module.css'
-import { formatTooltipCurrency } from './tooltipFormat'
 import type { CategoryBreakdownItem } from './useDashboardCharts'
 
 export function CategoryBreakdownChart({ items }: { items: CategoryBreakdownItem[] }) {
+  const currency = useCurrency()
+
   if (items.length === 0) {
     return <p className={styles.empty}>Sin gastos categorizados este mes.</p>
   }
@@ -19,7 +21,7 @@ export function CategoryBreakdownChart({ items }: { items: CategoryBreakdownItem
             ))}
           </Pie>
           <Tooltip
-            formatter={formatTooltipCurrency}
+            formatter={(value: unknown) => formatCurrency(Number(value), currency)}
             contentStyle={{ background: 'var(--surface-card)', border: '1px solid var(--border)', borderRadius: 8 }}
           />
         </PieChart>
@@ -30,7 +32,7 @@ export function CategoryBreakdownChart({ items }: { items: CategoryBreakdownItem
           <li key={item.categoryId} className={styles.legendRow}>
             <span className={styles.swatch} style={{ background: item.bg, borderColor: item.text }} />
             <span className={styles.legendName}>{item.name}</span>
-            <span className={`amount ${styles.legendAmount}`}>{formatCurrency(item.amount)}</span>
+            <span className={`amount ${styles.legendAmount}`}>{formatCurrency(item.amount, currency)}</span>
           </li>
         ))}
       </ul>

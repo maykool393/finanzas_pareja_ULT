@@ -238,16 +238,22 @@ export type Database = {
       households: {
         Row: {
           created_at: string
+          currency: string
+          expense_split: string
           id: string
           name: string
         }
         Insert: {
           created_at?: string
+          currency?: string
+          expense_split?: string
           id?: string
           name: string
         }
         Update: {
           created_at?: string
+          currency?: string
+          expense_split?: string
           id?: string
           name?: string
         }

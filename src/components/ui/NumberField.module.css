@@ -9,9 +9,11 @@
   left: var(--space-md);
   color: var(--text-muted);
   font-size: var(--text-md);
+  white-space: nowrap;
   pointer-events: none;
 }
 
+/* Espacio para el ancho de hasta 2 caracteres (ej. "S/"), no solo "$". */
 .withPrefix {
-  padding-left: calc(var(--space-md) + 14px);
+  padding-left: calc(var(--space-md) + 24px);
 }
