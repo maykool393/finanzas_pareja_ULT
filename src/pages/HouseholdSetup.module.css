@@ -35,6 +35,28 @@
   color: var(--loss-color);
 }
 
+.joinToggle {
+  align-self: center;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.joinToggle:hover {
+  color: var(--text-primary);
+}
+
+.backLink {
+  align-self: center;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.backLink:hover {
+  color: var(--text-primary);
+}
+
 /* Botón de acción principal del flujo — degradado de marca, ver DESIGN.md
    § Identidad de marca. Excepción intencional: no usa el componente Button
    compartido (esos estilos son neutros y app-wide; este es un caso puntual

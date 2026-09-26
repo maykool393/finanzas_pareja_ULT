@@ -2,7 +2,7 @@ import { type FormEvent, useState } from 'react'
 import { OnboardingLayout } from '../components/auth/OnboardingLayout'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
-import { ArrowRightIcon, LinkIcon, PeopleIcon } from '../components/ui/icons'
+import { ArrowRightIcon, PeopleIcon, PersonIcon } from '../components/ui/icons'
 import { InviteCodeBadge } from '../components/ui/InviteCodeBadge'
 import { InviteQrCode } from '../components/ui/InviteQrCode'
 import { RadioCardGroup } from '../components/ui/RadioCardGroup'
@@ -11,11 +11,11 @@ import { useSession } from '../hooks/useSession'
 import { supabase } from '../lib/supabase'
 import styles from './HouseholdSetup.module.css'
 
-type Mode = 'create' | 'join'
+type CreateMode = 'individual' | 'pareja'
 
-const MODE_OPTIONS = [
-  { value: 'create', label: 'Crear una pareja', icon: <PeopleIcon /> },
-  { value: 'join', label: 'Unirme a una', icon: <LinkIcon /> },
+const CREATE_MODE_OPTIONS = [
+  { value: 'individual', label: 'Cuenta individual', icon: <PersonIcon /> },
+  { value: 'pareja', label: 'Cuentas en pareja', icon: <PeopleIcon /> },
 ] as const
 
 interface HouseholdSetupProps {
@@ -26,19 +26,20 @@ interface HouseholdSetupProps {
 
 export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
   const { user } = useSession()
-  const [mode, setMode] = useState<Mode>('create')
+  const [createMode, setCreateMode] = useState<CreateMode>('pareja')
+  const [showJoinForm, setShowJoinForm] = useState(false)
   const [name, setName] = useState('')
   const [code, setCode] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showQr, setShowQr] = useState(false)
 
-  // Generado una vez al entrar: se muestra en el panel de "crear" antes de
-  // enviar el formulario, y es el mismo id que se inserta al confirmar.
-  const [householdId] = useState(() => crypto.randomUUID())
-  const inviteUrl = `${window.location.origin}/unirse/${householdId}`
+  // Solo se llena tras crear el household de verdad — antes de eso no hay
+  // fila en la base y compartir el código/QR llevaría a un link roto
+  // (quien lo abra intentaría unirse a un household que no existe).
+  const [createdHouseholdId, setCreatedHouseholdId] = useState<string | null>(null)
 
-  async function handleShare() {
+  async function handleShare(inviteUrl: string) {
     if (navigator.share) {
       await navigator.share({ title: 'Únete a nuestro hogar en Twoney', url: inviteUrl })
     } else {
@@ -51,6 +52,8 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
     if (!user) return
     setError(null)
     setSubmitting(true)
+
+    const householdId = crypto.randomUUID()
 
     // Se genera el id en el cliente en vez de leerlo de vuelta con .select():
     // households_select_member solo deja ver un household del que ya eres
@@ -74,7 +77,14 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
       return
     }
 
-    await onDone()
+    setSubmitting(false)
+
+    if (createMode === 'pareja') {
+      // El household ya existe: ahora sí se puede mostrar/compartir el código.
+      setCreatedHouseholdId(householdId)
+    } else {
+      await onDone()
+    }
   }
 
   async function handleJoin(event: FormEvent) {
@@ -97,46 +107,45 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
     await onDone()
   }
 
-  return (
-    <OnboardingLayout step={1} total={1} titleLine1="¡Comencemos su" titleLine2="viaje juntos!">
-      <p className={styles.lead}>
-        {mode === 'create'
-          ? 'Crea tu espacio compartido para empezar a registrar cuentas y movimientos.'
-          : 'Pégalo tal como te lo compartió tu pareja desde "Ver más" en la app.'}
-      </p>
+  // Paso 2 (solo "cuentas en pareja"): el household ya existe, se comparte
+  // el código/QR reales antes de entrar al dashboard.
+  if (createdHouseholdId) {
+    const inviteUrl = `${window.location.origin}/unirse/${createdHouseholdId}`
 
-      {joinError && <p className={styles.error}>{joinError}</p>}
+    return (
+      <OnboardingLayout step={2} total={2} titleLine1="¡Ya casi!" titleLine2="invita a tu pareja">
+        <p className={styles.lead}>Comparte este código o QR para que se una a su espacio compartido.</p>
 
-      <RadioCardGroup value={mode} onChange={setMode} options={MODE_OPTIONS} label="¿Cómo quieren vincularse?" />
+        <Card className={styles.panel}>
+          <div>
+            <span className={`label ${styles.codeLabel}`}>Código de vinculación</span>
+            <InviteCodeBadge code={createdHouseholdId} />
+          </div>
+          <div className={styles.actionsRow}>
+            <Button type="button" variant="secondary" onClick={() => handleShare(inviteUrl)}>
+              Compartir
+            </Button>
+            <Button type="button" variant="secondary" onClick={() => setShowQr((v) => !v)}>
+              Ver QR
+            </Button>
+          </div>
+          {showQr && <InviteQrCode url={inviteUrl} />}
+        </Card>
 
-      {mode === 'create' ? (
-        <form className={styles.form} onSubmit={handleCreate}>
-          <TextField label="Nombre del hogar" value={name} onChange={setName} required placeholder="Casa de Mery y Pablo" />
+        <button type="button" className={styles.cta} onClick={onDone}>
+          <span>Continuar</span>
+          <ArrowRightIcon width={18} height={18} />
+        </button>
+      </OnboardingLayout>
+    )
+  }
 
-          <Card className={styles.panel}>
-            <div>
-              <span className={`label ${styles.codeLabel}`}>Código de vinculación</span>
-              <InviteCodeBadge code={householdId} />
-            </div>
-            <div className={styles.actionsRow}>
-              <Button type="button" variant="secondary" onClick={handleShare}>
-                Compartir
-              </Button>
-              <Button type="button" variant="secondary" onClick={() => setShowQr((v) => !v)}>
-                Ver QR
-              </Button>
-            </div>
-            {showQr && <InviteQrCode url={inviteUrl} />}
-          </Card>
+  // "Tengo un código": pantalla aparte, no compite con la elección de arriba.
+  if (showJoinForm) {
+    return (
+      <OnboardingLayout step={1} total={1} titleLine1="¡Comencemos su" titleLine2="viaje juntos!">
+        <p className={styles.lead}>Pégalo tal como te lo compartió tu pareja desde "Ver más" en la app.</p>
 
-          {error && <p className={styles.error}>{error}</p>}
-
-          <button type="submit" className={styles.cta} disabled={submitting}>
-            <span>{submitting ? 'Creando…' : 'Crear'}</span>
-            {!submitting && <ArrowRightIcon width={18} height={18} />}
-          </button>
-        </form>
-      ) : (
         <form className={styles.form} onSubmit={handleJoin}>
           <TextField
             label="Código de invitación"
@@ -154,7 +163,63 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
             {!submitting && <ArrowRightIcon width={18} height={18} />}
           </button>
         </form>
-      )}
+
+        <button
+          type="button"
+          className={styles.backLink}
+          onClick={() => {
+            setShowJoinForm(false)
+            setError(null)
+          }}
+        >
+          Volver
+        </button>
+      </OnboardingLayout>
+    )
+  }
+
+  return (
+    <OnboardingLayout
+      step={1}
+      total={createMode === 'pareja' ? 2 : 1}
+      titleLine1="¡Comencemos su"
+      titleLine2="viaje juntos!"
+    >
+      <p className={styles.lead}>
+        {createMode === 'individual'
+          ? 'Lleva tus finanzas solo — luego podrás invitar a tu pareja cuando quieras.'
+          : 'Crea tu espacio compartido para empezar a registrar cuentas y movimientos.'}
+      </p>
+
+      {joinError && <p className={styles.error}>{joinError}</p>}
+
+      <RadioCardGroup
+        value={createMode}
+        onChange={setCreateMode}
+        options={CREATE_MODE_OPTIONS}
+        label="¿Cómo quieren llevar las finanzas?"
+      />
+
+      <form className={styles.form} onSubmit={handleCreate}>
+        <TextField
+          label="Nombre del hogar"
+          value={name}
+          onChange={setName}
+          required
+          placeholder={createMode === 'individual' ? 'Casa de Juan' : 'Casa de Mery y Pablo'}
+        />
+
+        {error && <p className={styles.error}>{error}</p>}
+
+        <button type="submit" className={styles.cta} disabled={submitting}>
+          <span>{submitting ? 'Creando…' : 'Crear'}</span>
+          {!submitting && <ArrowRightIcon width={18} height={18} />}
+        </button>
+      </form>
+
+      <button type="button" className={styles.joinToggle} onClick={() => setShowJoinForm(true)}>
+        ¿Tienes un código? Únete aquí
+      </button>
     </OnboardingLayout>
   )
 }

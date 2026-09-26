@@ -168,7 +168,17 @@ export function OtherIcon(props: SVGProps<SVGSVGElement>) {
   )
 }
 
-/** Dos personas — cuenta compartida (ItemCard) y "crear una pareja" (HouseholdSetup). */
+/** Una persona (outline) — "cuenta individual" en HouseholdSetup. */
+export function PersonIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <circle cx="10" cy="7" r="3.3" />
+      <path d="M3.5 17c0-3.7 3-6 6.5-6s6.5 2.3 6.5 6" />
+    </svg>
+  )
+}
+
+/** Dos personas — cuenta compartida (ItemCard) y "cuentas en pareja" (HouseholdSetup). */
 export function PeopleIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
