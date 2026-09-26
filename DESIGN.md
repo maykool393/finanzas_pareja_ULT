@@ -2,7 +2,7 @@
 
 Documento de referencia para desarrollo. Úsalo como contexto al pedirle a Claude Code que construya componentes. Es la fuente de verdad: si el código y este documento no coinciden, se corrige uno de los dos a propósito, nunca se deja la diferencia.
 
-Algunas reglas de este documento todavía no están aplicadas en el código. Cada una indica la etapa del plan que la resuelve (M2 a M6, ver README § Plan de mejoras).
+Algunas reglas de este documento todavía no están aplicadas en el código. Cada una indica la etapa del plan que la resuelve (M3 a M6, ver README § Plan de mejoras).
 
 ## Stack
 
@@ -81,12 +81,14 @@ Debe soportarse desde el inicio, no agregarse después. Usar `[data-theme="dark"
 | `--surface-inverse` | `#1a1a1a` | `#f0f0f0` | Botón primario |
 | `--text-primary` | `#1a1a1a` | `#f0f0f0` | Texto principal |
 | `--text-secondary` | `#5f5e5a` | `#a8a8a4` | Texto de apoyo |
-| `--text-muted` | `#6d6c66` | `#8d8d8a` | Etiquetas, hints, placeholders *(M2; hoy `#888780` / `#6f6f6b`)* |
+| `--text-muted` | `#6d6c66` | `#8d8d8a` | Etiquetas, hints, placeholders (`::placeholder` en `global.css`) |
 | `--text-inverse` | `#ffffff` | `#121212` | Texto sobre `--surface-inverse` |
 | `--border` | `#e0e0da` | `#2e2e2e` | Bordes y divisores |
 | `--border-strong` | `#c7c6be` | `#3d3d3a` | Bordes de inputs y botones secundarios |
 
 **Contraste mínimo:** todo texto normal debe llegar a 4.5:1 y el texto grande (24px o más, o 19px en negrita) a 3:1, medido contra las tres superficies de su modo: página, tarjeta y hundida. Los valores de `--text-muted` se eligieron así: el más cercano al original que cumple 4.5:1 contra las tres (claro: 5.3 / 5.1 / 4.6; oscuro: 5.6 / 5.0 / 4.6). El `--text-muted` anterior daba entre 3.0 y 3.7:1.
+
+Pares ya medidos que cumplen: texto de las tarjetas de categoría sobre su fondo (12:1 o más), título y acento sobre `--gradient-brand-light` (12.9–14:1 y 4.6–5.0:1), texto del CTA sobre `--gradient-brand-dark` (5.3–6.5:1). Un par nuevo de texto y fondo se mide antes de usarlo.
 
 ## Colores — categorías financieras (constantes en ambos modos)
 
@@ -129,13 +131,15 @@ Cada color de estado tiene dos usos con requisitos distintos: como relleno (barr
 |---|---|---|---|
 | `--gain-color` | `#639922` | `#639922` | Rellenos y barras de variación positiva |
 | `--loss-color` | `#D85A30` | `#D85A30` | Rellenos y barras de variación negativa |
-| `--gain-text` | `#4d771b` | `#669b26` | Montos positivos como texto *(M2)* |
-| `--loss-text` | `#b54c28` | `#dc6c47` | Montos negativos como texto *(M2)* |
-| `--danger-bg` | `#c5522c` | `#c5522c` | Fondo de botones destructivos *(M2)* |
-| `--text-on-danger` | `#ffffff` | `#ffffff` | Texto sobre `--danger-bg` *(M2)* |
+| `--gain-text` | `#4d771b` | `#669b26` | Montos positivos y texto de éxito |
+| `--loss-text` | `#b54c28` | `#dc6c47` | Montos negativos y mensajes de error |
+| `--danger-bg` | `#b14a28` | `#b14a28` | Fondo de botones destructivos |
+| `--text-on-danger` | `#ffffff` | `#ffffff` | Texto sobre `--danger-bg` |
 
 - Nunca usar `--gain-color` ni `--loss-color` como color de texto: dan 3.4:1 y 3.9:1 sobre fondo claro.
-- `--text-on-danger` es blanco fijo en ambos modos (no `--text-inverse`, que en oscuro pasa a casi negro y sobre `--danger-bg` no llega a 4.5:1). Blanco sobre `--danger-bg` da 4.55:1.
+- `--text-on-danger` es blanco fijo en ambos modos (no `--text-inverse`, que en oscuro pasa a casi negro y sobre `--danger-bg` no llega a 4.5:1).
+- `--danger-bg` da 5.4:1 en reposo, con margen para el hover: los botones bajan la opacidad a 0.9 al pasar el mouse, lo que aclara el fondo. Con un rojo al límite de 4.5:1, el hover quedaba en 3.9:1.
+- **El contraste se mide en todos los estados**, no solo en reposo: hover, foco y seleccionado también tienen que llegar a 4.5:1. Solo el estado deshabilitado está exento.
 
 ## Espaciado, bordes y elevación
 

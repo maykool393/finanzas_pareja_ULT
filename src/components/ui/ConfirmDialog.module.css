@@ -39,8 +39,8 @@
 }
 
 .confirmDelete {
-  background: var(--loss-color);
-  color: #ffffff;
+  background: var(--danger-bg);
+  color: var(--text-on-danger);
 }
 
 .confirmArchive:disabled,

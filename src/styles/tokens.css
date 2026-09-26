@@ -37,7 +37,8 @@
 
   --text-primary:   #1a1a1a;
   --text-secondary: #5f5e5a;
-  --text-muted:     #888780;
+  /* ≥4.5:1 contra page, card y sunken (5.3 / 5.1 / 4.6). Ver DESIGN.md § Colores. */
+  --text-muted:     #6d6c66;
   --text-inverse:   #ffffff;
 
   --border:        #e0e0da;
@@ -63,8 +64,16 @@
   /* Reutiliza el verde de --account-a — misma familia de tono, no un color nuevo. */
   --investment-b-bg:   #EAF3DE;
   --investment-b-text: #173404;
+  /* Rellenos (barras, gráficos): basta 3:1. Nunca como color de texto. */
   --gain-color: #639922;
   --loss-color: #D85A30;
+  /* Como texto (montos, errores): ≥4.5:1. Cambian en modo oscuro, ver abajo. */
+  --gain-text: #4d771b;
+  --loss-text: #b54c28;
+  /* Botón destructivo. Blanco fijo encima, también en oscuro: 5.4:1 en reposo
+     y ≥4.5:1 en hover (el hover baja la opacidad a 0.9 y aclara el fondo). */
+  --danger-bg: #b14a28;
+  --text-on-danger: #ffffff;
 
   /* ---------- Identidad de marca — onboarding (ver DESIGN.md) ---------- */
   --brand-pink: #FFB4E2;
@@ -110,8 +119,11 @@
 
   --text-primary:   #f0f0f0;
   --text-secondary: #a8a8a4;
-  --text-muted:     #6f6f6b;
+  --text-muted:     #8d8d8a;
   --text-inverse:   #121212;
+
+  --gain-text: #669b26;
+  --loss-text: #dc6c47;
 
   --border:        #2e2e2e;
   --border-strong: #3d3d3a;
@@ -132,8 +144,11 @@
 
     --text-primary:   #f0f0f0;
     --text-secondary: #a8a8a4;
-    --text-muted:     #6f6f6b;
+    --text-muted:     #8d8d8a;
     --text-inverse:   #121212;
+
+    --gain-text: #669b26;
+    --loss-text: #dc6c47;
 
     --border:        #2e2e2e;
     --border-strong: #3d3d3a;

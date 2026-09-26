@@ -42,5 +42,5 @@ select.input {
 
 .error {
   font-size: var(--text-xs);
-  color: var(--loss-color);
+  color: var(--loss-text);
 }

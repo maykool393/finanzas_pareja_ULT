@@ -21,7 +21,7 @@ Este documento es el plan de los 7 módulos que faltan. Se actualiza el **Estado
 | Fase | Módulo | Depende de | Estado |
 |---|---|---|---|
 | 0 | Fundamentos compartidos (UI + convenciones) | — | ✅ Completo |
-| 0.5 | Onboarding de household (crear + unirse por invitación) | Fase 0 | ✅ Completo — verificado en vivo |
+| 0.5 | Onboarding de household (individual o pareja, invitación por link/QR, preferencias) | Fase 0 | 🟨 Rediseñado — individual verificado en vivo; falta verificar pareja + QR |
 | 0.6 | Autenticación social (Google / Apple) | Fase 0 | 🟨 Construido — falta configurar proveedores y verificar en vivo |
 | 1 | Categorías de gastos e ingresos | Fase 0 | ✅ Completo — verificado en vivo |
 | 2 | Cuentas | Fase 0, 0.5 | ✅ Completo — verificado en vivo |
@@ -47,7 +47,7 @@ Cada etapa termina con su propio commit, verificado con `tsc`, lint y build. Se 
 |---|---|---|---|
 | M0 | Preparar: liberar disco, commitear el trabajo pendiente | — | ✅ Completo |
 | M1 | DESIGN.md como fuente de verdad | impeccable | ✅ Completo |
-| M2 | Contraste de color (WCAG AA) | impeccable | ⬜ Pendiente |
+| M2 | Contraste de color (WCAG AA) | impeccable | ✅ Completo |
 | M3 | Accesibilidad de interacción: diálogo y áreas táctiles | impeccable | ⬜ Pendiente |
 | M4 | Movimiento e interacción | emil-design-eng | ⬜ Pendiente |
 | M5 | Rendimiento: imágenes, bundle, animación de fondo, fuente | impeccable | ⬜ Pendiente |
@@ -71,10 +71,12 @@ Va primero: las etapas siguientes se rigen por él.
 
 Las reglas que el código todavía no cumple quedan marcadas en DESIGN.md con la etapa que las resuelve.
 
-### M2 — Contraste de color ⬜
-- [ ] `--text-muted` a ≥4.5:1 en claro y oscuro (hoy 3.0–3.7:1).
-- [ ] `--gain-text` / `--loss-text` para montos en texto; `--gain-color` / `--loss-color` quedan para barras y rellenos.
-- [ ] Fondo de los botones de eliminar que cumpla 4.5:1 con texto blanco (hoy 3.9:1).
+### M2 — Contraste de color ✅
+- [x] `--text-muted` a ≥4.5:1 en claro y oscuro (antes 3.0–3.7:1). Afecta etiquetas, hints, ejes de gráficos y placeholders.
+- [x] `--gain-text` / `--loss-text` para montos y mensajes de error; `--gain-color` / `--loss-color` quedan para barras y rellenos.
+- [x] `--danger-bg` para los botones de eliminar: 5.4:1 en reposo y ≥4.5:1 en hover (antes 3.9:1 en reposo y 3.4:1 en hover).
+- [x] Regla global para `::placeholder`: antes cada navegador usaba su gris por defecto, bajo 4.5:1.
+- [x] Medidos y documentados los pares que ya cumplían: tarjetas de categoría, texto sobre el degradado del onboarding.
 
 ### M3 — Accesibilidad de interacción ⬜
 - [ ] `Dialog`: foco contenido mientras está abierto, devuelto al disparador al cerrar, primer foco en el primer campo.
@@ -522,18 +524,41 @@ Nuevos: `CategoryBreakdownChart.tsx`, `IncomeVsExpenseChart.tsx`, `NetWorthTrend
 
 ---
 
-## Fase 0.5 — Onboarding de household ✅
+## Fase 0.5 — Onboarding de household 🟨 rediseñado
 
 `handle_new_user()` crea el `profile` al registrarse pero nunca asignaba `household_id` — no había ningún paso que creara un household ni que permitiera a la pareja unirse al mismo. Como **todas** las tablas de los 7 módulos dependen de `household_id`, esto bloqueaba absolutamente todo (se descubrió al intentar probar Categorías en vivo). Se construyó antes de seguir con Cuentas, en vez de parchear con SQL a mano.
 
-**Qué se construyó:**
-- `RequireHousehold` (`components/auth/RequireHousehold.tsx`): se monta dentro de `RequireAuth`, antes del `AppShell`. Si el `profile` no tiene `household_id`, muestra `HouseholdSetup` en vez de la app.
-- `HouseholdSetup` (`pages/HouseholdSetup.tsx`): mismo tratamiento visual que login/registro (`AuthLayout` + `RippleBackground`), con toggle "Crear" / "Unirme con un código".
-- **El código de invitación es el UUID del household** — no hace falta columna ni tabla nueva. Es imposible de adivinar (128 bits al azar) y unirse es solo `update profiles set household_id = <código> where id = auth.uid()`, ya cubierto por la policy `profiles_update_self` que ya existía.
-- `InviteHousehold` (`pages/InviteHousehold.tsx`, ruta `/invitar`, enlazada desde "Ver más"): para ver/copiar el código después de haberlo creado, y ver quién ya se unió.
-- **Bug de RLS encontrado y corregido antes de probar**: crear un household con `.insert().select()` fallaba en silencio — la policy `households_select_member` solo deja leer un household del que ya eres miembro, y justo al crearlo tu perfil todavía no está vinculado, así que el `select()` encadenado no devolvía nada. Se resolvió generando el `id` en el cliente (`crypto.randomUUID()`) en vez de leerlo de vuelta.
+**Rediseñado el 2026-09-26** con el sistema visual de onboarding (ver DESIGN.md § Identidad de marca). La primera versión era una sola pantalla con toggle "Crear / Unirme con un código"; lo que sigue describe el flujo actual.
 
-**Sin probar en vivo todavía**: el proyecto de Supabase exige confirmación de correo, así que no pude automatizar un registro completo de punta a punta (no tengo acceso a una bandeja de entrada real). Intenté con una cuenta desechable (`wewallet-e2e-test+...@mailinator.com`, sin confirmar, inofensiva) para verificar hasta donde se pudo — el resto (compilación, lint, la lógica de RLS trazada a mano) está verificado, pero falta que confirmes tú con tu cuenta real: entra a la app y deberías caer directo en la pantalla "Crear/Unirme" en vez del dashboard.
+**Cómo entra el usuario:**
+- `RequireHousehold` (`components/auth/RequireHousehold.tsx`) se monta dentro de `RequireAuth`, antes del `AppShell`. Si el `profile` no tiene `household_id`, primero intenta consumir una invitación pendiente (ver "Invitación por link o QR"); si no hay, muestra `HouseholdSetup` en vez de la app.
+
+**`HouseholdSetup` (`pages/HouseholdSetup.tsx`), por pasos:**
+1. **Elegir y nombrar**: "Cuenta individual" o "Cuentas en pareja" (`RadioCardGroup`) más el nombre del hogar. Al tocar "Crear" se inserta el household y se vincula el perfil.
+2. **Invitar** (solo pareja): código del hogar (`InviteCodeBadge`), botón "Compartir" (Web Share API, o copiar al portapapeles si no hay) y "Ver QR" (`InviteQrCode`). El código y el QR solo aparecen **después** de crear el household: antes, alguien podía escanearlo y unirse a un hogar que todavía no existía.
+3. **Preferencias**: moneda principal para ambos modos; en pareja, además, cómo repartir los gastos compartidos (`RadioListGroup`: proporcional, indiferente o 50/50). Se guardan en `households.currency` y `households.expense_split` (migración `20260926190000_household_preferences.sql`).
+- Aparte, "¿Tienes un código? Únete aquí" lleva a un formulario para pegar el código a mano, para quien no puede escanear el QR. Unirse a un hogar existente no pide preferencias: ya las definió quien lo creó.
+- Layout y piezas: `OnboardingLayout` (encabezado con degradado de marca), `SegmentedProgress` (2 pasos en individual, 3 en pareja) y `AvatarPair`.
+
+**Invitación por link o QR:**
+- El QR y "Compartir" apuntan a `/unirse/<householdId>`, un link real que abre cualquier cámara.
+- `JoinRedirect` (`pages/JoinRedirect.tsx`) guarda el id como invitación pendiente (`lib/pendingInvite.ts`, en `localStorage`) y redirige: con sesión, a `/dashboard`; sin sesión, a `/registro`.
+- Al registrarse con una invitación pendiente, `Login.tsx` manda `emailRedirectTo: /unirse/<id>` a Supabase. Así el link del correo de confirmación trae el id de vuelta en la URL, aunque se abra en otro navegador donde no existe ese `localStorage`.
+- `RequireHousehold` hace la unión y limpia la invitación pendiente, tanto si sale bien como si falla (así no queda reintentando). Si el código ya no es válido, muestra el error y cae al flujo normal.
+- Si el usuario **ya pertenece** a un hogar, la invitación se ignora: nunca se lo cambia de hogar automáticamente.
+
+**El código de invitación es el UUID del household**: no hace falta columna ni tabla nueva. Es imposible de adivinar (128 bits al azar) y unirse es solo `update profiles set household_id = <código> where id = auth.uid()`, cubierto por la policy `profiles_update_self`.
+
+**`InviteHousehold`** (`pages/InviteHousehold.tsx`, ruta `/invitar`, desde "Ver más"): para ver, copiar o mostrar como QR el código después de crear el hogar, y ver quién ya se unió.
+
+**Decisiones de implementación que no hay que deshacer:**
+- **El `id` del household se genera en el cliente** (`crypto.randomUUID()`) y el insert no lleva `.select()`: la policy `households_select_member` solo deja leer un household del que ya eres miembro, y justo al crearlo tu perfil todavía no está vinculado, así que leerlo de vuelta falla.
+- **Los `update` sí llevan `.select().single()`**: sin eso, si RLS filtra la fila (0 filas afectadas), Supabase no devuelve error y el cambio "funciona" sin guardar nada. Así se perdía la vinculación del perfil y la pantalla quedaba en "Creando…".
+
+**Verificación en vivo:**
+- ✅ Crear cuenta individual, de punta a punta (2026-09-26).
+- ⬜ Crear en pareja, compartir el QR y que la segunda persona se registre desde el link y quede unida.
+- Al probar, usar siempre un correo nunca usado antes y una sesión limpia. Reusar un correo, o borrar un usuario en Supabase sin cerrar su sesión, produce fallos que parecen bugs y no lo son.
 
 ## Fase 0.6 — Autenticación social (Google / Apple) 🟨 construida
 

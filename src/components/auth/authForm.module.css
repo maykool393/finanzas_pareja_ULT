@@ -89,7 +89,7 @@
 
 .error {
   font-size: var(--text-sm);
-  color: var(--loss-color);
+  color: var(--loss-text);
 }
 
 .notice {
