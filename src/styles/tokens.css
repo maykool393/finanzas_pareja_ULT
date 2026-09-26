@@ -93,7 +93,7 @@
   --header-height: 64px;
 
   /* ---------- Movimiento ----------
-     Animar solo transform/opacity. 150–250ms, nunca > 400ms. */
+     Animar solo transform/opacity. 150–250ms, nunca > 300ms (ver DESIGN.md). */
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   --duration-fast: 150ms;
   --duration-base: 220ms;

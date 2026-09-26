@@ -37,6 +37,72 @@ Leyenda: ⬜ Pendiente · 🟨 En progreso · ✅ Completo
 
 ---
 
+## Plan de mejoras (auditoría de diseño, 2026-09-26)
+
+Sale de auditar el código contra DESIGN.md y contra las skills de diseño. Resultado inicial: **13/20** en el formato de `impeccable audit` (accesibilidad 2, rendimiento 2, responsive 3, theming 3, integridad 3). Las etapas se llaman **M0–M6** para no confundirlas con las fases de módulos de arriba.
+
+Cada etapa termina con su propio commit, verificado con `tsc`, lint y build. Se marca aquí al cerrarla.
+
+| Etapa | Qué resuelve | Skill que manda | Estado |
+|---|---|---|---|
+| M0 | Preparar: liberar disco, commitear el trabajo pendiente | — | ✅ Completo |
+| M1 | DESIGN.md como fuente de verdad | impeccable | ✅ Completo |
+| M2 | Contraste de color (WCAG AA) | impeccable | ⬜ Pendiente |
+| M3 | Accesibilidad de interacción: diálogo y áreas táctiles | impeccable | ⬜ Pendiente |
+| M4 | Movimiento e interacción | emil-design-eng | ⬜ Pendiente |
+| M5 | Rendimiento: imágenes, bundle, animación de fondo, fuente | impeccable | ⬜ Pendiente |
+| M6 | Pulido | impeccable | ⬜ Pendiente |
+
+### M0 — Preparar ✅
+- [x] Liberar espacio en C: (estaba al 100%, causaba fallos intermitentes del build).
+- [x] Commitear el trabajo pendiente como punto de partida.
+- [x] Dejar solo las skills que mandan: `impeccable`, `emil-design-eng` y las de animación. Se eliminaron `high-end-visual-design`, `design-taste-frontend`, `minimalist-ui` y `redesign-existing-projects`, que contradecían DESIGN.md.
+
+### M1 — DESIGN.md como fuente de verdad ✅
+Va primero: las etapas siguientes se rigen por él.
+- [x] Sección "Skills y precedencia".
+- [x] Corregir los desvíos: `aria-checked` en tarjetas de selección, borde de 2px, tokens de inversiones, tokens base del fondo del login, tarjeta semi-opaca del login.
+- [x] Documentar los tokens que existen en `tokens.css` pero no en el doc: superficies, texto, bordes, tipografía, sombras, movimiento.
+- [x] Sección de formato de montos y moneda.
+- [x] Definir los tokens de contraste nuevos que usará M2, con valores verificados contra página, tarjeta y superficie hundida de cada modo.
+- [x] Excepción documentada para botones de solo ícono (circulares), con área táctil mínima de 44px.
+- [x] Reglas de movimiento alineadas con emil-design-eng: `:active`, hover condicionado, reducir movimiento sin eliminar fundidos.
+- [x] Secciones nuevas: variantes de botón, diálogo, texto de la interfaz, superficies del navegador.
+
+Las reglas que el código todavía no cumple quedan marcadas en DESIGN.md con la etapa que las resuelve.
+
+### M2 — Contraste de color ⬜
+- [ ] `--text-muted` a ≥4.5:1 en claro y oscuro (hoy 3.0–3.7:1).
+- [ ] `--gain-text` / `--loss-text` para montos en texto; `--gain-color` / `--loss-color` quedan para barras y rellenos.
+- [ ] Fondo de los botones de eliminar que cumpla 4.5:1 con texto blanco (hoy 3.9:1).
+
+### M3 — Accesibilidad de interacción ⬜
+- [ ] `Dialog`: foco contenido mientras está abierto, devuelto al disparador al cerrar, primer foco en el primer campo.
+- [ ] Área táctil de 44px: ThemeToggle, cerrar diálogo, "+" de secciones, `TypeToggle`, `ConfirmDialog`.
+
+### M4 — Movimiento e interacción ⬜
+- [ ] `:active` con `scale(0.97)` en todo lo que se presiona.
+- [ ] `ProgressBar`: `scaleX` en vez de animar `width`.
+- [ ] `Dialog` entra y sale deslizándose, la salida más rápida que la entrada.
+- [ ] Reducir movimiento: mantener opacidad y color, quitar solo el desplazamiento.
+- [ ] Hover condicionado a `(hover: hover) and (pointer: fine)`.
+
+### M5 — Rendimiento ⬜
+- [ ] Fondos del login a WebP/AVIF (hoy 2.2 MB cada uno) y revisar el precache de la PWA (hoy ≈5.4 MB).
+- [ ] Lazy-load de los gráficos (recharts) para partir el bundle de 950 KB.
+- [ ] `RippleBackground`: detener el loop sin ondas y respetar reducir movimiento.
+- [ ] Alojar la fuente Ubuntu en el proyecto, para que la PWA la tenga sin conexión.
+
+### M6 — Pulido ⬜
+- [ ] Quitar los guiones largos del texto visible.
+- [ ] Tema para la selección de texto y las barras de scroll.
+- [ ] Íconos de `AppShell` y `Dialog` al registro de `icons.tsx`, con trazo de 1.5.
+- [ ] `Card` con una sola elevación (borde o sombra) y sin tarjeta anidada en el QR.
+
+**Fuera de este plan:** skeletons de carga y estados vacíos que guíen al usuario. Es trabajo de diseño, no de corrección; va como tarea propia con `impeccable onboard`.
+
+---
+
 ## Convenciones transversales (aplican a todas las fases)
 
 **RLS**: todas las tablas nuevas o alteradas usan exactamente el patrón ya establecido en la migración base — `enable row level security` + una sola policy `for all to authenticated using (household_id = public.current_household_id()) with check (...)`. No se repite en cada fase salvo que un módulo necesite algo distinto (ninguno lo necesita).
