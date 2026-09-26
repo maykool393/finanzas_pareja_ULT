@@ -110,6 +110,7 @@ Las reglas que el código todavía no cumple quedan marcadas en DESIGN.md con la
 - [x] Gráficos (recharts) y librería de QR cargados bajo demanda.
 - [x] `RippleBackground`: el loop corre solo mientras hay ondas; reducir movimiento se consulta en cada toque.
 - [x] Fuente Ubuntu alojada en el proyecto (Fontsource, subconjunto latino, solo los pesos en uso). Sin conexión, la app ya no cae a la fuente del sistema.
+- [x] **La primera carga después de un despliegue mostraba la versión anterior**: el service worker viejo servía su `index.html` y su JS, y la foto de bienvenida salía rota (pedía el `.jpg` ya borrado). El registro por defecto nunca recargaba la página; ahora se registra con `virtual:pwa-register` y recarga sola al activarse la versión nueva. También se agregó un color de respaldo detrás de la foto. *(Reportado al probar la M5.)*
 - [ ] Pendiente, fuera del alcance original: el JS inicial sigue sobre el aviso de 500 KB de Vite (lo pesado es React, Supabase y el router). Bajar de ahí requiere cargar las pantallas por ruta.
 - [ ] Verificar en el navegador: el dashboard carga los gráficos sin saltos, la app abre sin conexión con la fuente correcta y los fondos se ven sin bandas.
 

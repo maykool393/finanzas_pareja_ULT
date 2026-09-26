@@ -9,6 +9,9 @@
    y el mismo asset en ambos modos — ver instrucción del usuario. */
 .screen {
   position: relative;
+  /* Color promedio de la foto: es lo que se ve mientras carga (o si falla),
+     en vez del fondo de la página. */
+  background-color: #b3858d;
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
