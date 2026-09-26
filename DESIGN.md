@@ -2,7 +2,7 @@
 
 Documento de referencia para desarrollo. Úsalo como contexto al pedirle a Claude Code que construya componentes. Es la fuente de verdad: si el código y este documento no coinciden, se corrige uno de los dos a propósito, nunca se deja la diferencia.
 
-Algunas reglas de este documento todavía no están aplicadas en el código. Cada una indica la etapa del plan que la resuelve (M5 y M6, ver README § Plan de mejoras).
+Algunas reglas de este documento todavía no están aplicadas en el código. Cada una indica la etapa del plan que la resuelve (M6, ver README § Plan de mejoras).
 
 ## Stack
 
@@ -41,7 +41,7 @@ La única excepción es la identidad de marca en los flujos de onboarding (ver m
 
 Una sola familia para toda la interfaz: títulos, botones, etiquetas, datos. `--font-mono` solo para códigos y datos que se leen carácter por carácter (ej. el código de invitación), nunca como adorno.
 
-**Carga:** siempre con `font-display: swap`, para no dejar texto invisible mientras carga. Las fuentes deben alojarse en el propio proyecto, no en Google Fonts: la app es una PWA y sin conexión no puede pedirlas a un servidor externo. *(Hoy se cargan desde Google Fonts; se corrige en M5.)*
+**Carga:** siempre con `font-display: swap`, para no dejar texto invisible mientras carga. Las fuentes se alojan en el propio proyecto, no en Google Fonts: la app es una PWA y sin conexión no puede pedirlas a un servidor externo. Se importan desde Fontsource (`@fontsource/ubuntu`, `@fontsource/ubuntu-mono`) en `main.tsx`, **solo el subconjunto latino** (cubre el español completo, `€` y `−`) y **solo los pesos en uso**: Ubuntu 300, 400, 500 y 700; Ubuntu Mono 400. Un peso nuevo se importa ahí antes de usarlo; si no, el navegador lo simula y se ve mal.
 
 | Token | Valor | Uso |
 |---|---|---|
@@ -211,7 +211,9 @@ Mismos dos tonos (rosa → azul) y mismo ángulo en las tres variantes — solo 
 
 Estas tres pantallas comparten el mismo fondo: un degradado difuminado en tonos pastel sobre base clara, generado a partir de los mismos colores de categoría del sistema (no introduce paleta nueva).
 
-**Asset:** `login-background.png` — 1080×2340px (proporción de pantalla móvil), reutilizable como imagen de fondo fija en las tres pantallas. *(Pesa 2.2 MB por modo; se convierte a WebP/AVIF en M5.)*
+**Asset:** `login-background.webp` — 1080×2340px (proporción de pantalla móvil), reutilizable como imagen de fondo fija en las tres pantallas.
+
+**Formato de las imágenes:** WebP con calidad 90. Los fondos llevan un grano fino a propósito, para evitar bandas en el degradado, y la compresión con pérdida lo borra: con calidad 80 el grano desaparece y aparecen bloques; AVIF a 60–75 hace saltos de color en bloques. Con calidad 90 se conserva y cada fondo pasa de 2.2 MB (PNG) a ≈100 KB. Al exportar un fondo nuevo, se verifica un recorte ampliado con el contraste estirado contra el original antes de reemplazarlo. Los originales en PNG están en el historial de git.
 
 **Composición:**
 - Base: blanco (`#ffffff`).
@@ -228,9 +230,14 @@ Estas tres pantallas comparten el mismo fondo: un degradado difuminado en tonos 
 - Como el fondo es claro y con color, el formulario (inputs, botones, texto) va sobre una tarjeta semi-opaca (`color-mix(in srgb, var(--surface-card) 60%, transparent)`) para mantener contraste — no colocar texto directo sobre el degradado.
 - Mismo asset y mismas reglas de tarjeta para las tres pantallas, variando solo el contenido del formulario.
 - El fondo tiene una variante para cada modo, con la misma composición de color y posición de manchas — solo cambia la base:
-  - Modo claro: `login-background.png` — base blanca (`#ffffff`).
-  - Modo oscuro: `login-background-dark.png` — base oscura (`#121212`, mismo valor que `--surface-page` en modo oscuro).
-- El componente de fondo (`RippleBackground`) alterna entre ambos assets según `data-theme`. Sus ondas al tocar solo deben dibujarse mientras existen: sin ondas, el loop de animación se detiene; con reducir movimiento, no se dibujan. *(Hoy el loop corre siempre; se corrige en M5.)*
+  - Modo claro: `login-background.webp` — base blanca (`#ffffff`).
+  - Modo oscuro: `login-background-dark.webp` — base oscura (`#121212`, mismo valor que `--surface-page` en modo oscuro).
+- El componente de fondo (`RippleBackground`) alterna entre ambos assets según `data-theme`. Sus ondas al tocar solo se dibujan mientras existen: el loop de animación arranca con el toque y se detiene cuando termina la última onda. Con reducir movimiento no se dibujan (se consulta en cada toque, así respeta el cambio aunque la pantalla ya esté abierta).
+
+## Rendimiento
+
+- **Una librería pesada que solo usa una pantalla o una acción se carga bajo demanda**, no en la carga inicial: los gráficos (recharts) con `React.lazy` en `Dashboard.tsx`, la librería de QR con `import()` dentro de `InviteQrCode`. Un `Suspense` reserva la altura del contenido que falta, para que la página no salte cuando llega.
+- **Precache de la PWA** (`vite.config.ts`): todo lo que la app necesita sin conexión (JS, CSS, imágenes WebP, fuentes) y nada más. Los archivos de `public/` que la app no usa van a `globIgnores`. El límite de tamaño por archivo es el de Workbox (2 MiB); si algo lo supera, se optimiza el archivo en vez de subir el límite.
 
 ## Montos y moneda
 

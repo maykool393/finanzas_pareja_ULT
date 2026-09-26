@@ -50,7 +50,7 @@ Cada etapa termina con su propio commit, verificado con `tsc`, lint y build. Se 
 | M2 | Contraste de color (WCAG AA) | impeccable | ✅ Completo |
 | M3 | Accesibilidad de interacción: diálogo y áreas táctiles | impeccable | ✅ Completo |
 | M4 | Movimiento e interacción | emil-design-eng | ✅ Completo |
-| M5 | Rendimiento: imágenes, bundle, animación de fondo, fuente | impeccable | ⬜ Pendiente |
+| M5 | Rendimiento: imágenes, bundle, animación de fondo, fuente | impeccable | ✅ Completo |
 | M6 | Pulido | impeccable | ⬜ Pendiente |
 
 ### M0 — Preparar ✅
@@ -96,11 +96,22 @@ Las reglas que el código todavía no cumple quedan marcadas en DESIGN.md con la
 - [x] **Foco al cerrar un diálogo**: volvía al botón pero sin anillo visible, porque el diálogo desaparecía antes y el foco pasaba por `<body>`. Ahora el diálogo sigue montado durante la salida mostrando su último contenido. *(Reportado al probar la M3.)*
 - [ ] Verificar en el navegador: hover en cada tipo de botón, cerrar un diálogo con Escape y ver el anillo en el botón que lo abrió, y activar "reducir movimiento" en el sistema operativo.
 
-### M5 — Rendimiento ⬜
-- [ ] Fondos del login a WebP/AVIF (hoy 2.2 MB cada uno) y revisar el precache de la PWA (hoy ≈5.4 MB).
-- [ ] Lazy-load de los gráficos (recharts) para partir el bundle de 950 KB.
-- [ ] `RippleBackground`: detener el loop sin ondas y respetar reducir movimiento.
-- [ ] Alojar la fuente Ubuntu en el proyecto, para que la PWA la tenga sin conexión.
+### M5 — Rendimiento ✅
+
+| | Antes | Después |
+|---|---|---|
+| Precache de la PWA | 5.48 MB, 23 archivos | 1.46 MB, 34 archivos (−73%) |
+| JS inicial | 929 KB (264 KB gzip) | 520 KB (145 KB gzip), −45% |
+| Fondo del login (cada modo) | 2.2 MB PNG | ≈100 KB WebP |
+| Foto de bienvenida | 507 KB JPG, sin precachear | 29 KB WebP, precacheada |
+
+- [x] Fondos y foto a WebP calidad 90. Se probaron q80 y AVIF: borraban el grano que evita las bandas del degradado (verificado con recortes ampliados).
+- [x] Precache: se suma `webp`, se excluyen `email-logo.png` y `testicon-*`, y el límite vuelve a 2 MiB (antes se había subido a 5 MiB solo por los PNG). La foto de bienvenida no se precacheaba porque el patrón no incluía `.jpg`. *(Detectado al implementar.)*
+- [x] Gráficos (recharts) y librería de QR cargados bajo demanda.
+- [x] `RippleBackground`: el loop corre solo mientras hay ondas; reducir movimiento se consulta en cada toque.
+- [x] Fuente Ubuntu alojada en el proyecto (Fontsource, subconjunto latino, solo los pesos en uso). Sin conexión, la app ya no cae a la fuente del sistema.
+- [ ] Pendiente, fuera del alcance original: el JS inicial sigue sobre el aviso de 500 KB de Vite (lo pesado es React, Supabase y el router). Bajar de ahí requiere cargar las pantallas por ruta.
+- [ ] Verificar en el navegador: el dashboard carga los gráficos sin saltos, la app abre sin conexión con la fuente correcta y los fondos se ven sin bandas.
 
 ### M6 — Pulido ⬜
 - [ ] Quitar los guiones largos del texto visible.

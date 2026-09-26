@@ -1,4 +1,3 @@
-import QRCode from 'qrcode'
 import { useEffect, useState } from 'react'
 import styles from './InviteQrCode.module.css'
 
@@ -12,9 +11,15 @@ export function InviteQrCode({ url }: InviteQrCodeProps) {
 
   useEffect(() => {
     let cancelled = false
-    QRCode.toDataURL(url, { margin: 1, width: 220, color: { dark: '#1a1a1a', light: '#ffffff' } }).then((result) => {
-      if (!cancelled) setDataUrl(result)
-    })
+    // La librería se carga recién al pedir el QR: solo se usa al tocar
+    // "Ver QR" y no tiene por qué viajar en la carga inicial de la app.
+    import('qrcode')
+      .then(({ default: QRCode }) =>
+        QRCode.toDataURL(url, { margin: 1, width: 220, color: { dark: '#1a1a1a', light: '#ffffff' } }),
+      )
+      .then((result) => {
+        if (!cancelled) setDataUrl(result)
+      })
     return () => {
       cancelled = true
     }

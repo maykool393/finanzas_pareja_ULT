@@ -31,8 +31,12 @@ export default defineConfig({
         ],
       },
       workbox: {
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MiB en vez de 2 MiB
-        globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
+        // Límite por defecto (2 MiB): los fondos pasaron a WebP (≈100 KB) y ya
+        // no hace falta subirlo. Si un archivo lo supera, el build avisa.
+        globPatterns: ['**/*.{js,css,html,svg,png,webp,ico,woff2}'],
+        // email-logo.png solo lo usa el correo de confirmación (vía CDN);
+        // testicon-* no los usa la app.
+        globIgnores: ['**/email-logo.png', '**/icons/testicon-*', '**/icons/testapple-*'],
       },
     }),
   ],

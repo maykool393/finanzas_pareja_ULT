@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import { Card } from '../components/ui/Card'
 import { PiggyIcon } from '../components/ui/icons'
 import { ItemCard } from '../components/ui/ItemCard'
@@ -6,9 +6,6 @@ import { SectionHeader } from '../components/ui/SectionHeader'
 import { AccountsSection } from '../features/accounts/AccountsSection'
 import { useAccounts } from '../features/accounts/useAccounts'
 import { useCategories } from '../features/categories/useCategories'
-import { CategoryBreakdownChart } from '../features/dashboard/CategoryBreakdownChart'
-import { IncomeVsExpenseChart } from '../features/dashboard/IncomeVsExpenseChart'
-import { NetWorthTrendChart } from '../features/dashboard/NetWorthTrendChart'
 import { useDashboardCharts } from '../features/dashboard/useDashboardCharts'
 import { DebtsSection } from '../features/debts/DebtsSection'
 import { useDebts } from '../features/debts/useDebts'
@@ -20,6 +17,18 @@ import { useCurrency } from '../hooks/useCurrency'
 import { useHouseholdMembers } from '../hooks/useHouseholdMembers'
 import { formatCurrency, formatMonth } from '../lib/format'
 import styles from './Dashboard.module.css'
+
+// Los gráficos (recharts) son la mayor parte del JS de la app y solo se usan
+// aquí: se cargan aparte, después del resto del dashboard.
+const CategoryBreakdownChart = lazy(() =>
+  import('../features/dashboard/CategoryBreakdownChart').then((m) => ({ default: m.CategoryBreakdownChart })),
+)
+const IncomeVsExpenseChart = lazy(() =>
+  import('../features/dashboard/IncomeVsExpenseChart').then((m) => ({ default: m.IncomeVsExpenseChart })),
+)
+const NetWorthTrendChart = lazy(() =>
+  import('../features/dashboard/NetWorthTrendChart').then((m) => ({ default: m.NetWorthTrendChart })),
+)
 
 interface MockItem {
   id: string
@@ -102,15 +111,21 @@ export function Dashboard() {
       {!chartsLoading && (
         <>
           <Card title="Gastos por categoría" className={styles.wide}>
-            <CategoryBreakdownChart items={categoryBreakdown} />
+            <Suspense fallback={<div className={styles.chartPlaceholder} aria-busy="true" />}>
+              <CategoryBreakdownChart items={categoryBreakdown} />
+            </Suspense>
           </Card>
 
           <Card title="Ingresos vs. gastos" className={styles.wide}>
-            <IncomeVsExpenseChart data={incomeVsExpense} />
+            <Suspense fallback={<div className={styles.chartPlaceholder} aria-busy="true" />}>
+              <IncomeVsExpenseChart data={incomeVsExpense} />
+            </Suspense>
           </Card>
 
           <Card title="Evolución del patrimonio" className={styles.wide}>
-            <NetWorthTrendChart data={netWorthTrend} />
+            <Suspense fallback={<div className={styles.chartPlaceholder} aria-busy="true" />}>
+              <NetWorthTrendChart data={netWorthTrend} />
+            </Suspense>
           </Card>
         </>
       )}

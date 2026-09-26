@@ -1,5 +1,5 @@
 import { Link, Navigate } from 'react-router-dom'
-import welcomeHero from '../assets/welcome-hero.jpg'
+import welcomeHero from '../assets/welcome-hero.webp'
 import { useSession } from '../hooks/useSession'
 import styles from './Welcome.module.css'
 

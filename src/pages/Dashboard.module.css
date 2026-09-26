@@ -28,6 +28,12 @@
 
 .wide { margin-top: var(--space-lg); }
 
+/* Reserva la altura de un gráfico (220px) mientras se carga, para que la
+   página no salte cuando llega. */
+.chartPlaceholder {
+  height: 220px;
+}
+
 .empty {
   font-size: var(--text-sm);
   color: var(--text-muted);

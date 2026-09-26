@@ -1,6 +1,6 @@
 import { type ReactNode, useEffect, useRef } from 'react'
-import darkBg from '../assets/login-background-dark.png'
-import lightBg from '../assets/login-background.png'
+import darkBg from '../assets/login-background-dark.webp'
+import lightBg from '../assets/login-background.webp'
 import { useTheme } from '../hooks/useTheme'
 import styles from './RippleBackground.module.css'
 
@@ -51,7 +51,9 @@ export function RippleBackground({ children, theme: themeProp }: RippleBackgroun
     const ctx = canvas?.getContext('2d')
     if (!wrapper || !canvas || !ctx) return
 
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    // Se consulta en cada toque, no una vez al montar: así respeta si el
+    // usuario activa "reducir movimiento" con la pantalla ya abierta.
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
 
     const accent = hexToRgb(getComputedStyle(wrapper).getPropertyValue('--account-b'))
     if (accent) accentRgbRef.current = accent
@@ -66,12 +68,23 @@ export function RippleBackground({ children, theme: themeProp }: RippleBackgroun
     resizeCanvas()
     window.addEventListener('resize', resizeCanvas)
 
+    // El loop solo corre mientras hay ondas: arranca con el toque y se
+    // detiene solo cuando la última termina. Antes corría en cada frame,
+    // siempre, aunque el canvas estuviera vacío.
+    let running = false
+    function startLoop() {
+      if (running) return
+      running = true
+      frameRef.current = requestAnimationFrame(draw)
+    }
+
     function handlePointerDown(event: PointerEvent) {
-      if (reducedMotion) return
+      if (reducedMotion.matches) return
       const rect = wrapper!.getBoundingClientRect()
       const ripples = ripplesRef.current
       if (ripples.length >= MAX_RIPPLES) ripples.shift()
       ripples.push({ x: event.clientX - rect.left, y: event.clientY - rect.top, start: performance.now() })
+      startLoop()
     }
     wrapper.addEventListener('pointerdown', handlePointerDown)
 
@@ -82,6 +95,11 @@ export function RippleBackground({ children, theme: themeProp }: RippleBackgroun
       const now = performance.now()
       const rippleLifespan = RING_DURATION_MS + (RING_COUNT - 1) * RING_STAGGER_MS
       ripplesRef.current = ripplesRef.current.filter((r) => now - r.start < rippleLifespan)
+
+      if (ripplesRef.current.length === 0) {
+        running = false
+        return
+      }
 
       for (const ripple of ripplesRef.current) {
         for (let ring = 0; ring < RING_COUNT; ring++) {
@@ -103,7 +121,6 @@ export function RippleBackground({ children, theme: themeProp }: RippleBackgroun
 
       frameRef.current = requestAnimationFrame(draw)
     }
-    frameRef.current = requestAnimationFrame(draw)
 
     return () => {
       window.removeEventListener('resize', resizeCanvas)
