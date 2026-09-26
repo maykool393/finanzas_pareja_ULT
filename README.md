@@ -1,4 +1,4 @@
-# WeWallet
+# Twoney
 
 Finanzas compartidas en pareja. React + TypeScript + Vite + Supabase (Postgres + Auth), CSS con variables nativas (sin Tailwind). Ver [DESIGN.md](DESIGN.md) para el sistema de diseño y `supabase/migrations/` para el historial de esquema aplicado.
 
@@ -22,6 +22,7 @@ Este documento es el plan de los 7 módulos que faltan. Se actualiza el **Estado
 |---|---|---|---|
 | 0 | Fundamentos compartidos (UI + convenciones) | — | ✅ Completo |
 | 0.5 | Onboarding de household (crear + unirse por invitación) | Fase 0 | ✅ Completo — verificado en vivo |
+| 0.6 | Autenticación social (Google / Apple) | Fase 0 | 🟨 Construido — falta configurar proveedores y verificar en vivo |
 | 1 | Categorías de gastos e ingresos | Fase 0 | ✅ Completo — verificado en vivo |
 | 2 | Cuentas | Fase 0, 0.5 | ✅ Completo — verificado en vivo |
 | 3 | Deudas | Fase 0 | ✅ Completo — verificado en vivo |
@@ -468,6 +469,22 @@ Nuevos: `CategoryBreakdownChart.tsx`, `IncomeVsExpenseChart.tsx`, `NetWorthTrend
 
 **Sin probar en vivo todavía**: el proyecto de Supabase exige confirmación de correo, así que no pude automatizar un registro completo de punta a punta (no tengo acceso a una bandeja de entrada real). Intenté con una cuenta desechable (`wewallet-e2e-test+...@mailinator.com`, sin confirmar, inofensiva) para verificar hasta donde se pudo — el resto (compilación, lint, la lógica de RLS trazada a mano) está verificado, pero falta que confirmes tú con tu cuenta real: entra a la app y deberías caer directo en la pantalla "Crear/Unirme" en vez del dashboard.
 
+## Fase 0.6 — Autenticación social (Google / Apple) 🟨 construida
+
+Botones "Continuar con Google" / "Continuar con Apple" en `Login.tsx`, debajo del formulario de correo — mismo flujo para iniciar sesión y para registrarse (`signInWithOAuth` crea la cuenta sola la primera vez, no hace falta un modo "signup" separado como en el de correo/contraseña).
+
+**Qué se construyó:**
+- `SocialAuthButtons.tsx` (`components/auth/`): dos botones que llaman a `supabase.auth.signInWithOAuth({ provider: 'google' | 'apple', options: { redirectTo: '<origin>/dashboard' } })`. Íconos de marca inline (SVG), sin librería nueva.
+- `Login.tsx`: al volver del proveedor, si algo falla (usuario cancela, proveedor no configurado, etc.) Supabase redirige con `#error_description=...` en el hash — se parsea en un `useEffect` y se muestra con el mismo `translateAuthError` que ya usan los errores de correo/contraseña.
+- **`handle_new_user()` actualizado** (`20260926140845_social_auth_display_name.sql`): el trigger que crea el `profile` al registrarse solo sabía leer `display_name` (la clave que manda el formulario de correo). Google manda `full_name`/`name` y Apple manda `name` (solo la primera vez que autoriza) — sin este cambio, todo usuario social caía al fallback `split_part(email, '@', 1)` en vez de mostrar su nombre real. También se agregó `picture` como alternativa a `avatar_url` para la foto de perfil.
+
+**Falta antes de poder probarlo en vivo (fuera del código, en los dashboards de Google/Apple/Supabase):**
+1. **Google Cloud Console** → crear credencial OAuth tipo "Web application" → Authorized redirect URI: `https://<tu-project-ref>.supabase.co/auth/v1/callback` (la URL exacta está en Supabase Dashboard → Authentication → Providers → Google) → copiar Client ID y Client Secret.
+2. **Apple Developer** → un App ID (con "Sign in with Apple" habilitado) + un Services ID (este es el Client ID) + una Key (`.p8`) para generar el secreto → mismo redirect URI que arriba, registrado como Website URL del Services ID. El secreto de Apple **expira cada 6 meses** y hay que regenerarlo a mano — no hay forma de automatizarlo desde el código.
+3. **Supabase Dashboard** → Authentication → Providers → activar Google y Apple, pegar las credenciales de los pasos 1 y 2.
+
+Sin este paso de configuración externa, los botones redirigen a una pantalla de error de Supabase ("provider not enabled") — es esperado, no un bug de la app.
+
 ## Pendientes (diferido a propósito, no es v1)
 
 Decisiones ya tomadas: se construye simple ahora, se deja documentado dónde enganchar la mejora después sin migrar ni romper nada de lo ya hecho.
@@ -478,3 +495,21 @@ Decisiones ya tomadas: se construye simple ahora, se deja documentado dónde eng
 ## Estado del plan
 
 Las 7 fases del plan original (más la 0 y la 0.5 que se agregaron al construir) están implementadas — ver la tabla de arriba para el detalle de qué falta verificar en vivo en cada una. Lo único que queda deliberadamente afuera de v1 está en "Pendientes" arriba.
+
+## BORRAR TABLAS
+truncate table
+  public.transactions,
+  public.budgets,
+  public.debts,
+  public.investments,
+  public.accounts,
+  public.categories,
+  public.profiles,
+  public.households
+cascade;
+
+## DESPLEGAR Y SUBIR AL GITHUB
+git add -A
+git status   # revisa que solo aparezca lo que quieres subir
+git commit -m "Autenticación social, renombre a Twoney, plantilla de correo"
+git push origin main

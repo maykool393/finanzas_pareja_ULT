@@ -63,7 +63,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className={styles.shell}>
       <header className={styles.header}>
         <div className={styles.headerInner}>
-          <img src="/logo.svg" alt="WeWallet" className={styles.brand} />
+          <img src="/logo.svg" alt="Twoney" className={styles.brand} />
           <nav className={styles.nav}>
             {NAV.map(({ to, label, end }) => (
               <NavLink

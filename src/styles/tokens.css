@@ -1,5 +1,5 @@
 /* =========================================================
-   Design tokens — WeWallet
+   Design tokens — Twoney
    Ver DESIGN.md. Base neutra; el color se reserva para
    cuentas, deudas e inversiones. Soporta claro/oscuro desde
    el inicio vía [data-theme], con fallback a prefers-color-scheme.

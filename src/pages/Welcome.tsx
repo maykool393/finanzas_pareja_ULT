@@ -26,7 +26,7 @@ export function Welcome() {
       <div className={styles.bottomOverlay} aria-hidden="true" />
 
       <header className={styles.header}>
-        <img src="/logo.svg" alt="WeWallet" className={styles.logo} />
+        <img src="/logo.svg" alt="Twoney" className={styles.logo} />
       </header>
 
       <div className={styles.content}>

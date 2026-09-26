@@ -10,8 +10,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg'],
       manifest: {
-        name: 'WeWallet',
-        short_name: 'WeWallet',
+        name: 'Twoney',
+        short_name: 'Twoney',
         description: 'Cuentas, deudas e inversiones compartidas en pareja.',
         lang: 'es',
         start_url: '/',

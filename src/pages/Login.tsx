@@ -1,6 +1,7 @@
-import { type FormEvent, useState } from 'react'
+import { type FormEvent, useEffect, useState } from 'react'
 import { Link, Navigate, useLocation } from 'react-router-dom'
 import { AuthLayout } from '../components/auth/AuthLayout'
+import { SocialAuthButtons } from '../components/auth/SocialAuthButtons'
 import styles from '../components/auth/authForm.module.css'
 import { supabase } from '../lib/supabase'
 import { translateAuthError } from '../lib/authErrors'
@@ -19,6 +20,15 @@ export function Login() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [confirmEmailSent, setConfirmEmailSent] = useState(false)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.hash.replace(/^#/, ''))
+    const description = params.get('error_description')
+    if (description) {
+      setError(translateAuthError(description.replace(/\+/g, ' ')))
+      window.history.replaceState(null, '', window.location.pathname)
+    }
+  }, [])
 
   if (!sessionLoading && session) {
     const from = (location.state as { from?: Location })?.from
@@ -106,6 +116,8 @@ export function Login() {
           </button>
         </form>
       )}
+
+      {!confirmEmailSent && <SocialAuthButtons />}
 
       {!confirmEmailSent && (
         <button

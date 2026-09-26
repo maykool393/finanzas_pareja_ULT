@@ -1,0 +1,101 @@
+<!--
+  Plantilla "Confirm signup" — Supabase Dashboard → Authentication → Email Templates.
+  No se aplica sola: hay que pegar este HTML a mano en ese editor (Supabase no lee
+  este archivo, es solo la copia versionada en el repo). Ver README.md § Fase 0.6.
+
+  Todos los colores/radios/sombras vienen de src/styles/tokens.css — nada inventado:
+  - #7F77DD / #EEEDFE / #26215C → --account-b / --account-b-bg / --account-b-text,
+    el mismo morado que ya usan RippleBackground y el fondo de las pantallas de auth.
+  - #1a1a1a / #ffffff        → --surface-inverse / --text-inverse, el mismo botón
+    negro que usa el formulario real (authForm.module.css .submit).
+  - #f5f5f0 / #ffffff        → --surface-card / --surface-page
+  - #5f5e5a / #888780 / #1a1a1a → --text-secondary / --text-muted / --text-primary
+  - #e0e0da                  → --border
+  - 12px / 8px / 999px       → --radius-card / --radius-control / --radius-full
+  - rgba(26,26,26,.06) / rgba(26,26,26,.08) → --shadow-sm / --shadow-md
+
+  Variables Go template (las provee Supabase; el preview del dashboard NO las evalúa,
+  solo el envío real — es normal ver "{{ if ... }}" literal en el preview):
+  - {{ .Data.display_name }} — nombre ingresado en el formulario de registro
+  - {{ .ConfirmationURL }}   — link de confirmación con el token
+-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f5f5f0; padding:40px 16px;">
+  <tr>
+    <td align="center">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px; background:#ffffff; border:1px solid #e0e0da; border-radius:12px; overflow:hidden; box-shadow: 0 2px 12px rgba(26, 26, 26, 0.08);">
+
+        <!-- Componente: Línea decorativa superior -->
+        <tr>
+          <td style="background:#7F77DD; font-size:0; line-height:0; height:4px;">&nbsp;</td>
+        </tr>
+
+        <!-- Header con el logo de Twoney -->
+        <tr>
+          <td align="center" style="background:#ffffff; padding:36px 32px 24px;">
+            <img
+              src="https://cdn.jsdelivr.net/gh/maykool393/finanzas_pareja_ULT@main/public/email-logo.png"
+              alt="Twoney"
+              width="140"
+              style="display:block; height:auto; border:0;"
+            />
+          </td>
+        </tr>
+
+        <!-- Componente: Badge / Etiqueta de estado del usuario -->
+        <tr>
+          <td align="center" style="padding:0 32px 20px;">
+            <span style="display:inline-block; background:#EEEDFE; color:#26215C; font-family:Arial, Helvetica, sans-serif; font-size:11px; font-weight:bold; letter-spacing:0.06em; padding:6px 14px; border-radius:999px; text-transform:uppercase;">
+              Registro completado
+            </span>
+          </td>
+        </tr>
+
+        <!-- Cuerpo del mensaje con Variables Dinámicas -->
+        <tr>
+          <td style="padding:0 32px 24px; font-family:Arial, Helvetica, sans-serif; text-align:center;">
+            <h1 style="margin:0 0 12px; font-size:24px; font-weight:bold; line-height:1.3; color:#1a1a1a;">
+              ¡Hola{{ if .Data.display_name }}, {{ .Data.display_name }}{{ end }}!
+            </h1>
+            <p style="margin:0; font-size:15px; line-height:1.6; color:#5f5e5a;">
+              Gracias por registrarte en <strong>Twoney</strong>. Confirma tu correo para empezar a organizar las finanzas en pareja de forma sencilla y transparente.
+            </p>
+          </td>
+        </tr>
+
+        <!-- Componente: Botón de Llamado a la Acción (CTA) -->
+        <tr>
+          <td align="center" style="padding:0 32px 28px;">
+            <a
+              href="{{ .ConfirmationURL }}"
+              style="display:inline-block; background:#1a1a1a; color:#ffffff; text-decoration:none; font-family:Arial, Helvetica, sans-serif; font-size:15px; font-weight:bold; padding:14px 36px; border-radius:8px; box-shadow: 0 1px 2px rgba(26, 26, 26, 0.06);"
+            >
+              Confirmar mi cuenta
+            </a>
+          </td>
+        </tr>
+
+        <!-- Enlace alternativo de respaldo estructurado -->
+        <tr>
+          <td style="padding:0 32px 32px; font-family:Arial, Helvetica, sans-serif;">
+            <p style="margin:0; font-size:12px; line-height:1.6; color:#888780; text-align:center; background:#f5f5f0; padding:12px; border-radius:8px; border:1px dashed #e0e0da;">
+              Si el botón no funciona, copia y pega este link en tu navegador:<br />
+              <a href="{{ .ConfirmationURL }}" style="color:#26215C; font-weight:500; word-break:break-all; text-decoration:underline;">{{ .ConfirmationURL }}</a>
+            </p>
+          </td>
+        </tr>
+
+        <!-- Footer / Pie de página legal corporativo -->
+        <tr>
+          <td style="padding:24px 32px; border-top:1px solid #e0e0da; background:#f5f5f0; font-family:Arial, Helvetica, sans-serif; text-align:center;">
+            <p style="margin:0 0 8px; font-size:12px; line-height:1.5; color:#5f5e5a; font-weight:500;">
+              © 2026 Twoney. Todos los derechos reservados.
+            </p>
+            <p style="margin:0; font-size:10px; line-height:1.5; color:#888780;">
+              Recibiste este correo porque te registraste en nuestra plataforma. Si no fuiste tú, puedes ignorar este mensaje.
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>

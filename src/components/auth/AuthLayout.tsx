@@ -7,7 +7,7 @@ export function AuthLayout({ children }: { children: ReactNode }) {
     <RippleBackground>
       <div className={styles.page}>
         <div className={styles.card}>
-          <img src="/logo.svg" alt="WeWallet" className={styles.logo} />
+          <img src="/logo.svg" alt="Twoney" className={styles.logo} />
           {children}
         </div>
       </div>
