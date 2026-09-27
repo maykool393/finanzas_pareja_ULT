@@ -15,4 +15,14 @@ export const CHART_TOOLTIP_STYLE = {
   borderRadius: 'var(--radius-control)',
 }
 
+/**
+ * Texto del tooltip siempre en --text-primary. Recharts lo pinta por defecto
+ * con el color de la serie, pensado para relleno y no para texto: en "Gastos
+ * por categoría" eran los fondos pastel sobre la tarjeta (1,1:1, invisible) y
+ * en los otros dos, 3,3–4,4:1. La serie ya se nombra en el texto ("Ingresos",
+ * "Supermercado"), así que el color no hace falta para identificarla.
+ */
+export const CHART_TOOLTIP_ITEM_STYLE = { color: 'var(--text-primary)' }
+export const CHART_TOOLTIP_LABEL_STYLE = { color: 'var(--text-secondary)' }
+
 export const CHART_AXIS_TICK = { fill: 'var(--text-muted)', fontSize: 12 }

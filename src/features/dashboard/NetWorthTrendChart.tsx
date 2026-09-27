@@ -1,7 +1,13 @@
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { useCurrency } from '../../hooks/useCurrency'
 import { formatCurrency, formatDate } from '../../lib/format'
-import { CHART_AXIS_TICK, CHART_TOOLTIP_STYLE, formatTooltipDate } from './tooltipFormat'
+import {
+  CHART_AXIS_TICK,
+  CHART_TOOLTIP_ITEM_STYLE,
+  CHART_TOOLTIP_LABEL_STYLE,
+  CHART_TOOLTIP_STYLE,
+  formatTooltipDate,
+} from './tooltipFormat'
 import type { NetWorthPoint } from './useDashboardCharts'
 
 export function NetWorthTrendChart({ data }: { data: NetWorthPoint[] }) {
@@ -43,6 +49,8 @@ export function NetWorthTrendChart({ data }: { data: NetWorthPoint[] }) {
             formatter={(value: unknown) => formatCurrency(Number(value), currency)}
             labelFormatter={formatTooltipDate}
             contentStyle={CHART_TOOLTIP_STYLE}
+            itemStyle={CHART_TOOLTIP_ITEM_STYLE}
+            labelStyle={CHART_TOOLTIP_LABEL_STYLE}
           />
           <Area type="monotone" dataKey="netWorth" stroke="var(--account-b)" strokeWidth={2} fill="url(#netWorthFill)" />
         </AreaChart>

@@ -325,6 +325,7 @@ Estas tres pantallas comparten el mismo fondo: un degradado difuminado en tonos 
 **Gráficos**
 - Colores de línea y barra con 3:1 contra la tarjeta en ambos modos (se miden, como el texto). Los tonos de categoría `-text` son oscuros fijos y no sirven para líneas: la del patrimonio usaba `--account-b-text` y en oscuro daba 1,15:1; ahora usa `--account-b` (3,6 / 4,4).
 - Tooltip y ejes con los estilos compartidos de `tooltipFormat.ts` (tokens), no valores sueltos.
+- **El texto del tooltip va en `--text-primary`, nunca en el color de la serie.** Recharts lo pinta por defecto con el color de relleno, que no está pensado para texto: en "Gastos por categoría" eran los fondos pastel (1,1:1, invisible) y en los otros dos, 3,3–4,4:1. La serie se identifica por su nombre en el propio texto.
 - Todo gráfico lleva un resumen en texto (`visually-hidden`) con lo que un lector de pantalla no puede sacar del SVG: el período y los valores que importan.
 
 **Títulos de pantalla**

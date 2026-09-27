@@ -2,7 +2,7 @@ import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxi
 import { useCurrency } from '../../hooks/useCurrency'
 import { formatCurrency } from '../../lib/format'
 import styles from './charts.module.css'
-import { CHART_AXIS_TICK, CHART_TOOLTIP_STYLE } from './tooltipFormat'
+import { CHART_AXIS_TICK, CHART_TOOLTIP_ITEM_STYLE, CHART_TOOLTIP_LABEL_STYLE, CHART_TOOLTIP_STYLE } from './tooltipFormat'
 import type { MonthlyTotals } from './useDashboardCharts'
 
 export function IncomeVsExpenseChart({ data }: { data: MonthlyTotals[] }) {
@@ -36,6 +36,8 @@ export function IncomeVsExpenseChart({ data }: { data: MonthlyTotals[] }) {
           <Tooltip
             formatter={(value: unknown) => formatCurrency(Number(value), currency)}
             contentStyle={CHART_TOOLTIP_STYLE}
+            itemStyle={CHART_TOOLTIP_ITEM_STYLE}
+            labelStyle={CHART_TOOLTIP_LABEL_STYLE}
           />
           <Bar dataKey="income" name="Ingresos" fill="var(--gain-color)" radius={[4, 4, 0, 0]} />
           <Bar dataKey="expense" name="Gastos" fill="var(--loss-color)" radius={[4, 4, 0, 0]} />

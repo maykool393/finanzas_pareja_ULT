@@ -2,7 +2,7 @@ import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 import { useCurrency } from '../../hooks/useCurrency'
 import { formatCurrency } from '../../lib/format'
 import styles from './CategoryBreakdownChart.module.css'
-import { CHART_TOOLTIP_STYLE } from './tooltipFormat'
+import { CHART_TOOLTIP_ITEM_STYLE, CHART_TOOLTIP_LABEL_STYLE, CHART_TOOLTIP_STYLE } from './tooltipFormat'
 import type { CategoryBreakdownItem } from './useDashboardCharts'
 
 export function CategoryBreakdownChart({ items }: { items: CategoryBreakdownItem[] }) {
@@ -24,6 +24,8 @@ export function CategoryBreakdownChart({ items }: { items: CategoryBreakdownItem
           <Tooltip
             formatter={(value: unknown) => formatCurrency(Number(value), currency)}
             contentStyle={CHART_TOOLTIP_STYLE}
+            itemStyle={CHART_TOOLTIP_ITEM_STYLE}
+            labelStyle={CHART_TOOLTIP_LABEL_STYLE}
           />
         </PieChart>
       </ResponsiveContainer>

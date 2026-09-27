@@ -288,6 +288,7 @@ Auditoría en el formato de `impeccable audit`: **18/20** (Excelente), contra 15
 - [x] **[P2] El onboarding mostraba el error técnico de Supabase** al fallar crear el hogar, vincularlo o guardar las preferencias ("Cannot coerce the result to a single JSON object", o "TypeError: Failed to fetch" sin conexión). Ahora muestra "No se pudo crear el hogar. Revisa tu conexión…"; el detalle va a la consola. *(Detectado al volver a auditar.)*
 - [x] **Unirse con un código sin conexión decía "Ese código no es válido".** `isNetworkError` distingue un fallo de red (Supabase lo devuelve sin `code`, verificado en `postgrest-js`) de un código inválido (`22P02`, `23503`). *(Detectado al volver a auditar.)*
 - [ ] Verificar con sesión: crear una categoría con un nombre que ya existe (activa o archivada) y ver el mensaje nuevo; en el onboarding, con la red cortada, crear un hogar y unirse con un código.
+- [x] **Texto del tooltip de los gráficos ilegible** (reportado al usarlo): tomaba el color de la serie. En "Gastos por categoría" eran los fondos pastel sobre la tarjeta, 1,1:1; en "Ingresos vs. gastos" y "Evolución del patrimonio", 3,3–4,4:1, bajo el 4,5:1 del texto. Ahora los tres usan `--text-primary` (16,7:1 en claro, 14,6:1 en oscuro), con la etiqueta en `--text-secondary`. Verificado con Playwright pasando el mouse sobre el gráfico en claro y oscuro.
 
 ---
 
