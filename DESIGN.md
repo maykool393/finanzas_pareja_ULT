@@ -255,6 +255,7 @@ Estas tres pantallas comparten el mismo fondo: un degradado difuminado en tonos 
 - **Se muestra el símbolo, no el código:** `€1.234`, `S/1.234`, `$1.234`. Los símbolos están en un mapa explícito en `format.ts`, porque `Intl` con el locale `es-CL` muestra código para las monedas no locales y no trae `S/` para PEN. Para agregar una moneda, se suma al mapa: el selector del onboarding se arma desde ahí.
 - Varias monedas comparten el símbolo `$`. Dentro de un hogar no confunde, porque hay una sola moneda. Si alguna pantalla llega a mostrar montos de monedas distintas, ahí hay que volver a mostrar el código.
 - Formato: locale `es-CL`, sin decimales (los montos se guardan en la unidad menor), clase `.amount` para cifras tabulares.
+- **El signo va antes del símbolo**: `-$23.990`, `+$850.000`. Intl con `es-CL` lo pone después (`$-23.990`), y junto al `+` de los ingresos no se leían parejos. Lo resuelve `formatCurrency`: los negativos siempre llevan `-`; el `+` solo con `{ signed: true }`, en listas de movimientos, donde importa distinguir ingreso de gasto. El cero no lleva signo. Nunca se antepone un signo a mano.
 - Los inputs de monto (`NumberField`) anteponen el símbolo de la moneda del hogar.
 
 ## Componentes clave

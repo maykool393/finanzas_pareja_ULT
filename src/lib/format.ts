@@ -30,23 +30,34 @@ export function getCurrencySymbol(currency: string): string {
 /**
  * Monto con símbolo de moneda. Los montos se guardan en la unidad menor (enteros).
  * `currency` es la del household actual — obtenerla con useCurrency(), nunca fija a mano.
+ *
+ * El signo va siempre antes del símbolo: "-$23.990", "+$850.000". Intl con
+ * es-CL lo pone después ("$-23.990"), y junto al "+" de los ingresos los dos
+ * montos no se leían parejos. `signed` agrega el "+" a los positivos (listas de
+ * movimientos, donde importa distinguir ingreso de gasto); el cero no lleva signo.
  */
 export function formatCurrency(
   amount: number,
   currency: string,
-  { compact = false }: { compact?: boolean } = {},
+  { compact = false, signed = false }: { compact?: boolean; signed?: boolean } = {},
 ): string {
   const symbol = getCurrencySymbol(currency)
-  return new Intl.NumberFormat(LOCALE, {
+  const magnitude = new Intl.NumberFormat(LOCALE, {
     style: 'currency',
     currency,
     currencyDisplay: 'narrowSymbol',
     notation: compact ? 'compact' : 'standard',
     maximumFractionDigits: 0,
   })
-    .formatToParts(amount)
+    .formatToParts(Math.abs(amount))
     .map((part) => (part.type === 'currency' ? symbol : part.value))
     .join('')
+
+  // Redondeado, igual que el texto: un -0,4 se muestra "$0", no "-$0".
+  const rounded = Math.round(amount)
+  if (rounded < 0) return `-${magnitude}`
+  if (signed && rounded > 0) return `+${magnitude}`
+  return magnitude
 }
 
 /** Monto sin símbolo, para tablas donde la moneda ya está en la cabecera. */

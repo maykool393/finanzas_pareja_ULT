@@ -60,8 +60,7 @@ export function TransactionList({ transactions, accounts, categories, members, o
                     </span>
                   </span>
                   <span className={`amount ${styles.amount} ${isIncome ? styles.income : styles.expense}`}>
-                    {isIncome ? '+' : ''}
-                    {formatCurrency(transaction.amount, currency)}
+                    {formatCurrency(transaction.amount, currency, { signed: true })}
                   </span>
                 </>
               )

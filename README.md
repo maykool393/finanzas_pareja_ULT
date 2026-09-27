@@ -172,6 +172,7 @@ Ningún formulario, borrado ni carga de datos manejaba errores: la capa `api.ts`
 - [x] `100dvh` en `RequireAuth`, `AppShell` y `reset.css`.
 - [x] **Viñetas y sangría en las listas**: ningún CSS las quitaba, y en los movimientos (pantalla y dashboard) se veían viñetas y 40px de sangría. Ahora `reset.css` las quita, y cada `<ul>` lleva `role="list"` para no perder la semántica en Safari. *(Detectado al verificar con capturas.)*
 - [x] **La barra de avance de una deuda pasaba por debajo del avatar del dueño.** Ahora termina antes. *(Detectado al verificar con capturas.)*
+- [x] **Signo antes del símbolo**: los gastos se veían `$-23.990` (formato de Intl para `es-CL`) y los ingresos `+$850.000`. Ahora `formatCurrency` pone el signo siempre antes: `-$23.990`. El `+` de los ingresos también pasó a `formatCurrency` (`{ signed: true }`), en vez de agregarse a mano en `TransactionList`. *(Decidido después de cerrar M9.)*
 - [x] Verificado con una página temporal (ya borrada) que monta `FinanceSection` y `TransactionList` con datos de ejemplo: tarjetas, carga, error, lista de movimientos y nombres accesibles, en claro y oscuro a 390px.
 - [ ] Verificar en el navegador, con sesión: crear una cuenta desde el dashboard y ver que el patrimonio cambia sin recargar; navegar las tarjetas con Tab y abrirlas con Enter; el onboarding se ve igual que antes (solo cambiaron nombres de tokens).
 
