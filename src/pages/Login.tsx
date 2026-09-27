@@ -11,6 +11,15 @@ import { supabase } from '../lib/supabase'
 
 type Mode = 'signin' | 'signup'
 
+/**
+ * Error que Supabase deja en el hash de la URL al volver de un enlace de
+ * correo vencido o de un login social cancelado (#error_description=...).
+ */
+function authErrorFromUrl(): string | null {
+  const description = new URLSearchParams(window.location.hash.replace(/^#/, '')).get('error_description')
+  return description ? translateAuthError(description.replace(/\+/g, ' ')) : null
+}
+
 export function Login() {
   const { session, loading: sessionLoading } = useSession()
   const location = useLocation()
@@ -20,14 +29,14 @@ export function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  // Se lee al montar (estado inicial), no en un efecto: así el error aparece en
+  // el primer render, sin un render extra.
+  const [error, setError] = useState<string | null>(authErrorFromUrl)
   const [confirmEmailSent, setConfirmEmailSent] = useState(false)
 
+  // Limpia el hash, para que el error no vuelva a aparecer al recargar.
   useEffect(() => {
-    const params = new URLSearchParams(window.location.hash.replace(/^#/, ''))
-    const description = params.get('error_description')
-    if (description) {
-      setError(translateAuthError(description.replace(/\+/g, ' ')))
+    if (window.location.hash.includes('error_description')) {
       window.history.replaceState(null, '', window.location.pathname)
     }
   }, [])

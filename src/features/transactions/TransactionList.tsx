@@ -1,4 +1,4 @@
-import { ICONS, type IconKey } from '../../components/ui/icons'
+import { ICONS, type IconKey } from '../../components/ui/iconRegistry'
 import { useCurrency } from '../../hooks/useCurrency'
 import { formatCurrency, formatDate } from '../../lib/format'
 import type { Account, Category, Profile, Transaction } from '../../types/domain'

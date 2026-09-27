@@ -15,7 +15,9 @@ import styles from './RequireAuth.module.css'
 export function RequireHousehold({ children }: { children: ReactNode }) {
   const { user } = useSession()
   const { householdId, loading, refresh } = useHouseholdId()
-  const [joiningInvite, setJoiningInvite] = useState(false)
+  // Si al montar hay una invitación pendiente (link/QR), se arranca "uniéndose":
+  // el splash se ve desde el primer render, sin esperar al efecto.
+  const [joiningInvite, setJoiningInvite] = useState(() => getPendingInvite() !== null)
   const [joinError, setJoinError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -24,7 +26,6 @@ export function RequireHousehold({ children }: { children: ReactNode }) {
     if (!pending) return
 
     let cancelled = false
-    setJoiningInvite(true)
 
     supabase
       .from('profiles')
@@ -48,7 +49,8 @@ export function RequireHousehold({ children }: { children: ReactNode }) {
     }
   }, [loading, householdId, user, refresh])
 
-  if (loading || joiningInvite) {
+  // Con household, la invitación pendiente no aplica (no se consume): se sigue de largo.
+  if (loading || (joiningInvite && !householdId)) {
     return <div className={styles.splash} aria-busy="true" />
   }
 

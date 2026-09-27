@@ -92,7 +92,9 @@
   --text-on-brand:        #1a1a1a;   /* texto e íconos sobre el degradado (12.9–14:1) */
   --text-on-brand-accent: #3D5FA8;   /* segunda línea del título a dos tonos (4.6–5.0:1) */
   --brand-track:          rgba(26, 26, 26, 0.18);   /* segmentos pendientes de la barra por pasos */
-  /* Sombra del CTA teñida con los extremos de --gradient-brand-dark. */
+  /* Sombra del CTA teñida con los extremos de --gradient-brand-dark. Esta sí
+     cambia en oscuro (abajo): el botón está sobre la hoja, que sigue el tema, y
+     una sombra de color sobre fondo oscuro se ve como un halo. */
   --shadow-brand-cta: 0 10px 22px rgba(199, 140, 176, 0.35), 0 6px 16px rgba(107, 146, 187, 0.3);
 
   /* ---------- Espaciado y bordes ---------- */
@@ -154,6 +156,7 @@
   --border-strong: #3d3d3a;
 
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-brand-cta: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
 /* ---------- Oscuro: preferencia del sistema (sin elección manual) ---------- */
@@ -179,6 +182,7 @@
     --border-strong: #3d3d3a;
 
       --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+      --shadow-brand-cta: 0 4px 16px rgba(0, 0, 0, 0.4);
   }
 }
 

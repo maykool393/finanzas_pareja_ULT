@@ -1,4 +1,4 @@
-import { ICONS, type IconKey } from '../../components/ui/icons'
+import { ICONS, type IconKey } from '../../components/ui/iconRegistry'
 import type { Category } from '../../types/domain'
 import { CATEGORY_COLOR_TOKENS } from './colors'
 import styles from './CategoryList.module.css'

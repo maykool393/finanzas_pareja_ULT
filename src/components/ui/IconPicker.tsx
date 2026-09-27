@@ -1,4 +1,4 @@
-import { ACCOUNT_ICON_OPTIONS, ICONS, type IconKey } from './icons'
+import { ACCOUNT_ICON_OPTIONS, ICONS, type IconKey } from './iconRegistry'
 import styles from './Picker.module.css'
 
 interface IconPickerProps {

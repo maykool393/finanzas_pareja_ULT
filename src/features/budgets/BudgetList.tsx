@@ -1,5 +1,5 @@
 import { ProgressBar } from '../../components/ui/ProgressBar'
-import { ICONS, type IconKey } from '../../components/ui/icons'
+import { ICONS, type IconKey } from '../../components/ui/iconRegistry'
 import { useCurrency } from '../../hooks/useCurrency'
 import { formatCurrency } from '../../lib/format'
 import type { BudgetProgress, Category, CategoryType } from '../../types/domain'

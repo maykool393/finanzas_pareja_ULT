@@ -19,6 +19,9 @@ export function useHouseholdId() {
     // Se usa detrás de RequireAuth: si aún no hay user, la sesión sigue
     // resolviendo — loading se mantiene true hasta que haya uno.
     if (!user) return
+    // Falso positivo del linter: refresh es async y su primer setState llega
+    // después del await, no de forma síncrona dentro del efecto.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     refresh()
   }, [user, refresh])
 

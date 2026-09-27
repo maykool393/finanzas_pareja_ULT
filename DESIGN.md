@@ -140,7 +140,7 @@ Cada color de estado tiene dos usos con requisitos distintos: como relleno (barr
 
 - Nunca usar `--gain-color` ni `--loss-color` como color de texto: dan 3.4:1 y 3.9:1 sobre fondo claro.
 - `--text-on-danger` es blanco fijo en ambos modos (no `--text-inverse`, que en oscuro pasa a casi negro y sobre `--danger-bg` no llega a 4.5:1).
-- `--danger-bg` da 5.4:1 en reposo, con margen para el hover: los botones bajan la opacidad a 0.9 al pasar el mouse, lo que aclara el fondo. Con un rojo al límite de 4.5:1, el hover quedaba en 3.9:1.
+- `--danger-bg` da 5.4:1 en reposo. El hover no baja la opacidad (ver Botones): cambia a `--danger-bg-hover`, más oscuro, que sube el contraste a 7.3:1. Con opacidad, un rojo al límite de 4.5:1 quedaba en 3.9:1.
 - **El contraste se mide en todos los estados**, no solo en reposo: hover, foco y seleccionado también tienen que llegar a 4.5:1. Solo el estado deshabilitado está exento.
 
 ## Espaciado, bordes y elevación
@@ -180,7 +180,7 @@ Distinto del fondo de Login/recuperar contraseña/crear cuenta (sección siguien
 --text-on-brand:        #1a1a1a;                 /* texto e íconos sobre el degradado */
 --text-on-brand-accent: #3D5FA8;                 /* segunda línea del título a dos tonos */
 --brand-track:          rgba(26, 26, 26, 0.18);  /* segmentos pendientes de la barra por pasos */
---shadow-brand-cta: 0 10px 22px rgba(199, 140, 176, 0.35), 0 6px 16px rgba(107, 146, 187, 0.3);
+--shadow-brand-cta: 0 10px 22px rgba(199, 140, 176, 0.35), 0 6px 16px rgba(107, 146, 187, 0.3);  /* en oscuro: 0 4px 16px rgba(0, 0, 0, 0.4) */
 ```
 
 Mismos dos tonos (rosa → azul) y mismo ángulo en las tres variantes — solo cambia cuánto blanco/negro se mezcla. `-light` y `-dark` existen para que un elemento pueda distinguirse de otro que también usa el degradado (ej. la barra de progreso sobre el fondo del encabezado): nunca se inventa un tono nuevo, se aclara u oscurece el mismo par.
@@ -193,7 +193,7 @@ Mismos dos tonos (rosa → azul) y mismo ángulo en las tres variantes — solo 
 - Texto sobre cualquiera de las tres variantes: siempre oscuro — el texto blanco no llega al contraste mínimo (AA) contra ninguna de ellas. Como el degradado no cambia con `[data-theme="dark"]`, el texto y los íconos sobre él usan `--text-on-brand` (y el acento, `--text-on-brand-accent`), fijos en ambos modos, nunca `--text-primary` (que se invierte en modo oscuro).
 - No sustituye los colores de categorías financieras ni se usa fuera de flujos de onboarding.
 - Nunca como texto con degradado: el énfasis se da con peso o tamaño.
-- Pendiente: no tiene variante para modo oscuro — hoy se ve igual en claro y oscuro. Definir si corresponde antes de extenderlo a más pantallas.
+- **En modo oscuro no cambia** (decidido el 2026-09-27): el degradado es la identidad del flujo y se ve igual en ambos modos; la hoja de abajo sí sigue el tema. El contraste se sostiene porque el texto sobre el degradado es fijo (`--text-on-brand`). Lo único que cambia en oscuro es la sombra del CTA (`--shadow-brand-cta`): la teñida de rosa y azul se veía como un halo sobre la hoja oscura, y pasa a una sombra neutra. Se descartaron forzar todo el onboarding en claro (quien usa modo oscuro pasaría de un login oscuro a una pantalla blanca) y una variante oscura del degradado (colores nuevos que diseñar y medir).
 
 ## Botones
 
@@ -252,7 +252,7 @@ Estas tres pantallas comparten el mismo fondo: un degradado difuminado en tonos 
 
 - **La moneda es del hogar**, no fija en el código: se elige en el onboarding y se guarda en `households.currency`. Monedas disponibles: CLP, USD, EUR, MXN, COP, ARS, PEN.
 - Todo monto visible pasa por `formatCurrency(amount, currency)` (`src/lib/format.ts`), con la moneda que entrega `useCurrency()`. Nunca escribir un símbolo ni un código de moneda a mano.
-- **Se muestra el símbolo, no el código:** `€1.234`, `S/1.234`, `$1.234`. Los símbolos están en un mapa explícito en `format.ts`, porque `Intl` con el locale `es-CL` muestra código para las monedas no locales y no trae `S/` para PEN. Para agregar una moneda, se suma al mapa: el selector del onboarding se arma desde ahí.
+- **Se muestra el símbolo, no el código:** `€1.234`, `S/ 1.234`, `$1.234`. Los soles llevan un espacio después del símbolo, que pone `Intl` y es la forma habitual en Perú. Los símbolos están en un mapa explícito en `format.ts`, porque `Intl` con el locale `es-CL` muestra código para las monedas no locales y no trae `S/` para PEN. Para agregar una moneda, se suma al mapa: el selector del onboarding se arma desde ahí.
 - Varias monedas comparten el símbolo `$`. Dentro de un hogar no confunde, porque hay una sola moneda. Si alguna pantalla llega a mostrar montos de monedas distintas, ahí hay que volver a mostrar el código.
 - Formato: locale `es-CL`, sin decimales (los montos se guardan en la unidad menor), clase `.amount` para cifras tabulares.
 - **El signo va antes del símbolo**: `-$23.990`, `+$850.000`. Intl con `es-CL` lo pone después (`$-23.990`), y junto al `+` de los ingresos no se leían parejos. Lo resuelve `formatCurrency`: los negativos siempre llevan `-`; el `+` solo con `{ signed: true }`, en listas de movimientos, donde importa distinguir ingreso de gasto. El cero no lleva signo. Nunca se antepone un signo a mano.
@@ -358,13 +358,14 @@ Esta es una app de uso diario: el movimiento comunica un cambio de estado, no de
 - **Hover solo con puntero fino:** todo hover que cambia fondo, borde, sombra o posición va dentro de `@media (hover: hover) and (pointer: fine)`. En pantallas táctiles el hover se "pega" después de tocar, y un fondo gris pegado se nota. El hover que solo cambia el color del texto puede quedar fuera: pegado no se distingue de haberlo tocado.
 - **Reducir movimiento** (`prefers-reduced-motion: reduce`) significa menos movimiento, no ninguno: se quitan desplazamientos y escalas, pero se mantienen los fundidos de opacidad y las transiciones de color, que ayudan a entender el cambio. Cómo: `tokens.css` lleva `--press-scale`, `--press-scale-large` y `--hover-lift` a valores neutros, y cada movimiento propio de un componente (hoja del diálogo, barra de progreso, chevron) tiene su excepción en su módulo. Las duraciones no se ponen en 0.
 - Preferir transiciones CSS antes que `@keyframes` en todo lo que se puede interrumpir (abrir y cerrar rápido): una transición se retoma desde donde está, un keyframe reinicia.
-- Casos de uso: expandir/colapsar secciones, aparición de nuevas transacciones (fundido/deslizamiento), conteo animado al actualizar montos, transición de color al cambiar entre modo claro/oscuro, entrada y salida de diálogos.
+- Casos de uso hoy: giro del chevron al expandir o colapsar una sección, transición de color al cambiar entre modo claro y oscuro, entrada y salida de diálogos, avance de las barras de progreso.
+- **Pendientes, no implementados:** despliegue del contenido de una sección, aparición de un movimiento nuevo en la lista (fundido) y conteo animado al cambiar un monto. Antes de hacerlos se pasan por la tabla de frecuencia: el dashboard se abre varias veces al día, así que un conteo en cada visita probablemente sobra; solo tendría sentido al guardar un cambio.
 
 ## Iconografía
 
 Estilo outline (contorno), no relleno. Consistente en todos los íconos de la app — cuentas, navegación inferior, indicadores de categoría.
 
-- **Íconos propios, no de librería.** Viven todos en `src/components/ui/icons.tsx`, sobre una grilla de 20×20 (`viewBox="0 0 20 20"`), trazo de 1.5 (`strokeWidth="1.5"`), extremos y uniones redondeados, color `currentColor`. Un ícono nuevo se agrega ahí, no dentro del componente que lo usa. Si ya existe uno para la misma idea, se reusa en vez de dibujar otro (ej. la pestaña "Finanzas" usa el mismo `WalletIcon` que el tipo de cuenta "Billetera").
+- **Íconos propios, no de librería.** Los componentes viven todos en `src/components/ui/icons.tsx` (ese archivo solo exporta componentes, para que funcione el recargado en caliente); el registro de los que el usuario elige (clave guardada en la base, componente y etiqueta) está en `iconRegistry.ts`. Todos van sobre una grilla de 20×20 (`viewBox="0 0 20 20"`), trazo de 1.5 (`strokeWidth="1.5"`), extremos y uniones redondeados, color `currentColor`. Un ícono nuevo se agrega ahí, no dentro del componente que lo usa. Si ya existe uno para la misma idea, se reusa en vez de dibujar otro (ej. la pestaña "Finanzas" usa el mismo `WalletIcon` que el tipo de cuenta "Billetera").
 - Los logos de Google y Apple en `SocialAuthButtons` no son íconos de interfaz sino marcas, con sus colores oficiales: quedan fuera del registro.
 - Ningún emoji ni carácter Unicode en lugar de un ícono.
 

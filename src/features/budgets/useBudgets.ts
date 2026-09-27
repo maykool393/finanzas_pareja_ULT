@@ -58,6 +58,9 @@ export function useBudgets() {
   }, [periodMonth])
 
   useEffect(() => {
+    // Falso positivo del linter: refresh es async y su primer setState llega
+    // después del await, no de forma síncrona dentro del efecto.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     refresh()
   }, [refresh])
 

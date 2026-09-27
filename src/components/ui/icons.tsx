@@ -1,18 +1,8 @@
-import type { ReactElement, SVGProps } from 'react'
+import type { SVGProps } from 'react'
 
-export type AccountIconKey = 'bank' | 'cash' | 'card' | 'piggy' | 'trend-up' | 'wallet'
-export type CategoryIconKey =
-  | 'groceries'
-  | 'home'
-  | 'transport'
-  | 'salary'
-  | 'entertainment'
-  | 'health'
-  | 'education'
-  | 'gifts'
-  | 'subscriptions'
-  | 'other'
-export type IconKey = AccountIconKey | CategoryIconKey
+// Solo componentes: el registro (mapa ICONS, opciones y tipos de clave) está en
+// iconRegistry.ts. Un archivo de componentes que además exporta objetos rompe
+// el recargado en caliente de Vite (regla only-export-components).
 
 export function BankIcon(props: SVGProps<SVGSVGElement>) {
   return (
@@ -353,44 +343,3 @@ export function HeartFilledIcon(props: SVGProps<SVGSVGElement>) {
     </svg>
   )
 }
-
-export const ICONS: Record<IconKey, (props: SVGProps<SVGSVGElement>) => ReactElement> = {
-  bank: BankIcon,
-  cash: CashIcon,
-  card: CardIcon,
-  piggy: PiggyIcon,
-  'trend-up': TrendUpIcon,
-  wallet: WalletIcon,
-  groceries: GroceriesIcon,
-  home: HomeIcon,
-  transport: TransportIcon,
-  salary: SalaryIcon,
-  entertainment: EntertainmentIcon,
-  health: HealthIcon,
-  education: EducationIcon,
-  gifts: GiftsIcon,
-  subscriptions: SubscriptionsIcon,
-  other: OtherIcon,
-}
-
-export const ACCOUNT_ICON_OPTIONS: { key: AccountIconKey; label: string }[] = [
-  { key: 'bank', label: 'Banco' },
-  { key: 'cash', label: 'Efectivo' },
-  { key: 'card', label: 'Tarjeta' },
-  { key: 'wallet', label: 'Billetera' },
-  { key: 'piggy', label: 'Ahorro' },
-  { key: 'trend-up', label: 'Inversión' },
-]
-
-export const CATEGORY_ICON_OPTIONS: { key: CategoryIconKey; label: string }[] = [
-  { key: 'groceries', label: 'Supermercado' },
-  { key: 'home', label: 'Hogar' },
-  { key: 'transport', label: 'Transporte' },
-  { key: 'salary', label: 'Sueldo' },
-  { key: 'entertainment', label: 'Entretención' },
-  { key: 'health', label: 'Salud' },
-  { key: 'education', label: 'Educación' },
-  { key: 'gifts', label: 'Regalos' },
-  { key: 'subscriptions', label: 'Suscripciones' },
-  { key: 'other', label: 'Otro' },
-]

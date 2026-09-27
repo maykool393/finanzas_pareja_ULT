@@ -142,7 +142,7 @@ Segunda pasada sobre el código completo, después de cerrar M0–M6. Lo que ya 
 | M7 | Errores y carga | impeccable | ✅ Completo |
 | M8 | Rutas y navegación | impeccable | ✅ Completo |
 | M9 | Limpieza de componentes y tokens | impeccable | ✅ Completo |
-| M10 | DESIGN.md y configuración | — | Pendiente |
+| M10 | DESIGN.md y configuración | — | ✅ Completo |
 
 ### M7 — Errores y carga ✅
 Ningún formulario, borrado ni carga de datos manejaba errores: la capa `api.ts` lanza la excepción y nadie la atrapaba.
@@ -176,12 +176,24 @@ Ningún formulario, borrado ni carga de datos manejaba errores: la capa `api.ts`
 - [x] Verificado con una página temporal (ya borrada) que monta `FinanceSection` y `TransactionList` con datos de ejemplo: tarjetas, carga, error, lista de movimientos y nombres accesibles, en claro y oscuro a 390px.
 - [ ] Verificar en el navegador, con sesión: crear una cuenta desde el dashboard y ver que el patrimonio cambia sin recargar; navegar las tarjetas con Tab y abrirlas con Enter; el onboarding se ve igual que antes (solo cambiaron nombres de tokens).
 
-### M10 — DESIGN.md y configuración
-- [ ] Quitar la mención al hover con opacidad 0.9 en los botones de eliminar: contradice la regla "hover = fondo, nunca opacidad".
-- [ ] Marcar como pendientes los casos de animación que no existen (conteo de montos, entrada de transacciones nuevas).
-- [ ] Decidir el degradado de marca en modo oscuro: hoy la hoja del onboarding sale oscura bajo un encabezado claro.
-- [ ] Excluir `.claude/` del lint: `npm run lint` suma 112 avisos de los scripts de las skills a los del proyecto.
-- [ ] Los 13 avisos del proyecto: 10 `set-state-in-effect` (los hooks de datos y `Login`, `RequireHousehold`, `useHousehold`, `useHouseholdId`) y 3 `only-export-components` en `icons.tsx`. Revisar cada uno: corregir o silenciar con el motivo escrito.
+### M10 — DESIGN.md y configuración ✅
+- [x] DESIGN.md decía que los botones de eliminar bajan la opacidad a 0.9 en hover, contra la regla "hover = fondo, nunca opacidad". Ahora describe lo que hace el código: `--danger-bg-hover`.
+- [x] Casos de animación: separados los que existen de los pendientes (despliegue de secciones, entrada de movimientos, conteo de montos), con una nota sobre la frecuencia antes de hacer el conteo.
+- [x] **Degradado de marca en modo oscuro: se mantiene claro** (decidido el 2026-09-27, con capturas del estado actual). La hoja sigue el tema y el contraste ya cumplía. Lo único que cambia en oscuro es la sombra del botón "Crear": la teñida de rosa y azul se veía como un halo sobre la hoja oscura y pasa a una sombra neutra. Se descartaron forzar el onboarding en claro y diseñar una variante oscura del degradado.
+- [x] `.claude/` y `dist/` fuera del lint (`.oxlintrc.json`): `npm run lint` pasa de 125 avisos a 0.
+- [x] Los 13 avisos del proyecto, uno por uno:
+  - 8 falsos positivos de `set-state-in-effect` (los 6 hooks de datos, `useHousehold`, `useHouseholdId`): el efecto llama a `refresh()`, cuyo primer `setState` llega después de un `await`. Silenciados con el motivo escrito encima.
+  - `Login`: el error que Supabase deja en la URL se lee en el estado inicial, no con un `setState` en un efecto; el efecto solo limpia la URL.
+  - `RequireHousehold`: si al montar hay una invitación pendiente, arranca "uniéndose" desde el estado inicial, en vez de ponerlo en el efecto.
+  - `icons.tsx` (3): exportaba el mapa `ICONS` y las listas de opciones junto a los componentes, lo que rompe el recargado en caliente. Pasaron a `iconRegistry.ts` con sus tipos; `icons.tsx` solo exporta componentes.
+- [x] DESIGN.md decía `S/1.234`; el código da `S/ 1.234` (con espacio, como lo pone `Intl` y como se escribe en Perú). Se corrigió el documento.
+- [ ] Verificar en el navegador: entrar por un link de invitación con sesión ya iniciada (debe unirse sin pasar por el onboarding) y volver de un enlace de correo vencido (debe verse el error en el login).
+
+### Cierre del plan 2
+Las cuatro etapas están implementadas. Falta:
+- Las verificaciones en el navegador marcadas en M7, M8, M9 y M10.
+- Pendiente de M5, fuera de este plan: cargar las pantallas por ruta, para bajar el JS inicial de los 500 KB.
+- Pendientes de diseño, no de corrección: la pantalla de Estadísticas y las animaciones marcadas como pendientes en DESIGN.md.
 
 ---
 
