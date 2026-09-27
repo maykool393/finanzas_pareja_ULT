@@ -42,8 +42,9 @@ export function Dashboard() {
   const { investments } = investmentsQuery
   const { categories } = useCategories()
   const { members } = useHouseholdMembers()
-  const transactionsQuery = useTransactions()
-  const recentTransactions = transactionsQuery.transactions.slice(0, 5)
+  // Solo los 5 que se muestran, no el historial entero.
+  const transactionsQuery = useTransactions({}, { pageSize: 5 })
+  const recentTransactions = transactionsQuery.transactions
   const charts = useDashboardCharts(accounts, debts, investments, categories)
 
   const accountsTotal = sum(accounts.filter((a) => !a.archivedAt).map((a) => a.balance))

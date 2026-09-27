@@ -47,18 +47,52 @@ function dayAfter(dateStr: string): string {
   return date.toISOString().slice(0, 10)
 }
 
-export async function listTransactions(filters: TransactionFilters = {}): Promise<Transaction[]> {
-  let query = supabase.from('transactions').select('*').order('occurred_at', { ascending: false })
+/** Filas por pedido: el tope por defecto de la API de Supabase (`max-rows`). */
+const API_MAX_ROWS = 1000
+
+function transactionsQuery(filters: TransactionFilters) {
+  // id como desempate: con el mismo día, el orden tiene que ser estable para
+  // que dos páginas seguidas no repitan ni salten filas.
+  let query = supabase
+    .from('transactions')
+    .select('*')
+    .order('occurred_at', { ascending: false })
+    .order('id', { ascending: false })
 
   if (filters.accountId) query = query.eq('account_id', filters.accountId)
   if (filters.categoryId) query = query.eq('category_id', filters.categoryId)
   if (filters.memberId) query = query.eq('member_id', filters.memberId)
   if (filters.from) query = query.gte('occurred_at', filters.from)
   if (filters.to) query = query.lt('occurred_at', dayAfter(filters.to))
+  return query
+}
 
-  const { data, error } = await query
+/** Una página de movimientos, del más nuevo al más antiguo. */
+export async function listTransactionsPage(
+  filters: TransactionFilters,
+  offset: number,
+  limit: number,
+): Promise<Transaction[]> {
+  const { data, error } = await transactionsQuery(filters).range(offset, offset + limit - 1)
   if (error) throw error
   return (data ?? []).map(mapRow)
+}
+
+/**
+ * Los movimientos que cumplen los filtros (hasta `max`), pedidos en bloques de
+ * 1000. Sin `max`, todos: para rangos acotados que se suman completos
+ * (gráficos, presupuestos). Un solo pedido se cortaría en silencio en la fila
+ * 1000 y los totales saldrían bajos.
+ */
+export async function listTransactions(filters: TransactionFilters = {}, max = Infinity): Promise<Transaction[]> {
+  const all: Transaction[] = []
+  while (all.length < max) {
+    const limit = Math.min(API_MAX_ROWS, max - all.length)
+    const page = await listTransactionsPage(filters, all.length, limit)
+    all.push(...page)
+    if (page.length < limit) break
+  }
+  return all
 }
 
 export async function createTransaction(

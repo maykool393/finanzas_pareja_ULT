@@ -205,7 +205,7 @@ Auditoría en el formato de `impeccable audit`: **15/20** (Bueno), contra 13/20 
 |---|---|---|---|
 | M11 | Montos con centavos | impeccable (harden) | ✅ Completo |
 | M12 | Teclado en grupos de opciones y título por pantalla | impeccable (harden) | ✅ Completo |
-| M13 | Carga de datos: límites, paginación y carga por ruta | impeccable (optimize) | Pendiente |
+| M13 | Carga de datos: límites, paginación y carga por ruta | impeccable (optimize) | ✅ Completo |
 | M14 | Ajustes del hogar y detalles menores | impeccable (harden, polish) | Pendiente |
 
 ### M11 — Montos con centavos ✅
@@ -223,17 +223,22 @@ Auditoría en el formato de `impeccable audit`: **15/20** (Bueno), contra 13/20 
 - [x] Probado en Chromium con Playwright sobre una página temporal (ya borrada): Tab, flechas en ambos sentidos, Inicio, Fin y Shift+Tab en Gasto/Ingreso y en el selector de ícono; títulos de la 404 y del login.
 - [ ] Verificar con un lector de pantalla (NVDA o VoiceOver): que anuncie "botón de opción, 2 de 6" al moverse con flechas, y el título nuevo al cambiar de pantalla.
 
-### M13 — Carga de datos
-- [ ] "Últimos movimientos" descarga todo el historial para mostrar 5: pedir solo 5.
-- [ ] Movimientos sin paginación: con el límite por defecto de Supabase (1000 filas), pasados los 1000 dejaría de mostrar los más antiguos sin avisar.
-- [ ] Los formularios vuelven a pedir cuentas, categorías y miembros cada vez que se abren: una caché compartida.
-- [ ] Cargar las pantallas por ruta (JS inicial sobre 500 KB, pendiente desde M5).
+### M13 — Carga de datos ✅
+- [x] "Últimos movimientos" pide solo 5 (antes descargaba todo el historial).
+- [x] Movimientos por páginas de 50, con "Cargar más". Después de guardar se recargan las páginas ya abiertas, y si alguien agregó un movimiento entre medio no se repiten filas. Orden estable (fecha y luego id) para que las páginas no salten filas.
+- [x] **Gráficos y presupuestos también se habrían cortado en 1000 filas** (6 meses de movimientos, 5–6 por día): ahora se piden en bloques de 1000 hasta el final. *(Detectado al implementar.)*
+- [x] Caché compartida (`lib/sharedQuery.ts`) para el hogar, las cuentas, las categorías y los miembros: se piden una vez para toda la app y se renuevan después de 30 segundos o al guardar; se borran al cambiar de usuario. Abrir el dashboard hacía unas 8 consultas del mismo perfil; ahora una. Los formularios ya no vuelven a pedir datos al abrirse.
+- [x] Guardar, editar o borrar un movimiento recarga también las cuentas: los saldos los cambia la base, y con la caché habrían quedado viejos. *(Detectado al implementar.)*
+- [x] Si falla la carga del hogar, se muestra el error con "Reintentar" y "Cerrar sesión". Antes el fallo se leía como "no tiene hogar" y mandaba al onboarding a quien ya tenía uno. *(Detectado al implementar.)*
+- [x] Carga por ruta: JS inicial de 538 a 477 KB (154 → 138 KB comprimido), bajo el aviso de 500 KB. Lo que queda es React, Supabase y el router. Probado en el build con Playwright: login, 404 y recuperar contraseña abren sus fragmentos, sin errores en consola.
+- [ ] Verificar con sesión: "Cargar más" en Movimientos; guardar un movimiento y ver el saldo nuevo en el dashboard sin recargar; cerrar sesión y entrar con otra cuenta sin ver datos de la anterior.
 
 ### M14 — Ajustes del hogar y detalles menores
 - [ ] La moneda y el reparto de gastos solo se eligen en el onboarding: agregar "Ajustes del hogar" en "Ver más".
 - [ ] Resumen en texto de los gráficos "Ingresos vs. gastos" y "Evolución del patrimonio".
 - [ ] Títulos de sección (Cuentas, Deudas, Inversiones) como encabezados.
 - [ ] `90dvh` en el diálogo; tooltips de gráficos con tokens.
+- [ ] El login y "Recuperar contraseña" no tienen `<h1>` (apareció al probar la M13).
 
 ---
 
@@ -734,5 +739,5 @@ cascade;
 ## DESPLEGAR Y SUBIR AL GITHUB
 git add -A
 git status   # revisa que solo aparezca lo que quieres subir
-git commit -m "Autenticación social, renombre a Twoney, plantilla de correo"
+git commit -m "Aplicación de mejora Fase 13"
 git push origin main

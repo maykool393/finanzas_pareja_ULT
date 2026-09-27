@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
 import { useHouseholdId } from '../../hooks/useHouseholdId'
+import { createSharedQuery, useSharedQuery } from '../../lib/sharedQuery'
 import type { Account } from '../../types/domain'
 import {
   type AccountInput,
@@ -10,38 +10,21 @@ import {
   updateAccount,
 } from './api'
 
+/** Compartidas por toda la app (ver sharedQuery.ts): cada formulario que las usa ya no las vuelve a pedir. */
+const accountsQuery = createSharedQuery<Account[]>(() => listAccounts(), [])
+
+/**
+ * Los saldos los mantiene la base con un trigger al guardar un movimiento: quien
+ * crea, edita o borra uno llama a esto para que las cuentas no queden viejas.
+ */
+export function refreshAccounts() {
+  return accountsQuery.refresh()
+}
+
 export function useAccounts() {
   const { householdId } = useHouseholdId()
-  const [accounts, setAccounts] = useState<Account[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(false)
-
-  // `loading` cubre solo la primera carga y los reintentos: las recargas
-  // después de guardar actualizan la lista sin reemplazarla por "Cargando…".
-  const refresh = useCallback(async () => {
-    try {
-      setAccounts(await listAccounts())
-      setError(false)
-    } catch (err) {
-      console.error(err)
-      setError(true)
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-  useEffect(() => {
-    // Falso positivo del linter: refresh es async y su primer setState llega
-    // después del await, no de forma síncrona dentro del efecto.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    refresh()
-  }, [refresh])
-
-  const retry = useCallback(() => {
-    setLoading(true)
-    setError(false)
-    refresh()
-  }, [refresh])
+  const { data: accounts, loading, error } = useSharedQuery(accountsQuery)
+  const refresh = accountsQuery.refresh
 
   async function create(input: AccountInput, initialBalance: number) {
     if (!householdId) return
@@ -64,5 +47,5 @@ export function useAccounts() {
     await refresh()
   }
 
-  return { accounts, loading, error, retry, create, update, toggleArchived, remove }
+  return { accounts, loading, error, retry: accountsQuery.retry, create, update, toggleArchived, remove }
 }

@@ -4,6 +4,7 @@ import { useSession } from '../../hooks/useSession'
 import { clearPendingInvite, getPendingInvite } from '../../lib/pendingInvite'
 import { supabase } from '../../lib/supabase'
 import { HouseholdSetup } from '../../pages/HouseholdSetup'
+import { LoadError } from '../ui/LoadStatus'
 import styles from './RequireAuth.module.css'
 
 /**
@@ -14,7 +15,7 @@ import styles from './RequireAuth.module.css'
  */
 export function RequireHousehold({ children }: { children: ReactNode }) {
   const { user } = useSession()
-  const { householdId, loading, refresh } = useHouseholdId()
+  const { householdId, loading, error, refresh, retry } = useHouseholdId()
   // Si al montar hay una invitación pendiente (link/QR), se arranca "uniéndose":
   // el splash se ve desde el primer render, sin esperar al efecto.
   const [joiningInvite, setJoiningInvite] = useState(() => getPendingInvite() !== null)
@@ -52,6 +53,19 @@ export function RequireHousehold({ children }: { children: ReactNode }) {
   // Con household, la invitación pendiente no aplica (no se consume): se sigue de largo.
   if (loading || (joiningInvite && !householdId)) {
     return <div className={styles.splash} aria-busy="true" />
+  }
+
+  // Sin esto, un fallo al pedir el perfil se leía como "no tiene hogar" y
+  // mandaba al onboarding a quien ya tenía uno.
+  if (error) {
+    return (
+      <div className={`${styles.splash} ${styles.centered}`}>
+        <LoadError onRetry={retry} />
+        <button type="button" className={styles.signOut} onClick={() => supabase.auth.signOut()}>
+          Cerrar sesión
+        </button>
+      </div>
+    )
   }
 
   if (!householdId) {

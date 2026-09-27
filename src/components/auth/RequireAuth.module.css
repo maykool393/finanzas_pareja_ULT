@@ -3,3 +3,25 @@
   min-height: 100dvh;
   background: var(--surface-page);
 }
+
+/* Error al cargar el hogar: el mensaje centrado, con "Cerrar sesión" debajo
+   por si la sesión quedó rota (ej. un usuario borrado con sesión abierta). */
+.centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  text-align: center;
+}
+
+.signOut {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  transition: color var(--duration-fast) ease;
+}
+
+.signOut:hover {
+  color: var(--text-primary);
+}

@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
 import { useHouseholdId } from '../../hooks/useHouseholdId'
+import { createSharedQuery, useSharedQuery } from '../../lib/sharedQuery'
 import type { Category } from '../../types/domain'
 import {
   type CategoryInput,
@@ -10,38 +10,13 @@ import {
   updateCategory,
 } from './api'
 
+/** Compartidas por toda la app (ver sharedQuery.ts): cada formulario que las usa ya no las vuelve a pedir. */
+const categoriesQuery = createSharedQuery<Category[]>(() => listCategories(), [])
+
 export function useCategories() {
   const { householdId } = useHouseholdId()
-  const [categories, setCategories] = useState<Category[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(false)
-
-  // `loading` cubre solo la primera carga y los reintentos: las recargas
-  // después de guardar actualizan la lista sin reemplazarla por "Cargando…".
-  const refresh = useCallback(async () => {
-    try {
-      setCategories(await listCategories())
-      setError(false)
-    } catch (err) {
-      console.error(err)
-      setError(true)
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-  useEffect(() => {
-    // Falso positivo del linter: refresh es async y su primer setState llega
-    // después del await, no de forma síncrona dentro del efecto.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    refresh()
-  }, [refresh])
-
-  const retry = useCallback(() => {
-    setLoading(true)
-    setError(false)
-    refresh()
-  }, [refresh])
+  const { data: categories, loading, error } = useSharedQuery(categoriesQuery)
+  const refresh = categoriesQuery.refresh
 
   async function create(input: CategoryInput) {
     if (!householdId) return
@@ -64,5 +39,5 @@ export function useCategories() {
     await refresh()
   }
 
-  return { categories, loading, error, retry, create, update, toggleArchived, remove }
+  return { categories, loading, error, retry: categoriesQuery.retry, create, update, toggleArchived, remove }
 }

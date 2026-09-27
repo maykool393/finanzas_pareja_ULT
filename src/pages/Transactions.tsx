@@ -3,6 +3,7 @@ import { Button } from '../components/ui/Button'
 import { ConfirmDialog } from '../components/ui/ConfirmDialog'
 import { DangerRow } from '../components/ui/DangerRow'
 import { Dialog } from '../components/ui/Dialog'
+import { FormError } from '../components/ui/FormError'
 import { LoadStatus } from '../components/ui/LoadStatus'
 import { useAccounts } from '../features/accounts/useAccounts'
 import { useCategories } from '../features/categories/useCategories'
@@ -12,13 +13,15 @@ import { TransactionList } from '../features/transactions/TransactionList'
 import { useTransactions } from '../features/transactions/useTransactions'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useHouseholdMembers } from '../hooks/useHouseholdMembers'
+import { ERROR_MESSAGES } from '../lib/errorMessages'
 import type { Transaction, TransactionFilters } from '../types/domain'
 import styles from './Transactions.module.css'
 
 export function Transactions() {
   useDocumentTitle('Movimientos')
   const [filters, setFilters] = useState<TransactionFilters>({})
-  const { transactions, loading, error, retry, create, update, remove } = useTransactions(filters)
+  const { transactions, hasMore, loading, error, retry, loadMore, loadingMore, loadMoreError, create, update, remove } =
+    useTransactions(filters)
   const { accounts } = useAccounts()
   const { categories } = useCategories()
   const { members } = useHouseholdMembers()
@@ -57,6 +60,14 @@ export function Transactions() {
           members={members}
           onSelect={(transaction) => setEditing(transaction)}
         />
+
+        {loadMoreError && <FormError>{ERROR_MESSAGES.load}</FormError>}
+
+        {hasMore && (
+          <Button variant="secondary" onClick={loadMore} disabled={loadingMore}>
+            {loadingMore ? 'Cargando…' : 'Cargar más'}
+          </Button>
+        )}
       </LoadStatus>
 
       <Dialog open={formOpen} onClose={() => setFormOpen(false)} title="Nuevo movimiento">
