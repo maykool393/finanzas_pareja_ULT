@@ -306,6 +306,16 @@ Estas tres pantallas comparten el mismo fondo: un degradado difuminado en tonos 
 - "Cargando…" aparece solo en la primera carga y al reintentar. Las recargas después de guardar actualizan la lista en su lugar: reemplazarla por "Cargando…" en cada guardado la haría parpadear.
 - Un monto que depende de datos que no han llegado nunca se muestra como `$0`, que parece un saldo real. El patrimonio muestra un bloque `--surface-sunken` del alto de la línea; el total de una sección se omite.
 
+**Estados vacíos** (`EmptyState`)
+- Un estado vacío es la primera guía de uso, no un aviso. Dice qué no hay todavía (título corto), para qué sirve lo que va a aparecer ahí o qué falta hacer antes (una o dos frases), y ofrece el paso siguiente (casi siempre un botón secundario para crear lo primero). Borde discontinuo `--border-strong`: marca un lugar que se va a llenar, sin parecer una tarjeta más.
+- **Si falta un paso previo, el estado vacío manda ahí**, no al botón que no va a funcionar: Movimientos sin cuentas lleva a Finanzas; Presupuestos sin categorías, a Categorías. Y el formulario que no se puede guardar por eso lo dice, en vez de dejar "Guardar" desactivado sin explicación.
+- Distinto del estado vacío por filtros ("Sin resultados", con "Quitar filtros"): no se mezclan.
+- Donde el hogar empieza sin nada que tenga sentido traer de fábrica, se ofrece una plantilla: Categorías tiene "Usar las sugeridas" (`features/categories/suggested.ts`).
+- Textos neutros en número: el hogar puede ser de una o de dos personas ("Agrega dónde está el dinero del hogar", no "donde tienen su dinero").
+
+**Carga** (`SkeletonCards`, `SkeletonRows`)
+- Mientras llega una lista, una silueta del mismo alto que el contenido (tarjetas de 96px en la grilla de secciones, filas de 56px), en `--surface-sunken`, estática: la carga suele durar menos de un segundo y un brillo en bucle sería movimiento sin información. Se pasa a `LoadStatus` con `skeleton`; sin él, queda el texto "Cargando…".
+
 **Pantallas sin contenido (404 y secciones pendientes)**
 - Ninguna ruta termina en una pantalla en blanco ni en un texto suelto. Toda pantalla dice qué es, por qué no hay nada y adónde ir.
 - **404** (`NotFound`, ruta `*`): va fuera de la sesión, con el mismo `AuthLayout` que el login, porque cualquiera puede abrir un enlace roto. Tiene un título, una línea que explica la causa y el botón principal "Volver al inicio" hacia `/`, que ya decide si va al dashboard o al login.

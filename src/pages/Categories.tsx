@@ -2,10 +2,13 @@ import { useState } from 'react'
 import { Button } from '../components/ui/Button'
 import { ConfirmDialog } from '../components/ui/ConfirmDialog'
 import { Dialog } from '../components/ui/Dialog'
+import { EmptyState } from '../components/ui/EmptyState'
 import { FormError } from '../components/ui/FormError'
 import { LoadStatus } from '../components/ui/LoadStatus'
+import { SkeletonRows } from '../components/ui/Skeleton'
 import { CategoryForm } from '../features/categories/CategoryForm'
 import { CategoryList } from '../features/categories/CategoryList'
+import { SUGGESTED_CATEGORIES } from '../features/categories/suggested'
 import { useCategories } from '../features/categories/useCategories'
 import { useAsyncAction } from '../hooks/useAsyncAction'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
@@ -15,9 +18,10 @@ import styles from './Categories.module.css'
 
 export function Categories() {
   useDocumentTitle('Categorías')
-  const { categories, loading, error, retry, create, update, toggleArchived, remove } = useCategories()
+  const { categories, loading, error, retry, create, createMany, update, toggleArchived, remove } = useCategories()
 
   const unarchive = useAsyncAction()
+  const suggested = useAsyncAction()
   const [showArchived, setShowArchived] = useState(false)
   const [formOpen, setFormOpen] = useState(false)
   const [editing, setEditing] = useState<Category | null>(null)
@@ -34,8 +38,26 @@ export function Categories() {
         <Button onClick={() => setFormOpen(true)}>Nueva categoría</Button>
       </div>
 
-      <LoadStatus loading={loading} error={error} onRetry={retry}>
-        {showArchived ? (
+      <LoadStatus loading={loading} error={error} onRetry={retry} skeleton={<SkeletonRows />}>
+        {!showArchived && active.length === 0 ? (
+          <EmptyState
+            title="Aún no hay categorías"
+            description="Ordenan los movimientos (Supermercado, Sueldo…) y permiten poner presupuestos. Empieza con las más comunes y ajústalas después, o crea las tuyas."
+            action={
+              <div className={styles.emptyActions}>
+                <Button
+                  onClick={() => suggested.run(() => createMany(SUGGESTED_CATEGORIES), ERROR_MESSAGES.save)}
+                  disabled={suggested.pending}
+                >
+                  {suggested.pending ? 'Creando…' : 'Usar las sugeridas'}
+                </Button>
+                <Button variant="secondary" onClick={() => setFormOpen(true)} disabled={suggested.pending}>
+                  Crear la primera
+                </Button>
+              </div>
+            }
+          />
+        ) : showArchived ? (
           <CategoryList
             categories={archived}
             archived
@@ -56,18 +78,22 @@ export function Categories() {
           />
         )}
 
+        {suggested.error && <FormError>{suggested.error}</FormError>}
         {unarchive.error && <FormError>{unarchive.error}</FormError>}
 
-        <button
-          type="button"
-          className={styles.archivedToggle}
-          onClick={() => {
-            unarchive.reset()
-            setShowArchived((v) => !v)
-          }}
-        >
-          {showArchived ? 'Ver activas' : `Ver archivadas (${archived.length})`}
-        </button>
+        {/* Sin archivadas no hay nada que ver: antes decía "Ver archivadas (0)". */}
+        {(archived.length > 0 || showArchived) && (
+          <button
+            type="button"
+            className={styles.archivedToggle}
+            onClick={() => {
+              unarchive.reset()
+              setShowArchived((v) => !v)
+            }}
+          >
+            {showArchived ? 'Ver activas' : `Ver archivadas (${archived.length})`}
+          </button>
+        )}
       </LoadStatus>
 
       <Dialog open={formOpen} onClose={() => setFormOpen(false)} title="Nueva categoría">

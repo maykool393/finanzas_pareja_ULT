@@ -1,6 +1,10 @@
 import { lazy, Suspense } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
+import { EmptyState } from '../components/ui/EmptyState'
 import { LoadError, LoadStatus } from '../components/ui/LoadStatus'
+import { SkeletonRows } from '../components/ui/Skeleton'
 import { AccountsSection } from '../features/accounts/AccountsSection'
 import { useAccounts } from '../features/accounts/useAccounts'
 import { useCategories } from '../features/categories/useCategories'
@@ -34,6 +38,7 @@ const sum = (values: number[]) => values.reduce((acc, v) => acc + v, 0)
 export function Dashboard() {
   useDocumentTitle('Finanzas')
   const currency = useCurrency()
+  const navigate = useNavigate()
   const accountsQuery = useAccounts()
   const debtsQuery = useDebts()
   const investmentsQuery = useInvestments()
@@ -55,6 +60,8 @@ export function Dashboard() {
   // El patrimonio suma tres listas: si falta una, el total sería falso.
   const totalsLoading = accountsQuery.loading || debtsQuery.loading || investmentsQuery.loading
   const totalsError = accountsQuery.error || debtsQuery.error || investmentsQuery.error
+  // Primer uso: sin nada registrado, "$0" solo no dice por dónde empezar.
+  const isEmptyHousehold = !totalsLoading && accounts.length === 0 && debts.length === 0 && investments.length === 0
 
   return (
     <>
@@ -72,7 +79,11 @@ export function Dashboard() {
         ) : (
           <p className={`amount ${styles.heroTotal}`}>{formatCurrency(netWorth, currency)}</p>
         )}
-        <p className={styles.heroMeta}>Cuentas e inversiones, menos deudas</p>
+        <p className={styles.heroMeta}>
+          {isEmptyHousehold
+            ? 'Agrega tu primera cuenta abajo para empezar a ver el patrimonio.'
+            : 'Cuentas e inversiones, menos deudas'}
+        </p>
       </header>
 
       {/* Las secciones reciben los mismos datos que el patrimonio y los gráficos:
@@ -114,12 +125,24 @@ export function Dashboard() {
           loading={transactionsQuery.loading}
           error={transactionsQuery.error}
           onRetry={transactionsQuery.retry}
+          skeleton={<SkeletonRows />}
         >
           <TransactionList
             transactions={recentTransactions}
             accounts={accounts}
             categories={categories}
             members={members}
+            empty={
+              <EmptyState
+                title="Aún no hay movimientos"
+                description="Aquí aparecen los últimos cinco movimientos registrados."
+                action={
+                  <Button variant="secondary" onClick={() => navigate('/mover')}>
+                    Ir a Movimientos
+                  </Button>
+                }
+              />
+            }
           />
         </LoadStatus>
       </Card>

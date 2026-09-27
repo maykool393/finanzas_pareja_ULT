@@ -3,6 +3,7 @@ import { createSharedQuery, useSharedQuery } from '../../lib/sharedQuery'
 import type { Category } from '../../types/domain'
 import {
   type CategoryInput,
+  createCategories,
   createCategory,
   deleteCategory,
   listCategories,
@@ -17,6 +18,12 @@ export function useCategories() {
   const { householdId } = useHouseholdId()
   const { data: categories, loading, error } = useSharedQuery(categoriesQuery)
   const refresh = categoriesQuery.refresh
+
+  async function createMany(inputs: CategoryInput[]) {
+    if (!householdId) return
+    await createCategories(householdId, inputs)
+    await refresh()
+  }
 
   async function create(input: CategoryInput) {
     if (!householdId) return
@@ -39,5 +46,5 @@ export function useCategories() {
     await refresh()
   }
 
-  return { categories, loading, error, retry: categoriesQuery.retry, create, update, toggleArchived, remove }
+  return { categories, loading, error, retry: categoriesQuery.retry, create, createMany, update, toggleArchived, remove }
 }

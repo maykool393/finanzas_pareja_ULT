@@ -250,6 +250,27 @@ Las cuatro etapas están implementadas. Falta:
 
 ---
 
+## M15 — Estados vacíos que guían y skeletons de carga (`impeccable onboard`)
+
+Pendiente desde el cierre del plan 1 ("skeletons de carga y estados vacíos que guíen al usuario"). M7 dejó la carga y los errores consistentes, pero los estados vacíos siguen siendo frases sueltas ("Sin cuentas todavía.") y la carga, el texto "Cargando…". Un hogar recién creado no tiene cuentas ni categorías, y la app no dice por dónde empezar.
+
+**Dependencias del primer uso que hoy nadie explica:** un movimiento necesita una cuenta (sin ella, "Guardar" queda desactivado sin decir por qué) y un presupuesto necesita una categoría (el hogar empieza sin ninguna).
+
+**Estado:** ✅ Completo.
+
+- [x] `EmptyState`: título corto, para qué sirve lo que va a aparecer y el paso siguiente (casi siempre un botón). Borde discontinuo, para que no se lea como una tarjeta que falló.
+- [x] Cuentas, deudas e inversiones: estado vacío con su botón de crear, que abre el formulario de la sección.
+- [x] Movimientos: sin cuentas, "Primero, una cuenta" con "Ir a Finanzas"; con filtros sin resultados, "Quitar filtros"; si no, "Registrar el primero". El formulario explica por qué no se puede guardar sin cuenta. En el dashboard, "Ir a Movimientos".
+- [x] Presupuestos: sin categorías, "Primero, categorías" con "Ir a Categorías"; si no, "Crear el primero". El formulario explica por qué no se puede guardar cuando no quedan categorías disponibles.
+- [x] Categorías: "Usar las sugeridas" crea de un toque 7 categorías comunes (6 de gasto y Sueldo) en un solo pedido, o "Crear la primera". "Ver archivadas (0)" ya no aparece sin archivadas.
+- [x] Dashboard sin nada registrado: bajo el patrimonio, "Agrega tu primera cuenta abajo para empezar a ver el patrimonio".
+- [x] Skeletons del mismo alto que el contenido (tarjetas en las secciones del dashboard; filas en Movimientos, últimos movimientos, Presupuestos y Categorías), estáticos.
+- [x] Textos neutros en número: el hogar puede ser de una persona.
+- [x] Verificado con capturas en claro y oscuro a 390px (página temporal, ya borrada).
+- [ ] Verificar con un hogar nuevo: recorrer el primer uso (Dashboard vacío → primera cuenta → primer movimiento → categorías sugeridas → primer presupuesto) y que cada estado vacío lleve al paso correcto.
+
+---
+
 ## Convenciones transversales (aplican a todas las fases)
 
 **RLS**: todas las tablas nuevas o alteradas usan exactamente el patrón ya establecido en la migración base — `enable row level security` + una sola policy `for all to authenticated using (household_id = public.current_household_id()) with check (...)`. No se repite en cada fase salvo que un módulo necesite algo distinto (ninguno lo necesita).

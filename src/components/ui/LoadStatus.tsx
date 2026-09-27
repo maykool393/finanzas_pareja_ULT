@@ -6,6 +6,8 @@ interface LoadStatusProps {
   loading: boolean
   error: boolean
   onRetry: () => void
+  /** Silueta del contenido mientras carga (SkeletonCards, SkeletonRows). Sin ella, el texto "Cargando…". */
+  skeleton?: ReactNode
   children: ReactNode
 }
 
@@ -14,10 +16,11 @@ interface LoadStatusProps {
  * error con "Reintentar" si falla, y el contenido cuando está. Así ninguna
  * lista muestra su estado vacío ("Sin cuentas todavía") antes de cargar.
  */
-export function LoadStatus({ loading, error, onRetry, children }: LoadStatusProps) {
+export function LoadStatus({ loading, error, onRetry, skeleton, children }: LoadStatusProps) {
   if (error) return <LoadError onRetry={onRetry} />
 
   if (loading) {
+    if (skeleton) return <>{skeleton}</>
     return (
       <p className={styles.loading} aria-busy="true">
         Cargando…

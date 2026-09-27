@@ -86,7 +86,3 @@ button.row:active {
 .income { color: var(--gain-text); }
 .expense { color: var(--loss-text); }
 
-.empty {
-  font-size: var(--text-sm);
-  color: var(--text-muted);
-}

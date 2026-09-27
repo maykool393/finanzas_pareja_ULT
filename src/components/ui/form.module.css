@@ -3,3 +3,10 @@
   flex-direction: column;
   gap: var(--space-lg);
 }
+
+/* Aviso dentro de un formulario: explica por qué algo no se puede hacer todavía. */
+.notice {
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--text-secondary);
+}

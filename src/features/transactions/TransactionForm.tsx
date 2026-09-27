@@ -32,7 +32,7 @@ interface TransactionFormProps {
 }
 
 export function TransactionForm({ initial, onSubmit, onCancel }: TransactionFormProps) {
-  const { accounts } = useAccounts()
+  const { accounts, loading: accountsLoading } = useAccounts()
   const { categories } = useCategories()
   const activeAccounts = accounts.filter((a) => !a.archivedAt)
 
@@ -94,6 +94,13 @@ export function TransactionForm({ initial, onSubmit, onCancel }: TransactionForm
       <TextField label="Fecha" type="date" value={occurredAt} onChange={setOccurredAt} required />
 
       <TextField label="Nota" value={description} onChange={setDescription} placeholder="Opcional" />
+
+      {/* Sin esto, Guardar quedaba desactivado sin decir por qué. */}
+      {!accountsLoading && activeAccounts.length === 0 && (
+        <p className={formStyles.notice}>
+          Cada movimiento entra o sale de una cuenta, y aún no hay ninguna. Crea la primera desde Finanzas.
+        </p>
+      )}
 
       {error && <FormError>{error}</FormError>}
 

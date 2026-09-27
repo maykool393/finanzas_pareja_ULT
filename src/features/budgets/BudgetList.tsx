@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { ProgressBar } from '../../components/ui/ProgressBar'
 import { ICONS, type IconKey } from '../../components/ui/iconRegistry'
 import { useCurrency } from '../../hooks/useCurrency'
@@ -11,6 +12,8 @@ interface BudgetListProps {
   categories: Category[]
   onEdit: (budget: BudgetProgress) => void
   onDelete: (budget: BudgetProgress) => void
+  /** Qué mostrar sin presupuestos: depende de si ya hay categorías. */
+  empty: ReactNode
 }
 
 /**
@@ -27,11 +30,11 @@ function fillColorFor(ratio: number, type: CategoryType, categoryTextColor: stri
   return 'var(--gain-color)'
 }
 
-export function BudgetList({ budgets, categories, onEdit, onDelete }: BudgetListProps) {
+export function BudgetList({ budgets, categories, onEdit, onDelete, empty }: BudgetListProps) {
   const currency = useCurrency()
 
   if (budgets.length === 0) {
-    return <p className={styles.empty}>Sin presupuestos este mes.</p>
+    return <>{empty}</>
   }
 
   return (

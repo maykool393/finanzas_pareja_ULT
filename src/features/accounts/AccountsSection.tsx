@@ -19,7 +19,12 @@ export function AccountsSection({ query, members }: AccountsSectionProps) {
       defaultIcon="bank"
       amount={(account) => account.balance}
       text={{
-        empty: 'Sin cuentas todavía.',
+        empty: {
+          title: 'Aún no hay cuentas',
+          description:
+            'Agrega dónde está el dinero del hogar: banco, efectivo o tarjeta. Con sus saldos se calcula el patrimonio, y en ellas se registran los movimientos.',
+          action: 'Agregar la primera cuenta',
+        },
         archivedEmpty: 'Ninguna cuenta archivada.',
         createTitle: 'Nueva cuenta',
         editTitle: 'Editar cuenta',

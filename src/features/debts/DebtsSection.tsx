@@ -20,7 +20,11 @@ export function DebtsSection({ query, members }: DebtsSectionProps) {
       amount={(debt) => debt.remaining}
       progress={(debt) => (debt.principal > 0 ? (debt.principal - debt.remaining) / debt.principal : 0)}
       text={{
-        empty: 'Sin deudas registradas.',
+        empty: {
+          title: 'Sin deudas registradas',
+          description: 'Si hay un préstamo o una compra en cuotas, agrégalo para ver cuánto falta por pagar. Se resta del patrimonio.',
+          action: 'Agregar una deuda',
+        },
         archivedEmpty: 'Ninguna deuda archivada.',
         createTitle: 'Nueva deuda',
         editTitle: 'Editar deuda',

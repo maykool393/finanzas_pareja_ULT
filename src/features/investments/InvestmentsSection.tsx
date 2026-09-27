@@ -19,7 +19,11 @@ export function InvestmentsSection({ query, members }: InvestmentsSectionProps) 
       defaultIcon="trend-up"
       amount={(investment) => investment.currentValue}
       text={{
-        empty: 'Sin inversiones todavía.',
+        empty: {
+          title: 'Aún no hay inversiones',
+          description: 'Agrega depósitos a plazo, fondos o acciones con su valor actual. Se suman al patrimonio.',
+          action: 'Agregar una inversión',
+        },
         archivedEmpty: 'Ninguna inversión archivada.',
         createTitle: 'Nueva inversión',
         editTitle: 'Editar inversión',

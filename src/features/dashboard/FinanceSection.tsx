@@ -1,12 +1,15 @@
 import { type ReactNode, useState } from 'react'
 import { ArchivedList, ArchivedToggle } from '../../components/ui/ArchivedList'
+import { Button } from '../../components/ui/Button'
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog'
 import { DangerRow } from '../../components/ui/DangerRow'
 import { Dialog } from '../../components/ui/Dialog'
+import { EmptyState } from '../../components/ui/EmptyState'
 import { ICONS, type AccountIconKey } from '../../components/ui/iconRegistry'
 import { ItemCard, type ItemVariant } from '../../components/ui/ItemCard'
 import { LoadStatus } from '../../components/ui/LoadStatus'
 import { SectionHeader } from '../../components/ui/SectionHeader'
+import { SkeletonCards } from '../../components/ui/Skeleton'
 import styles from '../../components/ui/sectionGrid.module.css'
 import { useCurrency } from '../../hooks/useCurrency'
 import { formatCurrency } from '../../lib/format'
@@ -47,7 +50,8 @@ interface FinanceSectionProps<T extends FinanceItem> {
   /** Solo deudas: proporción pagada (0–1). */
   progress?: (item: T) => number
   text: {
-    empty: string
+    /** Estado vacío que guía: qué va aquí, para qué sirve y el texto del botón para crear lo primero. */
+    empty: { title: string; description: string; action: string }
     archivedEmpty: string
     createTitle: string
     editTitle: string
@@ -100,8 +104,18 @@ export function FinanceSection<T extends FinanceItem>({
       />
 
       {expanded && (
-        <LoadStatus loading={query.loading} error={query.error} onRetry={query.retry}>
-          {!showArchived && active.length === 0 && <p className={styles.empty}>{text.empty}</p>}
+        <LoadStatus loading={query.loading} error={query.error} onRetry={query.retry} skeleton={<SkeletonCards />}>
+          {!showArchived && active.length === 0 && (
+            <EmptyState
+              title={text.empty.title}
+              description={text.empty.description}
+              action={
+                <Button variant="secondary" onClick={() => setFormOpen(true)}>
+                  {text.empty.action}
+                </Button>
+              }
+            />
+          )}
 
           {!showArchived && active.length > 0 && (
             <div className={styles.cardRow}>

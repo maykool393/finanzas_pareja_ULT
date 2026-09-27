@@ -50,6 +50,15 @@ export async function createCategory(householdId: string, input: CategoryInput):
   return mapRow(data)
 }
 
+/** Varias categorías en un solo pedido (las sugeridas del primer uso). */
+export async function createCategories(householdId: string, inputs: CategoryInput[]): Promise<void> {
+  const { error } = await supabase
+    .from('categories')
+    .insert(inputs.map((input) => ({ household_id: householdId, ...input })))
+    .select()
+  if (error) throw error
+}
+
 export async function updateCategory(id: string, input: CategoryInput): Promise<Category> {
   const { data, error } = await supabase.from('categories').update(input).eq('id', id).select().single()
   if (error) throw error

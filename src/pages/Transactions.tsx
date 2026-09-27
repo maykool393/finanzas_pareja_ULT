@@ -1,10 +1,13 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
 import { ConfirmDialog } from '../components/ui/ConfirmDialog'
 import { DangerRow } from '../components/ui/DangerRow'
 import { Dialog } from '../components/ui/Dialog'
+import { EmptyState } from '../components/ui/EmptyState'
 import { FormError } from '../components/ui/FormError'
 import { LoadStatus } from '../components/ui/LoadStatus'
+import { SkeletonRows } from '../components/ui/Skeleton'
 import { useAccounts } from '../features/accounts/useAccounts'
 import { useCategories } from '../features/categories/useCategories'
 import { TransactionFiltersBar } from '../features/transactions/TransactionFiltersBar'
@@ -22,11 +25,13 @@ export function Transactions() {
   const [filters, setFilters] = useState<TransactionFilters>({})
   const { transactions, hasMore, loading, error, retry, loadMore, loadingMore, loadMoreError, create, update, remove } =
     useTransactions(filters)
-  const { accounts } = useAccounts()
+  const { accounts, loading: accountsLoading } = useAccounts()
+  const navigate = useNavigate()
   const { categories } = useCategories()
   const { members } = useHouseholdMembers()
 
   const [filtersOpen, setFiltersOpen] = useState(false)
+  const hasFilters = Object.values(filters).some(Boolean)
   const [formOpen, setFormOpen] = useState(false)
   const [editing, setEditing] = useState<Transaction | null>(null)
   const [deleting, setDeleting] = useState<Transaction | null>(null)
@@ -52,13 +57,46 @@ export function Transactions() {
         />
       )}
 
-      <LoadStatus loading={loading} error={error} onRetry={retry}>
+      <LoadStatus loading={loading} error={error} onRetry={retry} skeleton={<SkeletonRows />}>
         <TransactionList
           transactions={transactions}
           accounts={accounts}
           categories={categories}
           members={members}
           onSelect={(transaction) => setEditing(transaction)}
+          empty={
+            hasFilters ? (
+              <EmptyState
+                title="Sin resultados"
+                description="Ningún movimiento coincide con estos filtros."
+                action={
+                  <Button variant="secondary" onClick={() => setFilters({})}>
+                    Quitar filtros
+                  </Button>
+                }
+              />
+            ) : !accountsLoading && accounts.every((a) => a.archivedAt) ? (
+              <EmptyState
+                title="Primero, una cuenta"
+                description="Cada movimiento entra o sale de una cuenta: el banco, el efectivo o una tarjeta. Crea la primera en Finanzas y vuelve aquí."
+                action={
+                  <Button variant="secondary" onClick={() => navigate('/dashboard')}>
+                    Ir a Finanzas
+                  </Button>
+                }
+              />
+            ) : (
+              <EmptyState
+                title="Aún no hay movimientos"
+                description="Registra ingresos y gastos para ver en qué se va el dinero cada mes. El saldo de la cuenta se ajusta solo."
+                action={
+                  <Button variant="secondary" onClick={() => setFormOpen(true)}>
+                    Registrar el primero
+                  </Button>
+                }
+              />
+            )
+          }
         />
 
         {loadMoreError && <FormError>{ERROR_MESSAGES.load}</FormError>}

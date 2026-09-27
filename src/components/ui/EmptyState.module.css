@@ -1,0 +1,30 @@
+/* Borde discontinuo: marca un lugar que se va a llenar, sin parecer una
+   tarjeta más (una tarjeta sólida vacía se lee como contenido que falló). */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  margin-top: var(--space-sm);
+  padding: var(--space-md);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-card);
+}
+
+.title {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-primary);
+}
+
+.description {
+  max-width: 52ch;
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--text-secondary);
+  text-wrap: pretty;
+}
+
+.action {
+  margin-top: var(--space-sm);
+}

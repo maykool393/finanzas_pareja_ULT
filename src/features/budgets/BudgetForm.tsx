@@ -27,7 +27,7 @@ interface BudgetFormProps {
 }
 
 export function BudgetForm({ initial, existingCategoryIds, periodMonth, onSubmit, onCancel }: BudgetFormProps) {
-  const { categories } = useCategories()
+  const { categories, loading: categoriesLoading } = useCategories()
   const initialCategory = categories.find((c) => c.id === initial?.categoryId)
 
   // null = el usuario no tocó el toggle todavía. Igual que con categoryId más
@@ -83,6 +83,15 @@ export function BudgetForm({ initial, existingCategoryIds, periodMonth, onSubmit
             required
           />
         </>
+      )}
+
+      {/* Sin esto, Guardar quedaba desactivado sin decir por qué. */}
+      {!initial && !categoriesLoading && available.length === 0 && (
+        <p className={formStyles.notice}>
+          {type === 'income'
+            ? 'No hay categorías de ingreso sin presupuesto este mes. Créalas en Categorías.'
+            : 'No hay categorías de gasto sin presupuesto este mes. Créalas en Categorías.'}
+        </p>
       )}
 
       <NumberField label={amountLabel} value={amount} onChange={setAmount} required min={1} />

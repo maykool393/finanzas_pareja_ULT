@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { ICONS, type IconKey } from '../../components/ui/iconRegistry'
 import { useCurrency } from '../../hooks/useCurrency'
 import { formatCurrency, formatDate } from '../../lib/format'
@@ -12,6 +13,8 @@ interface TransactionListProps {
   members: Profile[]
   /** Si se omite, la lista es de solo lectura (ej. vista previa en el dashboard). */
   onSelect?: (transaction: Transaction) => void
+  /** Qué mostrar sin movimientos: depende de dónde está la lista (primer uso, filtros sin resultados, dashboard). */
+  empty: ReactNode
 }
 
 function groupByDay(transactions: Transaction[]) {
@@ -25,11 +28,11 @@ function groupByDay(transactions: Transaction[]) {
   return [...groups.entries()].sort(([a], [b]) => (a < b ? 1 : -1))
 }
 
-export function TransactionList({ transactions, accounts, categories, members, onSelect }: TransactionListProps) {
+export function TransactionList({ transactions, accounts, categories, members, onSelect, empty }: TransactionListProps) {
   const currency = useCurrency()
 
   if (transactions.length === 0) {
-    return <p className={styles.empty}>Aún no hay movimientos registrados.</p>
+    return <>{empty}</>
   }
 
   return (

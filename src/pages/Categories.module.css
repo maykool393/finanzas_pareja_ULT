@@ -26,3 +26,9 @@
 .archivedToggle:hover {
   color: var(--text-primary);
 }
+
+.emptyActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
