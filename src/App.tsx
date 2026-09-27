@@ -11,7 +11,9 @@ import { InviteHousehold } from './pages/InviteHousehold'
 import { JoinRedirect } from './pages/JoinRedirect'
 import { Login } from './pages/Login'
 import { More } from './pages/More'
+import { NotFound } from './pages/NotFound'
 import { ResetPassword } from './pages/ResetPassword'
+import { Statistics } from './pages/Statistics'
 import { Transactions } from './pages/Transactions'
 import { Welcome } from './pages/Welcome'
 
@@ -42,11 +44,12 @@ export default function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/presupuesto" element={<Budgets />} />
         <Route path="/mover" element={<Transactions />} />
-        <Route path="/estadisticas" element={<p>Estadísticas: próximamente</p>} />
+        <Route path="/estadisticas" element={<Statistics />} />
         <Route path="/mas" element={<More />} />
         <Route path="/categorias" element={<Categories />} />
         <Route path="/invitar" element={<InviteHousehold />} />
       </Route>
+      <Route path="*" element={<NotFound />} />
     </Routes>
   )
 }

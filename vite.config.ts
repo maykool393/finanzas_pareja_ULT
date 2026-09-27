@@ -18,7 +18,9 @@ export default defineConfig({
         scope: '/',
         display: 'standalone',
         background_color: '#ffffff',
-        theme_color: '#ffffff',
+        // Igual al <meta name="theme-color"> claro de index.html (--surface-card).
+        // El manifiesto no puede cambiar con el tema; en la app manda el <meta>.
+        theme_color: '#FAFAFA',
         icons: [
           { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },

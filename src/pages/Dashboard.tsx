@@ -56,6 +56,9 @@ export function Dashboard() {
   return (
     <>
       <header className={styles.hero}>
+        {/* Las demás pantallas muestran su título; aquí el encabezado visible es el
+            patrimonio, así que el título de la pestaña queda solo para lectores de pantalla. */}
+        <h1 className="visually-hidden">Finanzas</h1>
         <p className="label">Patrimonio neto · {formatMonth(new Date())}</p>
         {totalsError ? (
           <p className={styles.heroError}>No se pudo calcular: faltan datos por cargar.</p>

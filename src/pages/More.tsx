@@ -12,7 +12,7 @@ export function More() {
   return (
     <div>
       <h1 className={styles.title}>Ver más</h1>
-      <nav className={styles.list}>
+      <nav className={styles.list} aria-label="Más secciones">
         {LINKS.map(({ to, label }) => (
           <Link key={to} to={to} className={styles.link}>
             {label}

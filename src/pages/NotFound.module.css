@@ -1,0 +1,18 @@
+.title {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-tight);
+  color: var(--text-primary);
+  text-wrap: balance;
+  margin-bottom: var(--space-sm);
+}
+
+/* Un <Link> con el aspecto del botón principal del login (.submit), que está
+   pensado para un <button>: le falta centrar el texto y ocupar el ancho. */
+.action {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: var(--space-sm);
+}

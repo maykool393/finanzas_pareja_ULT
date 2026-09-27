@@ -140,7 +140,7 @@ Segunda pasada sobre el código completo, después de cerrar M0–M6. Lo que ya 
 | Etapa | Qué resuelve | Skill que manda | Estado |
 |---|---|---|---|
 | M7 | Errores y carga | impeccable | ✅ Completo |
-| M8 | Rutas y navegación | impeccable | Pendiente |
+| M8 | Rutas y navegación | impeccable | ✅ Completo |
 | M9 | Limpieza de componentes y tokens | impeccable | Pendiente |
 | M10 | DESIGN.md y configuración | — | Pendiente |
 
@@ -156,11 +156,13 @@ Ningún formulario, borrado ni carga de datos manejaba errores: la capa `api.ts`
 - [x] Los mensajes de error se anuncian a los lectores de pantalla (`role="alert"`), también en login, recuperar contraseña y onboarding.
 - [ ] Verificar en el navegador: con la red cortada (DevTools → Network → Offline), guardar, eliminar, reactivar y recargar una pantalla; ver el mensaje y que "Reintentar" funcione al volver la red.
 
-### M8 — Rutas y navegación
-- [ ] Página 404: una URL desconocida mostraba una pantalla en blanco.
-- [ ] "Estadísticas": hoy es un `<p>` suelto en la navegación principal. Necesita un estado vacío diseñado.
-- [ ] `theme-color` según el tema: en modo oscuro la barra de estado del celular queda blanca.
-- [ ] `<h1>` en el Dashboard (es la única pantalla sin él) y `aria-label` en la navegación del encabezado y en "Ver más".
+### M8 — Rutas y navegación ✅
+- [x] Página 404 (`NotFound`, ruta `*`): una URL desconocida mostraba una pantalla en blanco. Usa el fondo y la tarjeta del login, porque cualquiera puede abrir un enlace roto; "Volver al inicio" va a `/`, que decide entre dashboard y login. Verificada en claro y oscuro con capturas a 390px.
+- [x] "Estadísticas": era un `<p>` suelto. Ahora es una pantalla (`Statistics`) con título, qué va a haber y un enlace a los gráficos que ya existen en Finanzas.
+- [x] `theme-color` según el tema: la barra del navegador era blanca fija. Ahora toma `--surface-card` de cada modo (igual al encabezado) y sigue al tema elegido a mano. El manifiesto pasa de `#ffffff` a `#FAFAFA`.
+- [x] **El tema elegido a mano se aplicaba tarde o nunca**: lo ponía React al montar el botón de tema o el fondo del login, así que cada pantalla se pintaba primero con el tema del sistema, y la bienvenida y el onboarding nunca lo aplicaban. Ahora lo aplica un script en `index.html` antes del primer pintado. *(Detectado al implementar.)*
+- [x] `<h1>` en el Dashboard (oculto a la vista, "Finanzas"; el encabezado visible es el patrimonio) y `aria-label` en la navegación del encabezado y en "Ver más".
+- [ ] Verificar en el navegador: la pantalla de Estadísticas (necesita sesión, no se pudo capturar); elegir modo oscuro a mano con el sistema en claro, recargar y ver que no parpadea, también en la bienvenida; en el celular, el color de la barra de estado en cada modo.
 
 ### M9 — Limpieza de componentes y tokens
 - [ ] **El patrimonio no se actualiza al guardar desde el dashboard.** `Dashboard` y cada sección llaman a `useAccounts`/`useDebts`/`useInvestments` por separado, con estados independientes: al crear o editar una cuenta, la sección se refresca, pero el total del encabezado y los gráficos no, hasta recargar la página. Se resuelve al extraer lo repetido de las secciones (abajo): los datos se cargan una vez en `Dashboard` y bajan como props. *(Detectado en M7.)*

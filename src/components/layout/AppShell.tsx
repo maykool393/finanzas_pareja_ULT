@@ -19,7 +19,8 @@ export function AppShell({ children }: { children: ReactNode }) {
       <header className={styles.header}>
         <div className={styles.headerInner}>
           <img src="/logo.svg" alt="Twoney" className={styles.brand} />
-          <nav className={styles.nav}>
+          {/* Misma etiqueta que la barra inferior: nunca se ven las dos a la vez (display: none). */}
+          <nav className={styles.nav} aria-label="Navegación principal">
             {NAV.map(({ to, label, end }) => (
               <NavLink
                 key={to}

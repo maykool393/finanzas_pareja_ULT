@@ -69,6 +69,8 @@ Debe soportarse desde el inicio, no agregarse después. Usar `[data-theme="dark"
 }
 ```
 
+El tema elegido a mano se guarda en `localStorage` (`theme`) y lo aplica un script pequeño en `index.html`, antes del primer pintado. Si lo aplicara React, cada pantalla se pintaría primero con el tema del sistema y después cambiaría, y las pantallas que no usan `useTheme` (bienvenida, onboarding) no lo aplicarían nunca.
+
 ## Colores — superficies y texto (neutros)
 
 | Variable | Claro | Oscuro | Uso |
@@ -282,6 +284,15 @@ Estas tres pantallas comparten el mismo fondo: un degradado difuminado en tonos 
 - "Cargando…" aparece solo en la primera carga y al reintentar. Las recargas después de guardar actualizan la lista en su lugar: reemplazarla por "Cargando…" en cada guardado la haría parpadear.
 - Un monto que depende de datos que no han llegado nunca se muestra como `$0`, que parece un saldo real. El patrimonio muestra un bloque `--surface-sunken` del alto de la línea; el total de una sección se omite.
 
+**Pantallas sin contenido (404 y secciones pendientes)**
+- Ninguna ruta termina en una pantalla en blanco ni en un texto suelto. Toda pantalla dice qué es, por qué no hay nada y adónde ir.
+- **404** (`NotFound`, ruta `*`): va fuera de la sesión, con el mismo `AuthLayout` que el login, porque cualquiera puede abrir un enlace roto. Tiene un título, una línea que explica la causa y el botón principal "Volver al inicio" hacia `/`, que ya decide si va al dashboard o al login.
+- **Sección que todavía no existe** (hoy, Estadísticas): título de la pantalla, ícono del registro en un círculo `--surface-sunken`, qué va a haber y un enlace de texto hacia lo más parecido que ya existe. No promete fechas.
+
+**Títulos de pantalla**
+- Cada pantalla tiene un `<h1>`. El Dashboard no muestra título visible (el encabezado es el patrimonio), así que lleva un `<h1 class="visually-hidden">` con el nombre de la pestaña.
+- Toda `<nav>` tiene `aria-label`. La del encabezado (escritorio) y la barra inferior (móvil) comparten "Navegación principal", porque nunca se ven las dos a la vez.
+
 **Toggle de modo oscuro**
 - Debe estar accesible desde la pantalla principal.
 
@@ -359,6 +370,7 @@ Lo que dibuja el navegador también es parte del diseño: toma colores de la pal
 | Barras de scroll | `global.css`, `scrollbar-color` | pulgar `--text-muted`, riel transparente. El pulgar es un control que se arrastra: necesita 3:1 contra el fondo, y `--border-strong` solo daba 1.7:1 |
 | Controles nativos (calendario de fecha) | `global.css`, `accent-color` | `--text-primary` |
 | Placeholders | `global.css`, `::placeholder` | `--text-muted` |
+| Barra del navegador y de estado del celular | `index.html` (`<meta name="theme-color">`, uno por modo del sistema) y `useTheme.ts` | `--surface-card` de cada modo (`#FAFAFA` / `#1e1e1e`), el mismo color del encabezado de la app. Con un tema elegido a mano, `useTheme` pone ese color en los dos `<meta>`. El manifiesto de la PWA lleva el claro, porque no puede cambiar con el tema. Como un `<meta>` no puede leer una variable CSS, los valores están escritos en esos tres lugares: si cambia `--surface-card`, se cambian ahí también |
 
 ## Navegación inferior
 
