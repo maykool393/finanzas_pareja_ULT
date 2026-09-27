@@ -7,11 +7,13 @@ import { BudgetForm } from '../features/budgets/BudgetForm'
 import { BudgetList } from '../features/budgets/BudgetList'
 import { useBudgets } from '../features/budgets/useBudgets'
 import { useCategories } from '../features/categories/useCategories'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { formatMonth } from '../lib/format'
 import type { BudgetProgress } from '../types/domain'
 import styles from './Budgets.module.css'
 
 export function Budgets() {
+  useDocumentTitle('Presupuesto')
   const { budgets, loading, error, retry, periodMonth, create, update, remove } = useBudgets()
   const { categories } = useCategories()
 

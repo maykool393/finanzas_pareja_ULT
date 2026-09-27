@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { AuthLayout } from '../components/auth/AuthLayout'
 import authStyles from '../components/auth/authForm.module.css'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import styles from './NotFound.module.css'
 
 /**
@@ -9,6 +10,8 @@ import styles from './NotFound.module.css'
  * sesión, al login sin ella.
  */
 export function NotFound() {
+  useDocumentTitle('Página no encontrada')
+
   return (
     <AuthLayout>
       <h1 className={styles.title}>No encontramos esta página</h1>

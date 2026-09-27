@@ -1,3 +1,4 @@
+import { useRadioGroupKeys } from '../../hooks/useRadioGroupKeys'
 import styles from './Picker.module.css'
 
 export interface ColorOption {
@@ -19,11 +20,13 @@ interface ColorPickerProps {
  * por el módulo que llama (cuentas/deudas usan a/b, categorías las 4 familias).
  */
 export function ColorPicker({ label = 'Color', value, onChange, options }: ColorPickerProps) {
+  const radioProps = useRadioGroupKeys(options.map((o) => o.key), value, onChange)
+
   return (
     <div className={styles.field}>
       <span className="label">{label}</span>
       <div className={styles.grid} role="radiogroup" aria-label={label}>
-        {options.map((option) => {
+        {options.map((option, index) => {
           const selected = value === option.key
           return (
             <button
@@ -35,6 +38,7 @@ export function ColorPicker({ label = 'Color', value, onChange, options }: Color
               className={selected ? `${styles.swatch} ${styles.swatchSelected}` : styles.swatch}
               style={{ background: option.swatch }}
               onClick={() => onChange(option.key)}
+              {...radioProps(index)}
             />
           )
         })}

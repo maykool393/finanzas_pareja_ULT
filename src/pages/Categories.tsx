@@ -8,11 +8,13 @@ import { CategoryForm } from '../features/categories/CategoryForm'
 import { CategoryList } from '../features/categories/CategoryList'
 import { useCategories } from '../features/categories/useCategories'
 import { useAsyncAction } from '../hooks/useAsyncAction'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { ERROR_MESSAGES } from '../lib/errorMessages'
 import type { Category } from '../types/domain'
 import styles from './Categories.module.css'
 
 export function Categories() {
+  useDocumentTitle('Categorías')
   const { categories, loading, error, retry, create, update, toggleArchived, remove } = useCategories()
 
   const unarchive = useAsyncAction()

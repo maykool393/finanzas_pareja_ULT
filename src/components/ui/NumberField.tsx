@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useCurrency } from '../../hooks/useCurrency'
-import { formatAmount, getCurrencySymbol } from '../../lib/format'
+import { formatAmount, getCurrencyDecimals, getCurrencySymbol, parseAmount } from '../../lib/format'
 import styles from './formField.module.css'
 import numberFieldStyles from './NumberField.module.css'
 
@@ -13,15 +13,12 @@ interface NumberFieldProps {
   required?: boolean
   placeholder?: string
   hint?: string
-  /** Antepone el símbolo de la moneda del household (€, S/, $...) — para campos de monto. */
+  /**
+   * Campo de monto: antepone el símbolo de la moneda del household (€, S/, $...)
+   * y acepta sus decimales (centavos en EUR, USD, PEN...). Con false es un
+   * entero (ej. número de cuotas).
+   */
   currency?: boolean
-}
-
-function parseDigits(raw: string): number | null {
-  const cleaned = raw.replace(/[^\d-]/g, '')
-  if (cleaned === '' || cleaned === '-') return null
-  const parsed = Number(cleaned)
-  return Number.isNaN(parsed) ? null : parsed
 }
 
 function clamp(value: number, min?: number, max?: number) {
@@ -47,8 +44,10 @@ export function NumberField({
 
   const currencyCode = useCurrency()
   const symbol = useMemo(() => getCurrencySymbol(currencyCode), [currencyCode])
+  const decimals = currency ? getCurrencyDecimals(currencyCode) : 0
 
-  const displayValue = focused ? raw : value === null ? '' : formatAmount(value)
+  // Sin foco: formateado ("1.234,50"). Con foco: lo que se escribe, tal cual.
+  const displayValue = focused ? raw : value === null ? '' : formatAmount(value, decimals)
 
   return (
     <label className={styles.field}>
@@ -58,13 +57,15 @@ export function NumberField({
         <input
           className={`${styles.input} ${currency ? numberFieldStyles.withPrefix : ''}`}
           type="text"
-          inputMode="decimal"
+          // Con decimales, el teclado del celular muestra la coma; sin ellos, solo dígitos.
+          inputMode={decimals > 0 ? 'decimal' : 'numeric'}
           required={required}
           placeholder={placeholder}
           value={displayValue}
           onFocus={() => {
             setFocused(true)
-            setRaw(value === null ? '' : String(value))
+            // Sin separador de miles y con coma decimal, para editarlo cómodo: "1234,5".
+            setRaw(value === null ? '' : String(value).replace('.', ','))
           }}
           onBlur={() => {
             setFocused(false)
@@ -74,7 +75,7 @@ export function NumberField({
           }}
           onChange={(e) => {
             setRaw(e.target.value)
-            onChange(parseDigits(e.target.value))
+            onChange(parseAmount(e.target.value, decimals))
           }}
         />
       </div>

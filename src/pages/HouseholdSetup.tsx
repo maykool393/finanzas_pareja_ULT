@@ -10,6 +10,7 @@ import { RadioCardGroup } from '../components/ui/RadioCardGroup'
 import { RadioListGroup } from '../components/ui/RadioListGroup'
 import { Select } from '../components/ui/Select'
 import { TextField } from '../components/ui/TextField'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useSession } from '../hooks/useSession'
 import { getCurrencySymbol, SUPPORTED_CURRENCIES } from '../lib/format'
 import { supabase } from '../lib/supabase'
@@ -57,6 +58,7 @@ interface HouseholdSetupProps {
 }
 
 export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
+  useDocumentTitle('Configura tu hogar')
   const { user } = useSession()
   const [step, setStep] = useState<Step>('choose')
   const [createMode, setCreateMode] = useState<CreateMode>('pareja')

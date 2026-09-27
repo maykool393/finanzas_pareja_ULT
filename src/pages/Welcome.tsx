@@ -1,5 +1,6 @@
 import { Link, Navigate } from 'react-router-dom'
 import welcomeHero from '../assets/welcome-hero.webp'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useSession } from '../hooks/useSession'
 import styles from './Welcome.module.css'
 
@@ -10,6 +11,7 @@ function markOnboardingSeen() {
 }
 
 export function Welcome() {
+  useDocumentTitle()
   const { session, loading } = useSession()
   const seen = localStorage.getItem(ONBOARDING_KEY) === 'true'
 

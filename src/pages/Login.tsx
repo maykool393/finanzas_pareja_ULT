@@ -4,6 +4,7 @@ import { AuthLayout } from '../components/auth/AuthLayout'
 import { SocialAuthButtons } from '../components/auth/SocialAuthButtons'
 import styles from '../components/auth/authForm.module.css'
 import { FormError } from '../components/ui/FormError'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useSession } from '../hooks/useSession'
 import { translateAuthError } from '../lib/authErrors'
 import { getPendingInvite } from '../lib/pendingInvite'
@@ -25,6 +26,7 @@ export function Login() {
   const location = useLocation()
 
   const [mode, setMode] = useState<Mode>(location.pathname === '/registro' ? 'signup' : 'signin')
+  useDocumentTitle(mode === 'signup' ? 'Crear cuenta' : 'Iniciar sesión')
   const [displayName, setDisplayName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')

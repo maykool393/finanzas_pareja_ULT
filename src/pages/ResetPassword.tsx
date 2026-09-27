@@ -3,10 +3,12 @@ import { Navigate } from 'react-router-dom'
 import { AuthLayout } from '../components/auth/AuthLayout'
 import styles from '../components/auth/authForm.module.css'
 import { FormError } from '../components/ui/FormError'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { supabase } from '../lib/supabase'
 import { translateAuthError } from '../lib/authErrors'
 
 export function ResetPassword() {
+  useDocumentTitle('Nueva contraseña')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [submitting, setSubmitting] = useState(false)

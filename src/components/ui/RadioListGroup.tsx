@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { useRadioGroupKeys } from '../../hooks/useRadioGroupKeys'
 import styles from './RadioListGroup.module.css'
 
 interface RadioListOption<T extends string> {
@@ -18,9 +19,11 @@ interface RadioListGroupProps<T extends string> {
 /** Lista de opciones tipo radio con descripción — variante de fila del mismo
  * patrón de RadioCardGroup (ver DESIGN.md § Tarjeta de selección). */
 export function RadioListGroup<T extends string>({ value, onChange, options, label }: RadioListGroupProps<T>) {
+  const radioProps = useRadioGroupKeys(options.map((o) => o.value), value, onChange)
+
   return (
     <div className={styles.group} role="radiogroup" aria-label={label}>
-      {options.map((option) => {
+      {options.map((option, index) => {
         const selected = value === option.value
         return (
           <button
@@ -30,6 +33,7 @@ export function RadioListGroup<T extends string>({ value, onChange, options, lab
             aria-checked={selected}
             className={selected ? `${styles.row} ${styles.selected}` : styles.row}
             onClick={() => onChange(option.value)}
+            {...radioProps(index)}
           >
             <span className={styles.icon}>{option.icon}</span>
             <span className={styles.text}>

@@ -2,11 +2,13 @@ import { useState } from 'react'
 import { Button } from '../components/ui/Button'
 import { InviteCodeBadge } from '../components/ui/InviteCodeBadge'
 import { InviteQrCode } from '../components/ui/InviteQrCode'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useHouseholdId } from '../hooks/useHouseholdId'
 import { useHouseholdMembers } from '../hooks/useHouseholdMembers'
 import styles from './InviteHousehold.module.css'
 
 export function InviteHousehold() {
+  useDocumentTitle('Invitar a tu pareja')
   const { householdId } = useHouseholdId()
   const { members } = useHouseholdMembers()
   const [showQr, setShowQr] = useState(false)

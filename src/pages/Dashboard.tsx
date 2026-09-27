@@ -12,6 +12,7 @@ import { useInvestments } from '../features/investments/useInvestments'
 import { TransactionList } from '../features/transactions/TransactionList'
 import { useTransactions } from '../features/transactions/useTransactions'
 import { useCurrency } from '../hooks/useCurrency'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useHouseholdMembers } from '../hooks/useHouseholdMembers'
 import { formatCurrency, formatMonth } from '../lib/format'
 import styles from './Dashboard.module.css'
@@ -31,6 +32,7 @@ const NetWorthTrendChart = lazy(() =>
 const sum = (values: number[]) => values.reduce((acc, v) => acc + v, 0)
 
 export function Dashboard() {
+  useDocumentTitle('Finanzas')
   const currency = useCurrency()
   const accountsQuery = useAccounts()
   const debtsQuery = useDebts()

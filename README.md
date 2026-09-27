@@ -197,6 +197,46 @@ Las cuatro etapas están implementadas. Falta:
 
 ---
 
+## Plan de mejoras 3 (tercera auditoría, 2026-09-27)
+
+Auditoría en el formato de `impeccable audit`: **15/20** (Bueno), contra 13/20 de la primera. Accesibilidad 3, rendimiento 3, diseño adaptable 3, tokens y temas 3, coherencia 3. El detector de `impeccable` no encontró nada en los 115 archivos de `src` ni en las pantallas públicas renderizadas a 390px (bienvenida, login, 404).
+
+| Etapa | Qué resuelve | Skill que manda | Estado |
+|---|---|---|---|
+| M11 | Montos con centavos | impeccable (harden) | ✅ Completo |
+| M12 | Teclado en grupos de opciones y título por pantalla | impeccable (harden) | ✅ Completo |
+| M13 | Carga de datos: límites, paginación y carga por ruta | impeccable (optimize) | Pendiente |
+| M14 | Ajustes del hogar y detalles menores | impeccable (harden, polish) | Pendiente |
+
+### M11 — Montos con centavos ✅
+**Fallo (P1):** `NumberField` borraba todo lo que no fuera dígito. En euros, dólares, soles o pesos mexicanos, escribir `12,50` guardaba **1.250**, cien veces más, sin que se notara, porque los montos se mostraban sin decimales. La base (`numeric(14, 2)`) sí acepta centavos, y DESIGN.md y `format.ts` decían por error que los montos se guardaban "en la unidad menor (enteros)". **Decisión (2026-09-27): se aceptan centavos** en las monedas que los usan.
+- [x] Decimales por moneda (`getCurrencyDecimals` en `format.ts`): 0 para CLP y COP, 2 para USD, EUR, MXN, ARS y PEN.
+- [x] `NumberField` interpreta lo escrito con `parseAmount`: coma decimal y punto de miles (`1.234,50`); un solo punto seguido de 1 o 2 dígitos también es decimal (`12.5`), y `1.234` sigue siendo mil. Los decimales de más se descartan. Teclado con coma solo en monedas con decimales. El número de cuotas sigue siendo entero.
+- [x] `formatCurrency` muestra los decimales de la moneda: `€12,50`, `€1.234,00`, `$1.234`. El formato compacto (`$3 M`) sigue sin decimales.
+- [x] DESIGN.md y `format.ts` corregidos: los montos se guardan en unidades de la moneda con 2 decimales, no en la unidad menor.
+- [x] Probado con 12 entradas (`12,50`, `12.5`, `1.234`, `1.234,56`, `1234,567`, `-45,9`, vacío…) y 7 formatos en distintas monedas.
+- [ ] Verificar en el navegador con un hogar en euros o dólares: registrar `12,50`, ver `€12,50` en la lista y que el saldo de la cuenta baje exactamente eso. Los montos que ya se guardaron multiplicados por 100 no se corrigen solos: hay que editarlos a mano.
+
+### M12 — Teclado en grupos de opciones y título por pantalla ✅
+- [x] Flechas en los 5 grupos de opciones (`TypeToggle`, `IconPicker`, `ColorPicker`, `RadioCardGroup`, `RadioListGroup`), con un hook común (`useRadioGroupKeys`): el grupo es una sola parada de Tab y las flechas mueven el foco y eligen, dando la vuelta; Inicio y Fin van a los extremos. Antes cada opción era una parada de Tab y las flechas no hacían nada.
+- [x] Título de la pestaña por pantalla con `useDocumentTitle` ("Movimientos · Twoney"), en las 13 pantallas; el login cambia entre "Iniciar sesión" y "Crear cuenta". Antes siempre decía "Twoney" (WCAG 2.4.2).
+- [x] Probado en Chromium con Playwright sobre una página temporal (ya borrada): Tab, flechas en ambos sentidos, Inicio, Fin y Shift+Tab en Gasto/Ingreso y en el selector de ícono; títulos de la 404 y del login.
+- [ ] Verificar con un lector de pantalla (NVDA o VoiceOver): que anuncie "botón de opción, 2 de 6" al moverse con flechas, y el título nuevo al cambiar de pantalla.
+
+### M13 — Carga de datos
+- [ ] "Últimos movimientos" descarga todo el historial para mostrar 5: pedir solo 5.
+- [ ] Movimientos sin paginación: con el límite por defecto de Supabase (1000 filas), pasados los 1000 dejaría de mostrar los más antiguos sin avisar.
+- [ ] Los formularios vuelven a pedir cuentas, categorías y miembros cada vez que se abren: una caché compartida.
+- [ ] Cargar las pantallas por ruta (JS inicial sobre 500 KB, pendiente desde M5).
+
+### M14 — Ajustes del hogar y detalles menores
+- [ ] La moneda y el reparto de gastos solo se eligen en el onboarding: agregar "Ajustes del hogar" en "Ver más".
+- [ ] Resumen en texto de los gráficos "Ingresos vs. gastos" y "Evolución del patrimonio".
+- [ ] Títulos de sección (Cuentas, Deudas, Inversiones) como encabezados.
+- [ ] `90dvh` en el diálogo; tooltips de gráficos con tokens.
+
+---
+
 ## Convenciones transversales (aplican a todas las fases)
 
 **RLS**: todas las tablas nuevas o alteradas usan exactamente el patrón ya establecido en la migración base — `enable row level security` + una sola policy `for all to authenticated using (household_id = public.current_household_id()) with check (...)`. No se repite en cada fase salvo que un módulo necesite algo distinto (ninguno lo necesita).

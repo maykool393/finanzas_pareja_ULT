@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { BarChartIcon } from '../components/ui/icons'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import styles from './Statistics.module.css'
 
 /**
@@ -8,6 +9,8 @@ import styles from './Statistics.module.css'
  * parecido: los gráficos del mes en Finanzas.
  */
 export function Statistics() {
+  useDocumentTitle('Estadísticas')
+
   return (
     <div className={styles.page}>
       <h1 className={styles.title}>Estadísticas</h1>

@@ -254,9 +254,10 @@ Estas tres pantallas comparten el mismo fondo: un degradado difuminado en tonos 
 - Todo monto visible pasa por `formatCurrency(amount, currency)` (`src/lib/format.ts`), con la moneda que entrega `useCurrency()`. Nunca escribir un símbolo ni un código de moneda a mano.
 - **Se muestra el símbolo, no el código:** `€1.234`, `S/ 1.234`, `$1.234`. Los soles llevan un espacio después del símbolo, que pone `Intl` y es la forma habitual en Perú. Los símbolos están en un mapa explícito en `format.ts`, porque `Intl` con el locale `es-CL` muestra código para las monedas no locales y no trae `S/` para PEN. Para agregar una moneda, se suma al mapa: el selector del onboarding se arma desde ahí.
 - Varias monedas comparten el símbolo `$`. Dentro de un hogar no confunde, porque hay una sola moneda. Si alguna pantalla llega a mostrar montos de monedas distintas, ahí hay que volver a mostrar el código.
-- Formato: locale `es-CL`, sin decimales (los montos se guardan en la unidad menor), clase `.amount` para cifras tabulares.
+- Formato: locale `es-CL`, clase `.amount` para cifras tabulares.
+- **Decimales según la moneda:** los montos se guardan en unidades de la moneda con hasta 2 decimales (`numeric(14, 2)`), no en la unidad menor. CLP y COP se escriben y muestran sin decimales (`$1.234`); USD, EUR, MXN, ARS y PEN siempre con dos (`€12,50`, `€1.234,00`). El mapa está en `format.ts` (`getCurrencyDecimals`); una moneda nueva se agrega ahí. El formato compacto (`$3 M`) va siempre sin decimales.
 - **El signo va antes del símbolo**: `-$23.990`, `+$850.000`. Intl con `es-CL` lo pone después (`$-23.990`), y junto al `+` de los ingresos no se leían parejos. Lo resuelve `formatCurrency`: los negativos siempre llevan `-`; el `+` solo con `{ signed: true }`, en listas de movimientos, donde importa distinguir ingreso de gasto. El cero no lleva signo. Nunca se antepone un signo a mano.
-- Los inputs de monto (`NumberField`) anteponen el símbolo de la moneda del hogar.
+- Los inputs de monto (`NumberField`) anteponen el símbolo de la moneda del hogar y aceptan sus decimales. Se escriben en formato es-CL: coma decimal y punto de miles (`1.234,50`). Como en muchos teclados el decimal es un punto, un solo punto seguido de 1 o 2 dígitos también cuenta como decimal (`12.5`), mientras que `1.234` sigue siendo mil doscientos treinta y cuatro. El teclado del celular muestra la coma solo en monedas con decimales. Antes el campo borraba la coma y `12,50` se guardaba como `1250`.
 
 ## Componentes clave
 
@@ -308,6 +309,7 @@ Estas tres pantallas comparten el mismo fondo: un degradado difuminado en tonos 
 - **Sección que todavía no existe** (hoy, Estadísticas): título de la pantalla, ícono del registro en un círculo `--surface-sunken`, qué va a haber y un enlace de texto hacia lo más parecido que ya existe. No promete fechas.
 
 **Títulos de pantalla**
+- Cada pantalla pone el título de la pestaña con `useDocumentTitle`: "Movimientos · Twoney". La bienvenida, solo "Twoney".
 - Cada pantalla tiene un `<h1>`. El Dashboard no muestra título visible (el encabezado es el patrimonio), así que lleva un `<h1 class="visually-hidden">` con el nombre de la pestaña.
 - Toda `<nav>` tiene `aria-label`. La del encabezado (escritorio) y la barra inferior (móvil) comparten "Navegación principal", porque nunca se ven las dos a la vez.
 
@@ -321,6 +323,7 @@ Estas tres pantallas comparten el mismo fondo: un degradado difuminado en tonos 
 
 **Tarjeta de selección (radio-card)**
 - El grupo es un `role="radiogroup"` con etiqueta; cada opción es un `<button>` real con `role="radio"` y `aria-checked`.
+- **Teclado** (vale para todo grupo de opciones: tarjetas, filas, Gasto/Ingreso, ícono y color): el grupo es una sola parada de Tab, en la opción elegida. Las flechas mueven el foco y eligen a la vez, dando la vuelta en los extremos; Inicio y Fin van a la primera y la última. Lo da `useRadioGroupKeys`: un grupo nuevo lo usa, no reimplementa el teclado.
 - Borde de 2px en ambos estados, para que seleccionar no mueva el layout. Estado activo: el borde toma `--gradient-brand-dark`. Estado inactivo: `--border`.
 - El fondo no cambia entre estados — seleccionar nunca rellena la tarjeta de color, la marca solo el borde.
 - Variante en fila (ícono + título + descripción + radio circular a la derecha) para listas de opciones con más texto, ej. cómo repartir gastos. Mismo borde degradado en el estado activo; el punto del radio interno sí se rellena en `--text-primary` (affordance estándar de radio, no "color de marca").

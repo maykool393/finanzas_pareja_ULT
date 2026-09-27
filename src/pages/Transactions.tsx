@@ -10,11 +10,13 @@ import { TransactionFiltersBar } from '../features/transactions/TransactionFilte
 import { TransactionForm } from '../features/transactions/TransactionForm'
 import { TransactionList } from '../features/transactions/TransactionList'
 import { useTransactions } from '../features/transactions/useTransactions'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useHouseholdMembers } from '../hooks/useHouseholdMembers'
 import type { Transaction, TransactionFilters } from '../types/domain'
 import styles from './Transactions.module.css'
 
 export function Transactions() {
+  useDocumentTitle('Movimientos')
   const [filters, setFilters] = useState<TransactionFilters>({})
   const { transactions, loading, error, retry, create, update, remove } = useTransactions(filters)
   const { accounts } = useAccounts()

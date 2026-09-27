@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ChevronRightIcon } from '../components/ui/icons'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import styles from './More.module.css'
 
 // Cada módulo que sume una pantalla de gestión (Fases 1–4) agrega su enlace aquí.
@@ -9,6 +10,8 @@ const LINKS = [
 ]
 
 export function More() {
+  useDocumentTitle('Ver más')
+
   return (
     <div>
       <h1 className={styles.title}>Ver más</h1>
