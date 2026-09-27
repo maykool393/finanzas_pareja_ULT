@@ -269,6 +269,26 @@ Pendiente desde el cierre del plan 1 ("skeletons de carga y estados vacíos que 
 - [x] Verificado con capturas en claro y oscuro a 390px (página temporal, ya borrada).
 - [ ] Verificar con un hogar nuevo: recorrer el primer uso (Dashboard vacío → primera cuenta → primer movimiento → categorías sugeridas → primer presupuesto) y que cada estado vacío lleve al paso correcto.
 
+
+---
+
+## M16 — Cuarta auditoría: errores con su causa y detalles de accesibilidad
+
+Auditoría en el formato de `impeccable audit`: **18/20** (Excelente), contra 15/20 de la tercera y 13/20 de la primera. Accesibilidad 3, rendimiento 4, diseño adaptable 4, tokens y temas 4, coherencia 3. El detector no encontró nada en los 158 archivos de `src` ni en las 5 pantallas públicas renderizadas a 390px.
+
+**Estado:** ✅ Completo.
+
+- [x] **[P2] Los errores siempre culpaban a la conexión.** Las categorías no admiten dos con el mismo nombre en un hogar (`unique (household_id, name)`), y crear una repetida (aunque la otra esté archivada) decía "Revisa tu conexión". Ahora dice `Ya existe una categoría llamada "…". Si está archivada, reactívala desde "Ver archivadas".` `useAsyncAction` acepta una función que elige el mensaje según el error, e `isUniqueViolation` reconoce el duplicado (código `23505`).
+- [x] **[P2] "Usar las sugeridas" fallaba entera** si ya existía alguna con el mismo nombre (por ejemplo, archivada). Ahora crea solo las que faltan; si ya existen todas (archivadas), lo dice y manda a "Ver archivadas".
+- [x] [P3] Botón de tema: etiqueta fija "Modo oscuro" con `aria-pressed` (antes "Cambiar a modo claro, activado").
+- [x] [P3] Ajustes del hogar: "Cambios guardados." desaparece al volver a editar.
+- [x] [P3] `NumberField`: `<span>` en vez de `<div>` dentro del `<label>`.
+- [x] [P3] Enlace "Saltar al contenido": primer elemento con Tab, oculto hasta recibir el foco, lleva al `<main>`.
+- [x] Probado con Playwright (página temporal, ya borrada): el enlace aparece con Tab, Enter pasa el foco al contenido y el Tab siguiente cae en el primer control; el botón de tema se anuncia "Modo oscuro".
+- [x] **[P2] El onboarding mostraba el error técnico de Supabase** al fallar crear el hogar, vincularlo o guardar las preferencias ("Cannot coerce the result to a single JSON object", o "TypeError: Failed to fetch" sin conexión). Ahora muestra "No se pudo crear el hogar. Revisa tu conexión…"; el detalle va a la consola. *(Detectado al volver a auditar.)*
+- [x] **Unirse con un código sin conexión decía "Ese código no es válido".** `isNetworkError` distingue un fallo de red (Supabase lo devuelve sin `code`, verificado en `postgrest-js`) de un código inválido (`22P02`, `23503`). *(Detectado al volver a auditar.)*
+- [ ] Verificar con sesión: crear una categoría con un nombre que ya existe (activa o archivada) y ver el mensaje nuevo; en el onboarding, con la red cortada, crear un hogar y unirse con un código.
+
 ---
 
 ## Convenciones transversales (aplican a todas las fases)

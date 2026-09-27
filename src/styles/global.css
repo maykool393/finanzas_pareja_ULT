@@ -47,3 +47,28 @@
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+
+/* "Saltar al contenido" (AppShell): fuera de la vista hasta que recibe el foco
+   con Tab; ahí aparece arriba a la izquierda, sobre el encabezado. */
+.skip-link {
+  position: absolute;
+  top: var(--space-sm);
+  left: var(--space-sm);
+  z-index: 20;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-control);
+  background: var(--surface-inverse);
+  color: var(--text-inverse);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  transform: translateY(calc(-100% - var(--space-md)));
+}
+
+.skip-link:focus-visible {
+  transform: none;
+}
+
+/* El <main> recibe el foco del enlace, no por Tab: sin anillo alrededor de toda la página. */
+main:focus {
+  outline: none;
+}

@@ -8,7 +8,7 @@ import { IconPicker } from '../../components/ui/IconPicker'
 import { TextField } from '../../components/ui/TextField'
 import { TypeToggle } from '../../components/ui/TypeToggle'
 import { useAsyncAction } from '../../hooks/useAsyncAction'
-import { ERROR_MESSAGES } from '../../lib/errorMessages'
+import { ERROR_MESSAGES, isUniqueViolation } from '../../lib/errorMessages'
 import type { Category, CategoryColor, CategoryType } from '../../types/domain'
 import type { CategoryInput } from './api'
 import { CATEGORY_COLOR_OPTIONS } from './colors'
@@ -33,7 +33,15 @@ export function CategoryForm({ initial, onSubmit, onCancel }: CategoryFormProps)
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault()
-    run(() => onSubmit({ name, type, icon, color }), ERROR_MESSAGES.save)
+    run(
+      () => onSubmit({ name, type, icon, color }),
+      // Un hogar no puede tener dos categorías con el mismo nombre, aunque una
+      // esté archivada. Antes este caso decía "Revisa tu conexión".
+      (err) =>
+        isUniqueViolation(err)
+          ? `Ya existe una categoría llamada "${name.trim()}". Si está archivada, reactívala desde "Ver archivadas".`
+          : ERROR_MESSAGES.save,
+    )
   }
 
   return (

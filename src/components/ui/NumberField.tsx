@@ -52,7 +52,8 @@ export function NumberField({
   return (
     <label className={styles.field}>
       <span className="label">{label}</span>
-      <div className={numberFieldStyles.wrapper}>
+      {/* <span> y no <div>: dentro de un <label> solo va contenido en línea. */}
+      <span className={numberFieldStyles.wrapper}>
         {currency && <span className={numberFieldStyles.prefix}>{symbol}</span>}
         <input
           className={`${styles.input} ${currency ? numberFieldStyles.withPrefix : ''}`}
@@ -78,7 +79,7 @@ export function NumberField({
             onChange(parseAmount(e.target.value, decimals))
           }}
         />
-      </div>
+      </span>
       {hint && <span className={styles.hint}>{hint}</span>}
     </label>
   )

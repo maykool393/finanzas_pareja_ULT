@@ -16,6 +16,9 @@ import { ERROR_MESSAGES } from '../lib/errorMessages'
 import type { Category } from '../types/domain'
 import styles from './Categories.module.css'
 
+/** Todas las sugeridas ya existen (archivadas): no hay nada que crear. */
+class AllSuggestionsExist extends Error {}
+
 export function Categories() {
   useDocumentTitle('Categorías')
   const { categories, loading, error, retry, create, createMany, update, toggleArchived, remove } = useCategories()
@@ -29,6 +32,10 @@ export function Categories() {
   const [deleting, setDeleting] = useState<Category | null>(null)
 
   const active = categories.filter((c) => !c.archivedAt)
+  // Las sugeridas que no existen todavía (ni archivadas): un nombre repetido
+  // hacía fallar la creación de todas, porque el hogar no admite nombres iguales.
+  const existingNames = new Set(categories.map((c) => c.name.trim().toLowerCase()))
+  const missingSuggestions = SUGGESTED_CATEGORIES.filter((c) => !existingNames.has(c.name.toLowerCase()))
   const archived = categories.filter((c) => c.archivedAt)
 
   return (
@@ -46,7 +53,18 @@ export function Categories() {
             action={
               <div className={styles.emptyActions}>
                 <Button
-                  onClick={() => suggested.run(() => createMany(SUGGESTED_CATEGORIES), ERROR_MESSAGES.save)}
+                  onClick={() =>
+                    suggested.run(
+                      async () => {
+                        if (missingSuggestions.length === 0) throw new AllSuggestionsExist()
+                        await createMany(missingSuggestions)
+                      },
+                      (err) =>
+                        err instanceof AllSuggestionsExist
+                          ? 'Las categorías sugeridas ya existen, archivadas. Reactívalas desde "Ver archivadas".'
+                          : ERROR_MESSAGES.save,
+                    )
+                  }
                   disabled={suggested.pending}
                 >
                   {suggested.pending ? 'Creando…' : 'Usar las sugeridas'}

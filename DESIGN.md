@@ -302,6 +302,7 @@ Estas tres pantallas comparten el mismo fondo: un degradado difuminado en tonos 
 - Guardar, archivar, reactivar y eliminar pasan por `useAsyncAction` (`src/hooks/`). El error va con `FormError`: `--text-sm`, `--loss-text` y `role="alert"` para que el lector de pantalla lo anuncie. En un formulario va justo sobre el botón de guardar; en `ConfirmDialog`, entre la descripción y los botones. Nunca `alert()`.
 - `ConfirmDialog` recibe una acción asíncrona y maneja su propia carga y su error. Mientras la acción corre, no se puede cerrar.
 - Los textos de error están en `src/lib/errorMessages.ts` y siguen la regla de "Texto de la interfaz": qué pasó y cómo seguir, sin detalles técnicos.
+- **El mensaje nombra la causa real.** "Revisa tu conexión" es solo para los fallos de red. Un error que el usuario puede corregir tiene su propio mensaje: un nombre repetido (código `23505`, `isUniqueViolation`) dice que ya existe y dónde está ("Si está archivada, reactívala desde 'Ver archivadas'"). `run` de `useAsyncAction` acepta una función que elige el mensaje según el error. Un fallo de red se reconoce con `isNetworkError` (Supabase lo devuelve sin `code`). El mensaje técnico de Supabase nunca llega a la pantalla: va a la consola.
 - Las listas usan `LoadStatus`: "Cargando…" en `--text-muted`; si falla, el error con un enlace "Reintentar". Así ninguna lista muestra su estado vacío antes de cargar.
 - "Cargando…" aparece solo en la primera carga y al reintentar. Las recargas después de guardar actualizan la lista en su lugar: reemplazarla por "Cargando…" en cada guardado la haría parpadear.
 - Un monto que depende de datos que no han llegado nunca se muestra como `$0`, que parece un saldo real. El patrimonio muestra un bloque `--surface-sunken` del alto de la línea; el total de una sección se omite.
@@ -330,7 +331,9 @@ Estas tres pantallas comparten el mismo fondo: un degradado difuminado en tonos 
 - Cada pantalla pone el título de la pestaña con `useDocumentTitle`: "Movimientos · Twoney". La bienvenida, solo "Twoney".
 - Cada pantalla tiene un `<h1>`. En login, registro y contraseñas va oculto a la vista (`AuthLayout title`), porque el logo ya encabeza la tarjeta.
 - Los títulos de sección del dashboard (Cuentas, Deudas, Inversiones) son `<h2>` que contienen el botón de expandir, como en el patrón de acordeón. El Dashboard no muestra título visible (el encabezado es el patrimonio), así que lleva un `<h1 class="visually-hidden">` con el nombre de la pestaña.
-- Toda `<nav>` tiene `aria-label`. La del encabezado (escritorio) y la barra inferior (móvil) comparten "Navegación principal", porque nunca se ven las dos a la vez.
+- Toda `<nav>` tiene `aria-label`.
+- El primer elemento con Tab dentro de la app es "Saltar al contenido" (oculto hasta recibir el foco), que lleva al `<main id="contenido">` sin pasar por el encabezado.
+- Un botón que alterna un estado (`aria-pressed`) lleva una etiqueta fija que nombra el estado ("Modo oscuro"), nunca una acción que cambia ("Cambiar a modo claro"): el lector ya anuncia "activado" o "desactivado". La del encabezado (escritorio) y la barra inferior (móvil) comparten "Navegación principal", porque nunca se ven las dos a la vez.
 
 **Toggle de modo oscuro**
 - Debe estar accesible desde la pantalla principal.

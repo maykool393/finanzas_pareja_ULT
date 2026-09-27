@@ -11,7 +11,9 @@ export function ThemeToggle() {
       type="button"
       className={styles.toggle}
       onClick={toggle}
-      aria-label={isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+      // Etiqueta fija con aria-pressed: el estado lo da "activado". Una etiqueta que
+      // cambiaba ("Cambiar a modo claro") se anunciaba "…, activado", contradictorio.
+      aria-label="Modo oscuro"
       aria-pressed={isDark}
     >
       {isDark ? <SunIcon /> : <MoonIcon />}

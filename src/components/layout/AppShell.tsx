@@ -16,6 +16,11 @@ const NAV = [
 export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className={styles.shell}>
+      {/* Primer elemento con Tab: evita recorrer el encabezado (logo, 5 enlaces,
+          tema y salir) en cada pantalla. Invisible hasta recibir el foco. */}
+      <a href="#contenido" className="skip-link">
+        Saltar al contenido
+      </a>
       <header className={styles.header}>
         <div className={styles.headerInner}>
           <img src="/logo.svg" alt="Twoney" className={styles.brand} />
@@ -43,7 +48,10 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      <main className={styles.main}>{children}</main>
+      {/* tabIndex -1: el enlace de arriba le pasa el foco, sin sumarlo al orden de Tab. */}
+      <main id="contenido" tabIndex={-1} className={styles.main}>
+        {children}
+      </main>
 
       <nav className={styles.tabBar} aria-label="Navegación principal">
         {NAV.map(({ to, label, end, Icon }) => (

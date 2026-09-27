@@ -51,6 +51,15 @@ function SettingsForm({
 
   const currencyChanged = currency !== household.currency
 
+  // Cualquier cambio después de guardar borra "Cambios guardados.": si no,
+  // seguía a la vista con cambios sin guardar.
+  function edited<T>(setter: (value: T) => void) {
+    return (value: T) => {
+      setSaved(false)
+      setter(value)
+    }
+  }
+
   function handleSubmit(event: FormEvent) {
     event.preventDefault()
     setSaved(false)
@@ -62,10 +71,10 @@ function SettingsForm({
 
   return (
     <form className={formStyles.form} onSubmit={handleSubmit}>
-      <TextField label="Nombre del hogar" value={name} onChange={setName} required autoComplete="off" />
+      <TextField label="Nombre del hogar" value={name} onChange={edited(setName)} required autoComplete="off" />
 
       <div className={styles.field}>
-        <Select label="Moneda principal" value={currency} onChange={setCurrency} options={CURRENCY_OPTIONS} required />
+        <Select label="Moneda principal" value={currency} onChange={edited(setCurrency)} options={CURRENCY_OPTIONS} required />
         {/* Los montos se guardan como números, sin moneda: cambiarla no los convierte. */}
         <p className={currencyChanged ? styles.warning : styles.hint}>
           Cambiar la moneda no convierte los montos ya registrados: solo cambia el símbolo con que se muestran.
@@ -78,7 +87,7 @@ function SettingsForm({
           <p className={styles.sectionLabel}>¿Cómo prefieren repartir los gastos compartidos?</p>
           <RadioListGroup
             value={expenseSplit}
-            onChange={setExpenseSplit}
+            onChange={edited(setExpenseSplit)}
             options={SPLIT_OPTIONS}
             label="¿Cómo prefieren repartir los gastos compartidos?"
           />

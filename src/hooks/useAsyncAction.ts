@@ -11,14 +11,16 @@ export function useAsyncAction() {
   const [pending, setPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const run = useCallback(async (action: () => Promise<void>, errorMessage: string) => {
+  // errorMessage puede ser una función del error, para distinguir causas que no
+  // son la conexión (ej. un nombre repetido): ver isUniqueViolation.
+  const run = useCallback(async (action: () => Promise<void>, errorMessage: string | ((err: unknown) => string)) => {
     setPending(true)
     setError(null)
     try {
       await action()
     } catch (err) {
       console.error(err)
-      setError(errorMessage)
+      setError(typeof errorMessage === 'function' ? errorMessage(err) : errorMessage)
     } finally {
       setPending(false)
     }

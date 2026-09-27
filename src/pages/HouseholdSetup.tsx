@@ -13,6 +13,7 @@ import { TextField } from '../components/ui/TextField'
 import { CURRENCY_OPTIONS, type ExpenseSplit, SPLIT_OPTIONS } from '../features/household/preferences'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useSession } from '../hooks/useSession'
+import { ERROR_MESSAGES, isNetworkError } from '../lib/errorMessages'
 import { supabase } from '../lib/supabase'
 import styles from './HouseholdSetup.module.css'
 
@@ -73,7 +74,9 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
     const { error: insertError } = await supabase.from('households').insert({ id: householdId, name })
 
     if (insertError) {
-      setError(insertError.message)
+      console.error(insertError)
+      // El mensaje de Supabase es técnico y en inglés: va a la consola, no a la pantalla.
+      setError(ERROR_MESSAGES.createHousehold)
       setSubmitting(false)
       return
     }
@@ -89,7 +92,8 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
       .single()
 
     if (linkError) {
-      setError(linkError.message)
+      console.error(linkError)
+      setError(ERROR_MESSAGES.createHousehold)
       setSubmitting(false)
       return
     }
@@ -115,7 +119,13 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
       .single()
 
     if (joinUpdateError) {
-      setError('Ese código no es válido. Pídele a tu pareja que lo copie de nuevo desde "Ver más".')
+      console.error(joinUpdateError)
+      // Sin conexión no es culpa del código: antes cualquier fallo decía "no es válido".
+      setError(
+        isNetworkError(joinUpdateError)
+          ? ERROR_MESSAGES.joinHousehold
+          : 'Ese código no es válido. Pídele a tu pareja que lo copie de nuevo desde "Ver más".',
+      )
       setSubmitting(false)
       return
     }
@@ -142,7 +152,8 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
       .single()
 
     if (prefsError) {
-      setError(prefsError.message)
+      console.error(prefsError)
+      setError(ERROR_MESSAGES.save)
       setSubmitting(false)
       return
     }
