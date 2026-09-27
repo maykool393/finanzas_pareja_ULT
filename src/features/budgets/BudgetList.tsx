@@ -35,7 +35,7 @@ export function BudgetList({ budgets, categories, onEdit, onDelete }: BudgetList
   }
 
   return (
-    <ul className={styles.list}>
+    <ul className={styles.list} role="list">
       {budgets.map((budget) => {
         const category = categories.find((c) => c.id === budget.categoryId)
         const Icon = category ? (ICONS[category.icon as IconKey] ?? ICONS.other) : ICONS.other

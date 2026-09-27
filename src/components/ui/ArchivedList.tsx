@@ -28,7 +28,7 @@ export function ArchivedList<T extends ArchivedItem>({
 
   return (
     <>
-      <ul className={styles.list}>
+      <ul className={styles.list} role="list">
         {items.map((item) => (
           <li key={item.id} className={styles.row}>
             <span className={styles.name}>{item.name}</span>

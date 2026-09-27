@@ -82,6 +82,10 @@ button.row:active {
   flex-shrink: 0;
 }
 
+/* Tokens de texto (4.5:1), no --gain-color/--loss-color, que son para rellenos. */
+.income { color: var(--gain-text); }
+.expense { color: var(--loss-text); }
+
 .empty {
   font-size: var(--text-sm);
   color: var(--text-muted);

@@ -10,45 +10,46 @@ interface ItemCardProps {
   amount: string
   variant: ItemVariant
   icon: ReactNode
-  /** Iniciales del dueño; null/undefined = cuenta compartida. */
+  /** Nombre del dueño; null/undefined = compartida. */
   owner?: string | null
   /** Solo para deudas: proporción de pagos completados (0–1). */
   progress?: number
-  onClick?: () => void
+  onClick: () => void
 }
 
+/**
+ * Tarjeta de cuenta, deuda o inversión. Es un <button> real (abre la edición).
+ * El nombre accesible se arma a mano: el de su contenido juntaría los textos
+ * sin separar ("Banesco$1.234MA") y perdería al dueño, que solo se ve como
+ * iniciales o un ícono. "Compartida" concuerda con los tres: cuenta, deuda e
+ * inversión.
+ */
 export function ItemCard({ name, amount, variant, icon, owner, progress, onClick }: ItemCardProps) {
+  const label = [
+    name,
+    amount,
+    progress !== undefined ? `${Math.round(Math.min(1, Math.max(0, progress)) * 100)} % pagado` : null,
+    owner ? `de ${owner}` : 'compartida',
+  ]
+    .filter(Boolean)
+    .join(', ')
+
   return (
-    <article
-      className={onClick ? `${styles.card} ${styles[variant]} ${styles.clickable}` : `${styles.card} ${styles[variant]}`}
-      onClick={onClick}
-      role={onClick ? 'button' : undefined}
-      tabIndex={onClick ? 0 : undefined}
-      onKeyDown={
-        onClick
-          ? (e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                onClick()
-              }
-            }
-          : undefined
-      }
-    >
-      <div className={styles.top}>
+    <button type="button" className={`${styles.card} ${styles[variant]}`} onClick={onClick} aria-label={label}>
+      <span className={styles.top}>
         <span className={styles.icon}>{icon}</span>
         <span className={styles.name}>{name}</span>
-      </div>
+      </span>
 
-      <p className={`amount ${styles.amount}`}>{amount}</p>
+      <span className={`amount ${styles.amount}`}>{amount}</span>
 
       {progress !== undefined && (
-        <ProgressBar ratio={progress} trackColor="rgba(255,255,255,0.5)" fillColor="var(--fill)" />
+        <span className={styles.progress}>
+          <ProgressBar ratio={progress} trackColor="var(--surface-on-category)" fillColor="var(--fill)" />
+        </span>
       )}
 
-      <span className={styles.avatar} aria-label={owner ? `Cuenta de ${owner}` : 'Cuenta compartida'}>
-        {owner ? owner.slice(0, 2).toUpperCase() : <PeopleIcon />}
-      </span>
-    </article>
+      <span className={styles.avatar}>{owner ? owner.slice(0, 2).toUpperCase() : <PeopleIcon />}</span>
+    </button>
   )
 }

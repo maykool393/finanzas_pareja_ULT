@@ -6,6 +6,7 @@ html { -webkit-text-size-adjust: 100%; }
 
 body {
   min-height: 100vh;
+  min-height: 100dvh;
   font-family: var(--font-sans);
   font-size: var(--text-md);
   line-height: var(--leading-normal);
@@ -31,6 +32,11 @@ button { min-height: 24px; }
 h1, h2, h3, h4 { line-height: var(--leading-tight); font-weight: var(--weight-medium); }
 
 a { color: inherit; text-decoration: none; }
+
+/* Las listas de la app son filas y tarjetas, no viñetas. Sin esto se veían las
+   viñetas y 40px de sangría (ej. en los movimientos). Safari deja de anunciar
+   como lista un <ul> sin viñetas: por eso cada uno lleva role="list". */
+ul, ol { list-style: none; padding: 0; }
 
 #root { isolation: isolate; }
 

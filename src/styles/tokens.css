@@ -65,6 +65,10 @@
   /* Reutiliza el verde de --account-a — misma familia de tono, no un color nuevo. */
   --investment-b-bg:   #EAF3DE;
   --investment-b-text: #173404;
+
+  /* Capa blanca translúcida sobre el fondo de una categoría: avatar del dueño
+     y riel de la barra de progreso en las tarjetas (ItemCard). */
+  --surface-on-category: rgba(255, 255, 255, 0.55);
   /* Rellenos (barras, gráficos): basta 3:1. Nunca como color de texto. */
   --gain-color: #639922;
   --loss-color: #D85A30;
@@ -83,6 +87,13 @@
   --gradient-brand:       linear-gradient(94.58deg, var(--brand-pink) -18.95%, var(--brand-blue) 111.62%);
   --gradient-brand-light: linear-gradient(94.58deg, #FFDDF2 -18.95%, #CAE0F8 111.62%);
   --gradient-brand-dark:  linear-gradient(94.58deg, #C78CB0 -18.95%, #6B92BB 111.62%);
+  /* Fijos en ambos modos, como el degradado: no se usan --text-primary ni
+     --text-inverse, que se invierten en oscuro y perderían contraste. */
+  --text-on-brand:        #1a1a1a;   /* texto e íconos sobre el degradado (12.9–14:1) */
+  --text-on-brand-accent: #3D5FA8;   /* segunda línea del título a dos tonos (4.6–5.0:1) */
+  --brand-track:          rgba(26, 26, 26, 0.18);   /* segmentos pendientes de la barra por pasos */
+  /* Sombra del CTA teñida con los extremos de --gradient-brand-dark. */
+  --shadow-brand-cta: 0 10px 22px rgba(199, 140, 176, 0.35), 0 6px 16px rgba(107, 146, 187, 0.3);
 
   /* ---------- Espaciado y bordes ---------- */
   --space-xs: 4px;
@@ -93,11 +104,16 @@
 
   --radius-card:    12px;
   --radius-control: 8px;
+  --radius-sheet:   20px;  /* hoja del onboarding montada sobre el degradado */
   --radius-full:    999px;
 
   /* ---------- Sombras ---------- */
-  --shadow-sm: 0 1px 2px rgba(26, 26, 26, 0.06);
   --shadow-md: 0 2px 12px rgba(26, 26, 26, 0.08);
+  /* Hacia arriba, sobre el degradado del onboarding. Sin variante oscura: cae
+     sobre el degradado, que no cambia con el tema. */
+  --shadow-sheet: 0 -10px 24px rgba(26, 26, 26, 0.06);
+  /* Velo detrás de los diálogos, igual en ambos modos. */
+  --scrim: rgba(0, 0, 0, 0.45);
 
   /* ---------- Layout ---------- */
   --container-max: 1120px;
@@ -137,7 +153,6 @@
   --border:        #2e2e2e;
   --border-strong: #3d3d3a;
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
@@ -163,8 +178,7 @@
     --border:        #2e2e2e;
     --border-strong: #3d3d3a;
 
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
   }
 }
 

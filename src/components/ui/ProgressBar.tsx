@@ -11,7 +11,9 @@ export function ProgressBar({ ratio, trackColor, fillColor }: ProgressBarProps) 
   const percent = Math.round(clamped * 100)
 
   return (
-    <div
+    // <span> y no <div>: la barra va dentro de ItemCard, que es un <button>, y
+    // un botón solo admite contenido en línea. El CSS los vuelve bloque.
+    <span
       className={styles.track}
       style={{ background: trackColor }}
       role="progressbar"
@@ -22,7 +24,7 @@ export function ProgressBar({ ratio, trackColor, fillColor }: ProgressBarProps) 
       {/* Relleno de ancho completo desplazado a la izquierda: animar translateX
           no recalcula layout (como width) ni aplasta el extremo redondeado
           (como scaleX). El riel recorta lo que sobra. */}
-      <div className={styles.fill} style={{ transform: `translateX(${(clamped - 1) * 100}%)`, background: fillColor }} />
-    </div>
+      <span className={styles.fill} style={{ transform: `translateX(${(clamped - 1) * 100}%)`, background: fillColor }} />
+    </span>
   )
 }

@@ -1,4 +1,4 @@
-.dangerRow {
+.row {
   display: flex;
   gap: var(--space-md);
   margin-top: var(--space-md);
@@ -6,11 +6,12 @@
   border-top: 1px solid var(--border);
 }
 
-.dangerRow button {
+.row button {
   font-size: var(--text-sm);
   color: var(--text-secondary);
+  transition: color var(--duration-fast) ease;
 }
 
-.dangerRow button:hover {
+.row button:hover {
   color: var(--text-primary);
 }

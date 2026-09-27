@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Button } from '../components/ui/Button'
 import { ConfirmDialog } from '../components/ui/ConfirmDialog'
+import { DangerRow } from '../components/ui/DangerRow'
 import { Dialog } from '../components/ui/Dialog'
 import { LoadStatus } from '../components/ui/LoadStatus'
 import { useAccounts } from '../features/accounts/useAccounts'
@@ -77,7 +78,7 @@ export function Transactions() {
               }}
               onCancel={() => setEditing(null)}
             />
-            <div className={styles.dangerRow}>
+            <DangerRow>
               <button
                 type="button"
                 onClick={() => {
@@ -87,7 +88,7 @@ export function Transactions() {
               >
                 Eliminar
               </button>
-            </div>
+            </DangerRow>
           </>
         )}
       </Dialog>

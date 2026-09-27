@@ -14,24 +14,24 @@
   gap: var(--space-md);
 }
 
-/* Colores fijos, no tokens de tema: el degradado de marca no cambia con
-   [data-theme="dark"] (ver DESIGN.md § Identidad de marca), así que el texto
-   tampoco puede seguir var(--text-primary) o perdería contraste en oscuro. */
+/* Tokens de marca, no de tema: el degradado no cambia con [data-theme="dark"]
+   (ver DESIGN.md § Identidad de marca), así que el texto tampoco puede seguir
+   var(--text-primary) o perdería contraste en oscuro. */
 .title {
   text-align: center;
   font-size: var(--text-lg);
   font-weight: var(--weight-bold);
   line-height: var(--leading-tight);
-  color: #1a1a1a;
+  color: var(--text-on-brand);
 }
 
 .titleAccent {
-  color: #3D5FA8;
+  color: var(--text-on-brand-accent);
 }
 
 .sheet {
   background: var(--surface-page);
-  border-radius: 20px 20px 0 0;
+  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
   margin-top: calc(var(--space-lg) * -1);
   position: relative;
   flex: 1;
@@ -40,5 +40,5 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
-  box-shadow: 0 -10px 24px rgba(26, 26, 26, 0.06);
+  box-shadow: var(--shadow-sheet);
 }

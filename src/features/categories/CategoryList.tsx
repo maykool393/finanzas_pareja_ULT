@@ -30,7 +30,7 @@ function CategoryGroup({
       {items.length === 0 ? (
         <p className={styles.empty}>{archived ? 'Ninguna archivada.' : 'Sin categorías todavía.'}</p>
       ) : (
-        <ul className={styles.list}>
+        <ul className={styles.list} role="list">
           {items.map((category) => {
             const Icon = ICONS[category.icon as IconKey] ?? ICONS.other
             const tone = CATEGORY_COLOR_TOKENS[category.color]

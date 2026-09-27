@@ -1,166 +1,55 @@
-import { useState } from 'react'
-import { ArchivedList, ArchivedToggle } from '../../components/ui/ArchivedList'
-import { ConfirmDialog } from '../../components/ui/ConfirmDialog'
-import { Dialog } from '../../components/ui/Dialog'
-import { ACCOUNT_ICON_OPTIONS, ICONS, type AccountIconKey } from '../../components/ui/icons'
-import { ItemCard, type ItemVariant } from '../../components/ui/ItemCard'
-import { LoadStatus } from '../../components/ui/LoadStatus'
-import { SectionHeader } from '../../components/ui/SectionHeader'
-import styles from '../../components/ui/sectionGrid.module.css'
-import sectionStyles from './AccountsSection.module.css'
-import { useCurrency } from '../../hooks/useCurrency'
-import { useHouseholdMembers } from '../../hooks/useHouseholdMembers'
-import { formatCurrency } from '../../lib/format'
-import type { Account } from '../../types/domain'
+import type { Profile } from '../../types/domain'
+import { FinanceSection } from '../dashboard/FinanceSection'
 import { AccountForm } from './AccountForm'
-import { useAccounts } from './useAccounts'
+import type { useAccounts } from './useAccounts'
 
-const DEFAULT_ICON = ACCOUNT_ICON_OPTIONS[0].key
+interface AccountsSectionProps {
+  /** De useAccounts() en Dashboard, que comparte los datos con el patrimonio y los gráficos. */
+  query: ReturnType<typeof useAccounts>
+  members: Profile[]
+}
 
-export function AccountsSection() {
-  const { accounts, loading, error, retry, create, update, toggleArchived, remove } = useAccounts()
-  const { members } = useHouseholdMembers()
-  const currency = useCurrency()
-
-  const [expanded, setExpanded] = useState(true)
-  const [showArchived, setShowArchived] = useState(false)
-  const [formOpen, setFormOpen] = useState(false)
-  const [editing, setEditing] = useState<Account | null>(null)
-  const [archiving, setArchiving] = useState<Account | null>(null)
-  const [deleting, setDeleting] = useState<Account | null>(null)
-
-  const active = accounts.filter((a) => !a.archivedAt)
-  const archived = accounts.filter((a) => a.archivedAt)
-  const total = active.reduce((acc, a) => acc + a.balance, 0)
-
-  function ownerName(ownerId: string | null) {
-    if (!ownerId) return null
-    return members.find((m) => m.id === ownerId)?.displayName ?? null
-  }
-
+export function AccountsSection({ query, members }: AccountsSectionProps) {
   return (
-    <section className={styles.section}>
-      <SectionHeader
-        title="Cuentas"
-        total={loading || error ? undefined : formatCurrency(total, currency)}
-        expanded={expanded}
-        onToggle={() => setExpanded((e) => !e)}
-        onAdd={() => setFormOpen(true)}
-      />
-
-      {expanded && (
-        <LoadStatus loading={loading} error={error} onRetry={retry}>
-          {!showArchived && active.length === 0 && (
-            <p className={styles.empty}>Sin cuentas todavía.</p>
-          )}
-
-          {!showArchived && active.length > 0 && (
-            <div className={styles.cardRow}>
-              {active.map((account) => {
-                const Icon = ICONS[(account.icon as AccountIconKey) ?? DEFAULT_ICON] ?? ICONS[DEFAULT_ICON]
-                return (
-                  <ItemCard
-                    key={account.id}
-                    name={account.name}
-                    amount={formatCurrency(account.balance, currency)}
-                    variant={(account.colorVariant === 'b' ? 'account-b' : 'account-a') satisfies ItemVariant}
-                    icon={<Icon />}
-                    owner={ownerName(account.ownerId)}
-                    onClick={() => setEditing(account)}
-                  />
-                )
-              })}
-            </div>
-          )}
-
-          {showArchived && (
-            <ArchivedList
-              items={archived}
-              onUnarchive={async (account) => {
-                await toggleArchived(account.id, false)
-                setShowArchived(false)
-              }}
-              onDelete={(account) => setDeleting(account)}
-              emptyLabel="Ninguna cuenta archivada."
-            />
-          )}
-
-          {archived.length > 0 && (
-            <ArchivedToggle count={archived.length} showing={showArchived} onToggle={() => setShowArchived((v) => !v)} />
-          )}
-        </LoadStatus>
-      )}
-
-      <Dialog open={formOpen} onClose={() => setFormOpen(false)} title="Nueva cuenta">
-        <AccountForm
-          onSubmit={async (input, initialBalance) => {
-            await create(input, initialBalance)
-            setFormOpen(false)
-          }}
-          onCancel={() => setFormOpen(false)}
-        />
-      </Dialog>
-
-      <Dialog open={editing !== null} onClose={() => setEditing(null)} title="Editar cuenta">
-        {editing && (
-          <>
-            <AccountForm
-              initial={editing}
-              onSubmit={async (input) => {
-                await update(editing.id, input)
-                setEditing(null)
-              }}
-              onCancel={() => setEditing(null)}
-            />
-            <div className={sectionStyles.dangerRow}>
-              <button
-                type="button"
-                onClick={() => {
-                  setArchiving(editing)
-                  setEditing(null)
-                }}
-              >
-                Archivar
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setDeleting(editing)
-                  setEditing(null)
-                }}
-              >
-                Eliminar
-              </button>
-            </div>
-          </>
-        )}
-      </Dialog>
-
-      <ConfirmDialog
-        open={archiving !== null}
-        onClose={() => setArchiving(null)}
-        onConfirm={async () => {
-          if (!archiving) return
-          await toggleArchived(archiving.id, true)
-          setArchiving(null)
-        }}
-        title="Archivar cuenta"
-        description={`"${archiving?.name}" dejará de aparecer en el dashboard. Sus movimientos se conservan y puedes recuperarla cuando quieras.`}
-        tone="archive"
-      />
-
-      <ConfirmDialog
-        open={deleting !== null}
-        onClose={() => setDeleting(null)}
-        onConfirm={async () => {
-          if (!deleting) return
-          await remove(deleting.id)
-          setDeleting(null)
-        }}
-        title="Eliminar cuenta"
-        description={`Esta acción no se puede deshacer. Se eliminará "${deleting?.name}" de forma permanente, junto con sus movimientos.`}
-        tone="delete"
-      />
-    </section>
+    <FinanceSection
+      kind="account"
+      title="Cuentas"
+      query={{ ...query, items: query.accounts }}
+      members={members}
+      defaultIcon="bank"
+      amount={(account) => account.balance}
+      text={{
+        empty: 'Sin cuentas todavía.',
+        archivedEmpty: 'Ninguna cuenta archivada.',
+        createTitle: 'Nueva cuenta',
+        editTitle: 'Editar cuenta',
+        archiveTitle: 'Archivar cuenta',
+        deleteTitle: 'Eliminar cuenta',
+        archiveDescription: (name) =>
+          `"${name}" dejará de aparecer en el dashboard. Sus movimientos se conservan y puedes recuperarla cuando quieras.`,
+        deleteDescription: (name) =>
+          `Esta acción no se puede deshacer. Se eliminará "${name}" de forma permanente, junto con sus movimientos.`,
+      }}
+      renderForm={(account, close) =>
+        account ? (
+          <AccountForm
+            initial={account}
+            onSubmit={async (input) => {
+              await query.update(account.id, input)
+              close()
+            }}
+            onCancel={close}
+          />
+        ) : (
+          <AccountForm
+            onSubmit={async (input, initialBalance) => {
+              await query.create(input, initialBalance)
+              close()
+            }}
+            onCancel={close}
+          />
+        )
+      }
+    />
   )
 }

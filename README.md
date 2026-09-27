@@ -141,7 +141,7 @@ Segunda pasada sobre el código completo, después de cerrar M0–M6. Lo que ya 
 |---|---|---|---|
 | M7 | Errores y carga | impeccable | ✅ Completo |
 | M8 | Rutas y navegación | impeccable | ✅ Completo |
-| M9 | Limpieza de componentes y tokens | impeccable | Pendiente |
+| M9 | Limpieza de componentes y tokens | impeccable | ✅ Completo |
 | M10 | DESIGN.md y configuración | — | Pendiente |
 
 ### M7 — Errores y carga ✅
@@ -164,12 +164,16 @@ Ningún formulario, borrado ni carga de datos manejaba errores: la capa `api.ts`
 - [x] `<h1>` en el Dashboard (oculto a la vista, "Finanzas"; el encabezado visible es el patrimonio) y `aria-label` en la navegación del encabezado y en "Ver más".
 - [ ] Verificar en el navegador: la pantalla de Estadísticas (necesita sesión, no se pudo capturar); elegir modo oscuro a mano con el sistema en claro, recargar y ver que no parpadea, también en la bienvenida; en el celular, el color de la barra de estado en cada modo.
 
-### M9 — Limpieza de componentes y tokens
-- [ ] **El patrimonio no se actualiza al guardar desde el dashboard.** `Dashboard` y cada sección llaman a `useAccounts`/`useDebts`/`useInvestments` por separado, con estados independientes: al crear o editar una cuenta, la sección se refresca, pero el total del encabezado y los gráficos no, hasta recargar la página. Se resuelve al extraer lo repetido de las secciones (abajo): los datos se cargan una vez en `Dashboard` y bajan como props. *(Detectado en M7.)*
-- [ ] `ItemCard` como `<button>` real, en vez de `<article role="button">`. El dueño se anuncia de verdad (hoy es un `aria-label` en un `<span>`, que se ignora) y con un texto que sirve para deudas e inversiones, no solo "Cuenta de…".
-- [ ] Valores sueltos a tokens: color del acento del onboarding (`#3D5FA8`), radio y sombra de la hoja, fondo del diálogo, avatar de `ItemCard`, riel de la barra de progreso, color del monto en `TransactionList`.
-- [ ] `100dvh` en `RequireAuth`, `AppShell` y `reset.css`.
-- [ ] Extraer lo repetido de `AccountsSection`, `DebtsSection` e `InvestmentsSection` (≈170 líneas cada una, casi iguales) y la regla `.dangerRow`, copiada en 4 archivos.
+### M9 — Limpieza de componentes y tokens ✅
+- [x] **El patrimonio no se actualizaba al guardar desde el dashboard.** `Dashboard` y cada sección cargaban los datos por separado. Ahora `Dashboard` los carga una vez y los pasa a las secciones, así el total del encabezado, los gráficos y las tarjetas leen el mismo estado. *(Detectado en M7.)*
+- [x] Las tres secciones (≈505 líneas casi iguales) son ahora una `FinanceSection` común (`features/dashboard/`) más una configuración corta por tipo (≈45 líneas cada una). La fila "Archivar / Eliminar", copiada en 4 archivos, es `DangerRow`.
+- [x] `ItemCard` es un `<button>` real, en vez de `<article role="button">`. Su nombre accesible incluye monto, avance (deudas) y dueño: "Crédito auto, $5.400.000, 40 % pagado, compartida". Antes el dueño era un `aria-label` en un `<span>`, que se ignora, y decía "Cuenta de…" también en deudas e inversiones. `ProgressBar` pasó a `<span>` para poder ir dentro del botón.
+- [x] Valores sueltos a tokens: `--text-on-brand` y `--text-on-brand-accent` (texto sobre el degradado, antes `#1a1a1a` y `#3D5FA8`), `--brand-track`, `--shadow-brand-cta`, `--radius-sheet`, `--shadow-sheet`, `--scrim` (fondo del diálogo) y `--surface-on-category` (avatar y riel en las tarjetas). El color del monto en `TransactionList` pasó de `style` a clases. Se quitó `--shadow-sm`, que no se usaba. Quedan con valores propios, a propósito: `Welcome` (colores sobre una foto), los colores del QR y el canvas de `RippleBackground`.
+- [x] `100dvh` en `RequireAuth`, `AppShell` y `reset.css`.
+- [x] **Viñetas y sangría en las listas**: ningún CSS las quitaba, y en los movimientos (pantalla y dashboard) se veían viñetas y 40px de sangría. Ahora `reset.css` las quita, y cada `<ul>` lleva `role="list"` para no perder la semántica en Safari. *(Detectado al verificar con capturas.)*
+- [x] **La barra de avance de una deuda pasaba por debajo del avatar del dueño.** Ahora termina antes. *(Detectado al verificar con capturas.)*
+- [x] Verificado con una página temporal (ya borrada) que monta `FinanceSection` y `TransactionList` con datos de ejemplo: tarjetas, carga, error, lista de movimientos y nombres accesibles, en claro y oscuro a 390px.
+- [ ] Verificar en el navegador, con sesión: crear una cuenta desde el dashboard y ver que el patrimonio cambia sin recargar; navegar las tarjetas con Tab y abrirlas con Enter; el onboarding se ve igual que antes (solo cambiaron nombres de tokens).
 
 ### M10 — DESIGN.md y configuración
 - [ ] Quitar la mención al hover con opacidad 0.9 en los botones de eliminar: contradice la regla "hover = fondo, nunca opacidad".

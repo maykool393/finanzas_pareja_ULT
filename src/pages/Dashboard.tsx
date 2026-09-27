@@ -72,9 +72,11 @@ export function Dashboard() {
         <p className={styles.heroMeta}>Cuentas e inversiones, menos deudas</p>
       </header>
 
-      <AccountsSection />
-      <DebtsSection />
-      <InvestmentsSection />
+      {/* Las secciones reciben los mismos datos que el patrimonio y los gráficos:
+          si cada una los cargara por su cuenta, guardar en una no actualizaría el total. */}
+      <AccountsSection query={accountsQuery} members={members} />
+      <DebtsSection query={debtsQuery} members={members} />
+      <InvestmentsSection query={investmentsQuery} members={members} />
 
       {charts.error && (
         <Card title="Gráficos" className={styles.wide}>

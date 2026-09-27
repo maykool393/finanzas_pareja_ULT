@@ -1,35 +1,28 @@
 .card {
   position: relative;
+  width: 100%;
   min-width: 200px;
   border-radius: var(--radius-card);
   padding: var(--space-md);
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
+  text-align: left;
   transition: transform var(--duration-fast) var(--ease-out);
 }
 
-/* Solo las tarjetas que abren algo reaccionan: una que no hace nada no
-   debería insinuar que se puede tocar. */
-.clickable:active {
+/* Siempre abre algo (la edición), así que siempre reacciona. */
+.card:active {
   transform: scale(var(--press-scale-large));
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .clickable:hover {
+  .card:hover {
     transform: translateY(var(--hover-lift));
   }
 }
 
-.clickable {
-  cursor: pointer;
-  text-align: left;
-  border: none;
-  font: inherit;
-  width: 100%;
-}
-
-.clickable:focus-visible {
+.card:focus-visible {
   outline: 2px solid var(--text-primary);
   outline-offset: 2px;
 }
@@ -60,6 +53,12 @@
   margin-top: var(--space-xs);
 }
 
+/* La barra termina antes del avatar (26px + separación), que está en la
+   esquina inferior derecha: antes pasaba por debajo de él. */
+.progress {
+  margin-right: calc(26px + var(--space-sm));
+}
+
 .avatar {
   position: absolute;
   right: var(--space-md);
@@ -67,7 +66,7 @@
   width: 26px;
   height: 26px;
   border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.55);
+  background: var(--surface-on-category);
   display: flex;
   align-items: center;
   justify-content: center;

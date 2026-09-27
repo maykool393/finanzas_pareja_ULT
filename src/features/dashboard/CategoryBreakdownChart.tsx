@@ -27,7 +27,7 @@ export function CategoryBreakdownChart({ items }: { items: CategoryBreakdownItem
         </PieChart>
       </ResponsiveContainer>
 
-      <ul className={styles.legend}>
+      <ul className={styles.legend} role="list">
         {items.map((item) => (
           <li key={item.categoryId} className={styles.legendRow}>
             <span className={styles.swatch} style={{ background: item.bg, borderColor: item.text }} />

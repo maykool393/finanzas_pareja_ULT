@@ -15,7 +15,7 @@ export function SegmentedProgress({ step, total }: SegmentedProgressProps) {
         <div className={styles.segment} key={index}>
           <ProgressBar
             ratio={index < step ? 1 : 0}
-            trackColor="rgba(26, 26, 26, 0.18)"
+            trackColor="var(--brand-track)"
             fillColor="var(--gradient-brand-dark)"
           />
         </div>

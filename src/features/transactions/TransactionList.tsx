@@ -37,7 +37,7 @@ export function TransactionList({ transactions, accounts, categories, members, o
       {groupByDay(transactions).map(([day, items]) => (
         <section key={day} className={styles.group}>
           <p className="label">{formatDate(day)}</p>
-          <ul className={styles.list}>
+          <ul className={styles.list} role="list">
             {items.map((transaction) => {
               const account = accounts.find((a) => a.id === transaction.accountId)
               const category = categories.find((c) => c.id === transaction.categoryId)
@@ -59,10 +59,7 @@ export function TransactionList({ transactions, accounts, categories, members, o
                       {[account?.name, member?.displayName].filter(Boolean).join(' · ')}
                     </span>
                   </span>
-                  <span
-                    className={`amount ${styles.amount}`}
-                    style={{ color: isIncome ? 'var(--gain-text)' : 'var(--loss-text)' }}
-                  >
+                  <span className={`amount ${styles.amount} ${isIncome ? styles.income : styles.expense}`}>
                     {isIncome ? '+' : ''}
                     {formatCurrency(transaction.amount, currency)}
                   </span>

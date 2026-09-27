@@ -155,9 +155,11 @@ Cada color de estado tiene dos usos con requisitos distintos: como relleno (barr
 --radius-card: 12px;
 --radius-control: 8px;
 --radius-full: 999px;   /* solo píldoras pequeñas: barras de progreso, avatares, botones de solo ícono */
+--radius-sheet: 20px;   /* solo la hoja del onboarding, montada sobre el degradado */
 
---shadow-sm: 0 1px 2px rgba(26, 26, 26, 0.06);
---shadow-md: 0 2px 12px rgba(26, 26, 26, 0.08);
+--shadow-md: 0 2px 12px rgba(26, 26, 26, 0.08);      /* diálogos; en oscuro, 0 4px 16px rgba(0, 0, 0, 0.4) */
+--shadow-sheet: 0 -10px 24px rgba(26, 26, 26, 0.06); /* hoja del onboarding: hacia arriba, igual en ambos modos */
+--scrim: rgba(0, 0, 0, 0.45);                        /* velo detrás de los diálogos */
 ```
 
 - **Una sola elevación por superficie:** borde o sombra, no ambos. Un borde de 1px bajo una sombra difusa se lee como una tarjeta fantasma. Las tarjetas (`Card`, la del login) llevan **borde**: en modo oscuro una sombra sobre fondo oscuro casi no se ve, y el borde es lo que marca el contorno. Lo que flota sobre un fondo oscurecido o de otro color (diálogo, hoja del onboarding) lleva **sombra**.
@@ -174,6 +176,11 @@ Distinto del fondo de Login/recuperar contraseña/crear cuenta (sección siguien
 --gradient-brand:       linear-gradient(94.58deg, var(--brand-pink) -18.95%, var(--brand-blue) 111.62%);
 --gradient-brand-light: linear-gradient(94.58deg, #FFDDF2 -18.95%, #CAE0F8 111.62%);
 --gradient-brand-dark:  linear-gradient(94.58deg, #C78CB0 -18.95%, #6B92BB 111.62%);
+
+--text-on-brand:        #1a1a1a;                 /* texto e íconos sobre el degradado */
+--text-on-brand-accent: #3D5FA8;                 /* segunda línea del título a dos tonos */
+--brand-track:          rgba(26, 26, 26, 0.18);  /* segmentos pendientes de la barra por pasos */
+--shadow-brand-cta: 0 10px 22px rgba(199, 140, 176, 0.35), 0 6px 16px rgba(107, 146, 187, 0.3);
 ```
 
 Mismos dos tonos (rosa → azul) y mismo ángulo en las tres variantes — solo cambia cuánto blanco/negro se mezcla. `-light` y `-dark` existen para que un elemento pueda distinguirse de otro que también usa el degradado (ej. la barra de progreso sobre el fondo del encabezado): nunca se inventa un tono nuevo, se aclara u oscurece el mismo par.
@@ -183,7 +190,7 @@ Mismos dos tonos (rosa → azul) y mismo ángulo en las tres variantes — solo 
 - Segmento(s) completados de la barra de progreso, botón de acción principal del flujo y borde de la opción seleccionada en tarjetas de elección: `--gradient-brand-dark` — todos más oscuros que el encabezado para distinguirse de él.
 - `--brand-pink` / `--brand-blue` sólidos (sin degradado): avatares del componente `AvatarPair`.
 - `--gradient-brand` (variante base): no se aplica directo a ningún elemento; es el par de origen del que salen `-light` y `-dark`.
-- Texto sobre cualquiera de las tres variantes: siempre oscuro — el texto blanco no llega al contraste mínimo (AA) contra ninguna de ellas. Como el degradado no cambia con `[data-theme="dark"]`, el texto y los íconos sobre él usan `#1a1a1a` literal, no `--text-primary` (que sí se invierte en modo oscuro).
+- Texto sobre cualquiera de las tres variantes: siempre oscuro — el texto blanco no llega al contraste mínimo (AA) contra ninguna de ellas. Como el degradado no cambia con `[data-theme="dark"]`, el texto y los íconos sobre él usan `--text-on-brand` (y el acento, `--text-on-brand-accent`), fijos en ambos modos, nunca `--text-primary` (que se invierte en modo oscuro).
 - No sustituye los colores de categorías financieras ni se usa fuera de flujos de onboarding.
 - Nunca como texto con degradado: el énfasis se da con peso o tamaño.
 - Pendiente: no tiene variante para modo oscuro — hoy se ve igual en claro y oscuro. Definir si corresponde antes de extenderlo a más pantallas.
@@ -195,7 +202,7 @@ Mismos dos tonos (rosa → azul) y mismo ángulo en las tres variantes — solo 
 | Primario | `--surface-inverse` | `--text-inverse` | — | `--surface-inverse-hover` |
 | Secundario | `--surface-page` | `--text-primary` | 1px `--border-strong` | `--surface-sunken` |
 | Destructivo | `--danger-bg` | `--text-on-danger` | — | `--danger-bg-hover` |
-| CTA de onboarding | `--gradient-brand-dark` | `#1a1a1a` fijo | — | Capa blanca al 16% |
+| CTA de onboarding | `--gradient-brand-dark` | `--text-on-brand` | — | Capa blanca al 16% |
 
 **Hover = cambio de color de fondo, nunca de opacidad.** Bajar la opacidad casi no se nota en un botón oscuro, y en uno de color aclara el fondo y baja el contraste del texto. El CTA con degradado es la excepción de técnica: un degradado no transiciona de color, así que el hover es una sombra interna blanca al 16% (`inset 0 0 0 100px`), que se pinta sobre el fondo y debajo del texto y sí se puede animar. Aclara en vez de oscurecer porque el texto es oscuro, y así sube el contraste (5.3 → 6.7:1). Cada color de hover se mide con su texto igual que el de reposo.
 
@@ -256,11 +263,15 @@ Estas tres pantallas comparten el mismo fondo: un degradado difuminado en tonos 
 - Fondo de color de categoría, radio `--radius-card`, padding `--space-md`.
 - Icono representativo + nombre en la parte superior.
 - Monto grande y destacado debajo.
-- Icono de persona (avatar) en la esquina inferior derecha para indicar de quién es.
+- Icono de persona (avatar) en la esquina inferior derecha para indicar de quién es: iniciales del dueño, o el ícono de personas si es compartida. Fondo `--surface-on-category` (blanco translúcido).
+- Es un `<button>` (abre la edición), con un `aria-label` armado a mano: "Banesco, $1.284.500, de Mariana", "Crédito auto, $5.400.000, 40 % pagado, compartida". El nombre que saldría del contenido juntaría los textos sin separar y perdería al dueño, que solo se ve como iniciales. "Compartida" concuerda con cuenta, deuda e inversión.
+- Si lleva barra de progreso (deudas), la barra termina antes del avatar: no pasa por debajo de él.
+- Las tres secciones del dashboard son la misma `FinanceSection` con su configuración (textos, monto, ícono por defecto). Un cambio de comportamiento se hace ahí, una vez.
 
 **Barra de progreso (deudas, presupuestos)**
 - Altura 5px, radio `--radius-full`.
-- Fondo en el tono claro de la categoría, relleno en el tono `fill`.
+- Riel: `--surface-on-category` dentro de una tarjeta de color; `--surface-sunken` sobre una superficie neutra (presupuestos). Relleno en el tono `fill`.
+- Es un `<span>` con `display: block`, no un `<div>`: va dentro de `ItemCard`, que es un botón, y un botón solo admite contenido en línea.
 - Largo proporcional a pagos completados / pagos totales. El relleno mide siempre el 100% del riel y se desplaza con `transform: translateX(-(1 − proporción) × 100%)`; el riel (`overflow: hidden`) recorta lo que sobra. Nunca animar `width` (recalcula layout). Tampoco `scaleX`: aplasta el extremo redondeado, que se ve casi recto cuando la barra está poco llena.
 
 **Encabezado de sección (Cuentas / Deudas / Inversiones)**
@@ -274,6 +285,12 @@ Estas tres pantallas comparten el mismo fondo: un degradado difuminado en tonos 
 - El efecto que maneja el foco depende solo de `open`. `onClose` se lee desde una ref: como suele ser una función nueva en cada render del padre, si fuera dependencia el efecto se reiniciaría y le quitaría el foco al campo en el que se está escribiendo.
 - Entra deslizándose desde abajo (hoja) o con fundido y escala desde 0.97 (centrado), con `@starting-style` y `--duration-base`. Sale con `--duration-fast`: más rápido que la entrada.
 - Al cerrar, sigue montado `EXIT_MS` (150ms, igual a `--duration-fast`) mostrando el último contenido que tuvo abierto. Así la animación de salida tiene qué animar aunque el padre ya haya puesto su estado en `null`, y el foco vuelve al disparador mientras el campo enfocado todavía existe. Si el diálogo desapareciera primero, el foco pasaría por `<body>` y Chrome no mostraría el anillo al devolverlo: el foco volvía, pero invisible.
+
+**Listas**
+- `reset.css` quita viñetas y sangría a todo `<ul>`/`<ol>`: las listas de la app son filas y tarjetas. Cada `<ul>` lleva `role="list"`, porque Safari deja de anunciar como lista un `<ul>` sin viñetas.
+
+**Pie de un diálogo de edición**
+- "Archivar" y "Eliminar" van en `DangerRow`, separados del formulario por un divisor, como enlaces de texto: la confirmación, con su botón de color, llega en el diálogo siguiente.
 
 **Errores y carga**
 - Es una PWA: sin conexión, cualquier llamada a Supabase puede fallar. Ninguna acción queda colgada: si falla, el botón se libera y el error se muestra en línea.
@@ -298,7 +315,7 @@ Estas tres pantallas comparten el mismo fondo: un degradado difuminado en tonos 
 
 **Barra de progreso por pasos (onboarding)**
 - Un segmento por paso, dentro del área del degradado de marca (ver "Identidad de marca") — nunca sobre una franja neutra separada.
-- Segmento(s) completados: relleno con `--gradient-brand-dark`. Pendientes: tono oscuro translúcido (`rgba(26, 26, 26, 0.18)`) sobre el degradado del encabezado.
+- Segmento(s) completados: relleno con `--gradient-brand-dark`. Pendientes: `--brand-track`, tono oscuro translúcido sobre el degradado del encabezado.
 - Mismo patrón para cualquier flujo de varios pasos, no solo vincular hogar.
 
 **Tarjeta de selección (radio-card)**
