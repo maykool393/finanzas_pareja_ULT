@@ -30,7 +30,7 @@ export function ForgotPassword() {
   }
 
   return (
-    <AuthLayout>
+    <AuthLayout title="Recuperar contraseña">
       {sent ? (
         <p className={styles.notice}>
           Si <strong>{email}</strong> tiene una cuenta, te enviamos un correo con un enlace para

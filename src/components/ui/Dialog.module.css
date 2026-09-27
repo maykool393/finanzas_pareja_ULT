@@ -31,6 +31,7 @@
   width: 100%;
   max-width: 480px;
   max-height: 90vh;
+  max-height: 90dvh;
   overflow-y: auto;
   background: var(--surface-card);
   border-radius: var(--radius-card) var(--radius-card) 0 0;

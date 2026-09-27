@@ -311,9 +311,15 @@ Estas tres pantallas comparten el mismo fondo: un degradado difuminado en tonos 
 - **404** (`NotFound`, ruta `*`): va fuera de la sesión, con el mismo `AuthLayout` que el login, porque cualquiera puede abrir un enlace roto. Tiene un título, una línea que explica la causa y el botón principal "Volver al inicio" hacia `/`, que ya decide si va al dashboard o al login.
 - **Sección que todavía no existe** (hoy, Estadísticas): título de la pantalla, ícono del registro en un círculo `--surface-sunken`, qué va a haber y un enlace de texto hacia lo más parecido que ya existe. No promete fechas.
 
+**Gráficos**
+- Colores de línea y barra con 3:1 contra la tarjeta en ambos modos (se miden, como el texto). Los tonos de categoría `-text` son oscuros fijos y no sirven para líneas: la del patrimonio usaba `--account-b-text` y en oscuro daba 1,15:1; ahora usa `--account-b` (3,6 / 4,4).
+- Tooltip y ejes con los estilos compartidos de `tooltipFormat.ts` (tokens), no valores sueltos.
+- Todo gráfico lleva un resumen en texto (`visually-hidden`) con lo que un lector de pantalla no puede sacar del SVG: el período y los valores que importan.
+
 **Títulos de pantalla**
 - Cada pantalla pone el título de la pestaña con `useDocumentTitle`: "Movimientos · Twoney". La bienvenida, solo "Twoney".
-- Cada pantalla tiene un `<h1>`. El Dashboard no muestra título visible (el encabezado es el patrimonio), así que lleva un `<h1 class="visually-hidden">` con el nombre de la pestaña.
+- Cada pantalla tiene un `<h1>`. En login, registro y contraseñas va oculto a la vista (`AuthLayout title`), porque el logo ya encabeza la tarjeta.
+- Los títulos de sección del dashboard (Cuentas, Deudas, Inversiones) son `<h2>` que contienen el botón de expandir, como en el patrón de acordeón. El Dashboard no muestra título visible (el encabezado es el patrimonio), así que lleva un `<h1 class="visually-hidden">` con el nombre de la pestaña.
 - Toda `<nav>` tiene `aria-label`. La del encabezado (escritorio) y la barra inferior (móvil) comparten "Navegación principal", porque nunca se ven las dos a la vez.
 
 **Toggle de modo oscuro**

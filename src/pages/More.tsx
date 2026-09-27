@@ -5,6 +5,7 @@ import styles from './More.module.css'
 
 // Cada módulo que sume una pantalla de gestión (Fases 1–4) agrega su enlace aquí.
 const LINKS = [
+  { to: '/ajustes', label: 'Ajustes del hogar' },
   { to: '/invitar', label: 'Invitar a tu pareja' },
   { to: '/categorias', label: 'Categorías' },
 ]

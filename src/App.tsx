@@ -18,6 +18,7 @@ const Budgets = page('Budgets', () => import('./pages/Budgets'))
 const Categories = page('Categories', () => import('./pages/Categories'))
 const Dashboard = page('Dashboard', () => import('./pages/Dashboard'))
 const ForgotPassword = page('ForgotPassword', () => import('./pages/ForgotPassword'))
+const HouseholdSettings = page('HouseholdSettings', () => import('./pages/HouseholdSettings'))
 const InviteHousehold = page('InviteHousehold', () => import('./pages/InviteHousehold'))
 const JoinRedirect = page('JoinRedirect', () => import('./pages/JoinRedirect'))
 const More = page('More', () => import('./pages/More'))
@@ -65,6 +66,7 @@ export default function App() {
           <Route path="/mas" element={<More />} />
           <Route path="/categorias" element={<Categories />} />
           <Route path="/invitar" element={<InviteHousehold />} />
+          <Route path="/ajustes" element={<HouseholdSettings />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

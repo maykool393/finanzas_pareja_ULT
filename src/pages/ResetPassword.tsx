@@ -36,7 +36,7 @@ export function ResetPassword() {
   }
 
   return (
-    <AuthLayout>
+    <AuthLayout title="Nueva contraseña">
       <form className={styles.form} onSubmit={handleSubmit}>
         <p className={styles.lead}>Elige tu nueva contraseña.</p>
 

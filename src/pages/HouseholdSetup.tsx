@@ -3,52 +3,25 @@ import { OnboardingLayout } from '../components/auth/OnboardingLayout'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { FormError } from '../components/ui/FormError'
-import { ArrowRightIcon, BoltIcon, ClockIcon, PeopleIcon, PersonIcon, SlidersIcon } from '../components/ui/icons'
+import { ArrowRightIcon, PeopleIcon, PersonIcon } from '../components/ui/icons'
 import { InviteCodeBadge } from '../components/ui/InviteCodeBadge'
 import { InviteQrCode } from '../components/ui/InviteQrCode'
 import { RadioCardGroup } from '../components/ui/RadioCardGroup'
 import { RadioListGroup } from '../components/ui/RadioListGroup'
 import { Select } from '../components/ui/Select'
 import { TextField } from '../components/ui/TextField'
+import { CURRENCY_OPTIONS, type ExpenseSplit, SPLIT_OPTIONS } from '../features/household/preferences'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useSession } from '../hooks/useSession'
-import { getCurrencySymbol, SUPPORTED_CURRENCIES } from '../lib/format'
 import { supabase } from '../lib/supabase'
 import styles from './HouseholdSetup.module.css'
 
 type CreateMode = 'individual' | 'pareja'
-type ExpenseSplit = 'proporcional' | 'indiferente' | '50-50'
 type Step = 'choose' | 'join' | 'invite' | 'preferences'
 
 const CREATE_MODE_OPTIONS = [
   { value: 'individual', label: 'Cuenta individual', icon: <PersonIcon /> },
   { value: 'pareja', label: 'Cuentas en pareja', icon: <PeopleIcon /> },
-] as const
-
-const CURRENCY_OPTIONS = SUPPORTED_CURRENCIES.map((code) => ({
-  value: code,
-  label: `${code} ${getCurrencySymbol(code)}`,
-}))
-
-const SPLIT_OPTIONS = [
-  {
-    value: 'proporcional',
-    label: 'Proporcional',
-    description: 'Ajustado según el nivel de ingresos de cada uno para una contribución justa.',
-    icon: <SlidersIcon />,
-  },
-  {
-    value: 'indiferente',
-    label: 'Indiferente',
-    description: 'Todo se maneja de forma conjunta, sin divisiones entre los dos.',
-    icon: <ClockIcon />,
-  },
-  {
-    value: '50-50',
-    label: '50 / 50',
-    description: 'Ambos aportan exactamente el mismo porcentaje a las cuentas del hogar.',
-    icon: <BoltIcon />,
-  },
 ] as const
 
 interface HouseholdSetupProps {

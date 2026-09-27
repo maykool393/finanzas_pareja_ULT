@@ -1,0 +1,36 @@
+.title {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-medium);
+  color: var(--text-primary);
+  margin-bottom: var(--space-lg);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.sectionLabel {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+}
+
+.hint {
+  font-size: var(--text-xs);
+  line-height: var(--leading-normal);
+  color: var(--text-muted);
+}
+
+/* Al elegir otra moneda, el aviso deja de ser un detalle: pasa a texto de apoyo con peso. */
+.warning {
+  font-size: var(--text-xs);
+  line-height: var(--leading-normal);
+  font-weight: var(--weight-medium);
+  color: var(--text-primary);
+}
+
+.saved {
+  font-size: var(--text-sm);
+  color: var(--gain-text);
+}

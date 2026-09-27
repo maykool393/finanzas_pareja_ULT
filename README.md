@@ -206,7 +206,7 @@ Auditoría en el formato de `impeccable audit`: **15/20** (Bueno), contra 13/20 
 | M11 | Montos con centavos | impeccable (harden) | ✅ Completo |
 | M12 | Teclado en grupos de opciones y título por pantalla | impeccable (harden) | ✅ Completo |
 | M13 | Carga de datos: límites, paginación y carga por ruta | impeccable (optimize) | ✅ Completo |
-| M14 | Ajustes del hogar y detalles menores | impeccable (harden, polish) | Pendiente |
+| M14 | Ajustes del hogar y detalles menores | impeccable (harden, polish) | ✅ Completo |
 
 ### M11 — Montos con centavos ✅
 **Fallo (P1):** `NumberField` borraba todo lo que no fuera dígito. En euros, dólares, soles o pesos mexicanos, escribir `12,50` guardaba **1.250**, cien veces más, sin que se notara, porque los montos se mostraban sin decimales. La base (`numeric(14, 2)`) sí acepta centavos, y DESIGN.md y `format.ts` decían por error que los montos se guardaban "en la unidad menor (enteros)". **Decisión (2026-09-27): se aceptan centavos** en las monedas que los usan.
@@ -233,12 +233,20 @@ Auditoría en el formato de `impeccable audit`: **15/20** (Bueno), contra 13/20 
 - [x] Carga por ruta: JS inicial de 538 a 477 KB (154 → 138 KB comprimido), bajo el aviso de 500 KB. Lo que queda es React, Supabase y el router. Probado en el build con Playwright: login, 404 y recuperar contraseña abren sus fragmentos, sin errores en consola.
 - [ ] Verificar con sesión: "Cargar más" en Movimientos; guardar un movimiento y ver el saldo nuevo en el dashboard sin recargar; cerrar sesión y entrar con otra cuenta sin ver datos de la anterior.
 
-### M14 — Ajustes del hogar y detalles menores
-- [ ] La moneda y el reparto de gastos solo se eligen en el onboarding: agregar "Ajustes del hogar" en "Ver más".
-- [ ] Resumen en texto de los gráficos "Ingresos vs. gastos" y "Evolución del patrimonio".
-- [ ] Títulos de sección (Cuentas, Deudas, Inversiones) como encabezados.
-- [ ] `90dvh` en el diálogo; tooltips de gráficos con tokens.
-- [ ] El login y "Recuperar contraseña" no tienen `<h1>` (apareció al probar la M13).
+### M14 — Ajustes del hogar y detalles menores ✅
+- [x] "Ajustes del hogar" en "Ver más" (`/ajustes`): nombre, moneda y reparto de gastos (este último solo con dos personas en el hogar). El onboarding ya prometía "Podrás cambiarla más adelante desde los ajustes de tu hogar". Si se elige otra moneda, un aviso resalta que los montos no se convierten, solo cambia el símbolo. El hogar pasó a la caché compartida: al guardar, la moneda cambia en toda la app sin recargar. Las opciones de moneda y reparto se movieron a `features/household/preferences.tsx`, compartidas con el onboarding.
+- [x] **La línea del patrimonio casi no se veía en modo oscuro** (1,15:1 contra la tarjeta): usaba `--account-b-text`, un tono oscuro fijo. Ahora `--account-b` (3,6:1 en claro, 4,4:1 en oscuro). *(Detectado al implementar.)*
+- [x] Resumen en texto de "Ingresos vs. gastos" y "Evolución del patrimonio", para lectores de pantalla.
+- [x] Títulos de sección (Cuentas, Deudas, Inversiones) como `<h2>` con el botón adentro (patrón de acordeón).
+- [x] `90dvh` en el diálogo; tooltips y ejes de los gráficos con estilos compartidos y tokens. La primera fecha del gráfico de patrimonio salía cortada ("9 jun"): el eje tiene margen.
+- [x] `<h1>` en login, registro, recuperar y nueva contraseña (oculto a la vista: el logo ya encabeza la tarjeta).
+- [x] Verificado con Playwright en una página temporal (ya borrada): encabezados, resúmenes, `<h1>` del login y captura de los gráficos en oscuro a 390px.
+- [ ] Verificar con sesión: cambiar la moneda en "Ajustes del hogar" y ver el símbolo nuevo en el dashboard sin recargar; que el reparto aparezca solo con dos personas.
+
+### Cierre del plan 3
+Las cuatro etapas están implementadas. Falta:
+- Las verificaciones con sesión y con lector de pantalla marcadas en M11–M14.
+- Pendientes de diseño: la pantalla de Estadísticas y las animaciones marcadas como pendientes en DESIGN.md.
 
 ---
 

@@ -4,6 +4,12 @@
   gap: var(--space-sm);
 }
 
+.heading {
+  flex: 1;
+  display: flex;
+  font: inherit;
+}
+
 .toggle {
   flex: 1;
   display: flex;

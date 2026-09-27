@@ -81,7 +81,7 @@ export function Login() {
   }
 
   return (
-    <AuthLayout>
+    <AuthLayout title={mode === 'signup' ? 'Crear cuenta' : 'Iniciar sesión'}>
       {confirmEmailSent ? (
         <p className={styles.notice}>
           Te enviamos un correo a <strong>{email}</strong> para confirmar tu cuenta.
