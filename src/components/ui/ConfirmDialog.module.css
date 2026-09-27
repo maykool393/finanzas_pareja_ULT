@@ -5,6 +5,10 @@
   margin-bottom: var(--space-lg);
 }
 
+.error {
+  margin-bottom: var(--space-lg);
+}
+
 .actions {
   display: flex;
   justify-content: flex-end;

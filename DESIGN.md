@@ -273,6 +273,15 @@ Estas tres pantallas comparten el mismo fondo: un degradado difuminado en tonos 
 - Entra deslizándose desde abajo (hoja) o con fundido y escala desde 0.97 (centrado), con `@starting-style` y `--duration-base`. Sale con `--duration-fast`: más rápido que la entrada.
 - Al cerrar, sigue montado `EXIT_MS` (150ms, igual a `--duration-fast`) mostrando el último contenido que tuvo abierto. Así la animación de salida tiene qué animar aunque el padre ya haya puesto su estado en `null`, y el foco vuelve al disparador mientras el campo enfocado todavía existe. Si el diálogo desapareciera primero, el foco pasaría por `<body>` y Chrome no mostraría el anillo al devolverlo: el foco volvía, pero invisible.
 
+**Errores y carga**
+- Es una PWA: sin conexión, cualquier llamada a Supabase puede fallar. Ninguna acción queda colgada: si falla, el botón se libera y el error se muestra en línea.
+- Guardar, archivar, reactivar y eliminar pasan por `useAsyncAction` (`src/hooks/`). El error va con `FormError`: `--text-sm`, `--loss-text` y `role="alert"` para que el lector de pantalla lo anuncie. En un formulario va justo sobre el botón de guardar; en `ConfirmDialog`, entre la descripción y los botones. Nunca `alert()`.
+- `ConfirmDialog` recibe una acción asíncrona y maneja su propia carga y su error. Mientras la acción corre, no se puede cerrar.
+- Los textos de error están en `src/lib/errorMessages.ts` y siguen la regla de "Texto de la interfaz": qué pasó y cómo seguir, sin detalles técnicos.
+- Las listas usan `LoadStatus`: "Cargando…" en `--text-muted`; si falla, el error con un enlace "Reintentar". Así ninguna lista muestra su estado vacío antes de cargar.
+- "Cargando…" aparece solo en la primera carga y al reintentar. Las recargas después de guardar actualizan la lista en su lugar: reemplazarla por "Cargando…" en cada guardado la haría parpadear.
+- Un monto que depende de datos que no han llegado nunca se muestra como `$0`, que parece un saldo real. El patrimonio muestra un bloque `--surface-sunken` del alto de la línea; el total de una sección se omite.
+
 **Toggle de modo oscuro**
 - Debe estar accesible desde la pantalla principal.
 

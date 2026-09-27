@@ -40,6 +40,15 @@
   color: var(--text-primary);
 }
 
+.actions button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.error {
+  margin-top: var(--space-sm);
+}
+
 .toggle {
   align-self: flex-start;
   font-size: var(--text-sm);

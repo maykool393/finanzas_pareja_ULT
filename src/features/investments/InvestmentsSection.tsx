@@ -4,6 +4,7 @@ import { ConfirmDialog } from '../../components/ui/ConfirmDialog'
 import { Dialog } from '../../components/ui/Dialog'
 import { ACCOUNT_ICON_OPTIONS, ICONS, type AccountIconKey } from '../../components/ui/icons'
 import { ItemCard, type ItemVariant } from '../../components/ui/ItemCard'
+import { LoadStatus } from '../../components/ui/LoadStatus'
 import { SectionHeader } from '../../components/ui/SectionHeader'
 import styles from '../../components/ui/sectionGrid.module.css'
 import { useCurrency } from '../../hooks/useCurrency'
@@ -17,7 +18,7 @@ import { useInvestments } from './useInvestments'
 const DEFAULT_ICON = ACCOUNT_ICON_OPTIONS.find((o) => o.key === 'trend-up')!.key
 
 export function InvestmentsSection() {
-  const { investments, loading, create, update, toggleArchived, remove } = useInvestments()
+  const { investments, loading, error, retry, create, update, toggleArchived, remove } = useInvestments()
   const { members } = useHouseholdMembers()
   const currency = useCurrency()
 
@@ -27,7 +28,6 @@ export function InvestmentsSection() {
   const [editing, setEditing] = useState<Investment | null>(null)
   const [archiving, setArchiving] = useState<Investment | null>(null)
   const [deleting, setDeleting] = useState<Investment | null>(null)
-  const [confirmLoading, setConfirmLoading] = useState(false)
 
   const active = investments.filter((i) => !i.archivedAt)
   const archived = investments.filter((i) => i.archivedAt)
@@ -42,49 +42,53 @@ export function InvestmentsSection() {
     <section className={styles.section}>
       <SectionHeader
         title="Inversiones"
-        total={formatCurrency(total, currency)}
+        total={loading || error ? undefined : formatCurrency(total, currency)}
         expanded={expanded}
         onToggle={() => setExpanded((e) => !e)}
         onAdd={() => setFormOpen(true)}
       />
 
-      {expanded && !loading && !showArchived && active.length === 0 && (
-        <p className={styles.empty}>Sin inversiones todavía.</p>
-      )}
+      {expanded && (
+        <LoadStatus loading={loading} error={error} onRetry={retry}>
+          {!showArchived && active.length === 0 && (
+            <p className={styles.empty}>Sin inversiones todavía.</p>
+          )}
 
-      {expanded && !showArchived && active.length > 0 && (
-        <div className={styles.cardRow}>
-          {active.map((investment) => {
-            const Icon = ICONS[(investment.icon as AccountIconKey) ?? DEFAULT_ICON] ?? ICONS[DEFAULT_ICON]
-            return (
-              <ItemCard
-                key={investment.id}
-                name={investment.name}
-                amount={formatCurrency(investment.currentValue, currency)}
-                variant={(investment.colorVariant === 'b' ? 'investment-b' : 'investment-a') satisfies ItemVariant}
-                icon={<Icon />}
-                owner={ownerName(investment.ownerId)}
-                onClick={() => setEditing(investment)}
-              />
-            )
-          })}
-        </div>
-      )}
+          {!showArchived && active.length > 0 && (
+            <div className={styles.cardRow}>
+              {active.map((investment) => {
+                const Icon = ICONS[(investment.icon as AccountIconKey) ?? DEFAULT_ICON] ?? ICONS[DEFAULT_ICON]
+                return (
+                  <ItemCard
+                    key={investment.id}
+                    name={investment.name}
+                    amount={formatCurrency(investment.currentValue, currency)}
+                    variant={(investment.colorVariant === 'b' ? 'investment-b' : 'investment-a') satisfies ItemVariant}
+                    icon={<Icon />}
+                    owner={ownerName(investment.ownerId)}
+                    onClick={() => setEditing(investment)}
+                  />
+                )
+              })}
+            </div>
+          )}
 
-      {expanded && showArchived && (
-        <ArchivedList
-          items={archived}
-          onUnarchive={async (investment) => {
-            await toggleArchived(investment.id, false)
-            setShowArchived(false)
-          }}
-          onDelete={(investment) => setDeleting(investment)}
-          emptyLabel="Ninguna inversión archivada."
-        />
-      )}
+          {showArchived && (
+            <ArchivedList
+              items={archived}
+              onUnarchive={async (investment) => {
+                await toggleArchived(investment.id, false)
+                setShowArchived(false)
+              }}
+              onDelete={(investment) => setDeleting(investment)}
+              emptyLabel="Ninguna inversión archivada."
+            />
+          )}
 
-      {expanded && archived.length > 0 && (
-        <ArchivedToggle count={archived.length} showing={showArchived} onToggle={() => setShowArchived((v) => !v)} />
+          {archived.length > 0 && (
+            <ArchivedToggle count={archived.length} showing={showArchived} onToggle={() => setShowArchived((v) => !v)} />
+          )}
+        </LoadStatus>
       )}
 
       <Dialog open={formOpen} onClose={() => setFormOpen(false)} title="Nueva inversión">
@@ -137,15 +141,12 @@ export function InvestmentsSection() {
         onClose={() => setArchiving(null)}
         onConfirm={async () => {
           if (!archiving) return
-          setConfirmLoading(true)
           await toggleArchived(archiving.id, true)
-          setConfirmLoading(false)
           setArchiving(null)
         }}
         title="Archivar inversión"
         description={`"${archiving?.name}" dejará de aparecer en el dashboard. Puedes recuperarla cuando quieras.`}
         tone="archive"
-        loading={confirmLoading}
       />
 
       <ConfirmDialog
@@ -153,15 +154,12 @@ export function InvestmentsSection() {
         onClose={() => setDeleting(null)}
         onConfirm={async () => {
           if (!deleting) return
-          setConfirmLoading(true)
           await remove(deleting.id)
-          setConfirmLoading(false)
           setDeleting(null)
         }}
         title="Eliminar inversión"
         description={`Esta acción no se puede deshacer. Se eliminará "${deleting?.name}" de forma permanente.`}
         tone="delete"
-        loading={confirmLoading}
       />
     </section>
   )

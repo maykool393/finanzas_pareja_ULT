@@ -3,6 +3,7 @@ import { Link, Navigate, useLocation } from 'react-router-dom'
 import { AuthLayout } from '../components/auth/AuthLayout'
 import { SocialAuthButtons } from '../components/auth/SocialAuthButtons'
 import styles from '../components/auth/authForm.module.css'
+import { FormError } from '../components/ui/FormError'
 import { useSession } from '../hooks/useSession'
 import { translateAuthError } from '../lib/authErrors'
 import { getPendingInvite } from '../lib/pendingInvite'
@@ -118,7 +119,7 @@ export function Login() {
             </Link>
           )}
 
-          {error && <p className={styles.error}>{error}</p>}
+          {error && <FormError>{error}</FormError>}
 
           <button type="submit" className={styles.submit} disabled={submitting}>
             {submitting ? 'Un momento…' : mode === 'signin' ? 'Iniciar sesión' : 'Crear cuenta'}

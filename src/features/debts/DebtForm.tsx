@@ -2,11 +2,14 @@ import { type FormEvent, useState } from 'react'
 import { Button } from '../../components/ui/Button'
 import { ColorPicker } from '../../components/ui/ColorPicker'
 import formStyles from '../../components/ui/form.module.css'
+import { FormError } from '../../components/ui/FormError'
 import { ACCOUNT_ICON_OPTIONS, type AccountIconKey } from '../../components/ui/icons'
 import { IconPicker } from '../../components/ui/IconPicker'
 import { MemberSelect } from '../../components/ui/MemberSelect'
 import { NumberField } from '../../components/ui/NumberField'
 import { TextField } from '../../components/ui/TextField'
+import { useAsyncAction } from '../../hooks/useAsyncAction'
+import { ERROR_MESSAGES } from '../../lib/errorMessages'
 import type { ColorVariant, Debt } from '../../types/domain'
 import type { DebtInput } from './api'
 
@@ -32,12 +35,11 @@ export function DebtForm({ initial, onSubmit, onCancel }: DebtFormProps) {
   const [installmentsRemaining, setInstallmentsRemaining] = useState<number | null>(
     initial?.installmentsRemaining ?? null,
   )
-  const [submitting, setSubmitting] = useState(false)
+  const { pending: submitting, error, run } = useAsyncAction()
 
-  async function handleSubmit(event: FormEvent) {
+  function handleSubmit(event: FormEvent) {
     event.preventDefault()
-    setSubmitting(true)
-    await onSubmit({
+    const input: DebtInput = {
       name,
       ownerId,
       icon,
@@ -46,8 +48,8 @@ export function DebtForm({ initial, onSubmit, onCancel }: DebtFormProps) {
       remaining: remaining ?? 0,
       installmentAmount,
       installmentsRemaining,
-    })
-    setSubmitting(false)
+    }
+    run(() => onSubmit(input), ERROR_MESSAGES.save)
   }
 
   return (
@@ -76,6 +78,8 @@ export function DebtForm({ initial, onSubmit, onCancel }: DebtFormProps) {
       <IconPicker value={icon} onChange={(v) => setIcon(v as AccountIconKey)} options={ACCOUNT_ICON_OPTIONS} />
 
       <ColorPicker value={colorVariant} onChange={(v) => setColorVariant(v as ColorVariant)} options={DEBT_COLOR_OPTIONS} />
+
+      {error && <FormError>{error}</FormError>}
 
       <Button type="submit" variant="primary" disabled={submitting}>
         {submitting ? 'Guardando…' : 'Guardar'}

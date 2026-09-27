@@ -14,14 +14,29 @@ export function useInvestments() {
   const { householdId } = useHouseholdId()
   const [investments, setInvestments] = useState<Investment[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
+  // `loading` cubre solo la primera carga y los reintentos: las recargas
+  // después de guardar actualizan la lista sin reemplazarla por "Cargando…".
   const refresh = useCallback(async () => {
-    setLoading(true)
-    setInvestments(await listInvestments())
-    setLoading(false)
+    try {
+      setInvestments(await listInvestments())
+      setError(false)
+    } catch (err) {
+      console.error(err)
+      setError(true)
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => {
+    refresh()
+  }, [refresh])
+
+  const retry = useCallback(() => {
+    setLoading(true)
+    setError(false)
     refresh()
   }, [refresh])
 
@@ -46,5 +61,5 @@ export function useInvestments() {
     await refresh()
   }
 
-  return { investments, loading, create, update, toggleArchived, remove }
+  return { investments, loading, error, retry, create, update, toggleArchived, remove }
 }

@@ -36,11 +36,6 @@
   flex: 1;
 }
 
-.error {
-  font-size: var(--text-sm);
-  color: var(--loss-text);
-}
-
 .joinToggle {
   align-self: center;
   font-size: var(--text-sm);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import type { Account, Category, Debt, Investment, Transaction } from '../../types/domain'
 import { CATEGORY_COLOR_TOKENS } from '../categories/colors'
 import { listTransactions } from '../transactions/api'
@@ -55,17 +55,34 @@ export function useDashboardCharts(
 ) {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
+  // Cada reintento lo sube en uno, y eso vuelve a correr la consulta.
+  const [attempt, setAttempt] = useState(0)
 
   useEffect(() => {
     let active = true
-    listTransactions({ from: isoDate(monthStart(MONTHS_BACK)) }).then((data) => {
-      if (!active) return
-      setTransactions(data)
-      setLoading(false)
-    })
+    listTransactions({ from: isoDate(monthStart(MONTHS_BACK)) }).then(
+      (data) => {
+        if (!active) return
+        setTransactions(data)
+        setLoading(false)
+      },
+      (err) => {
+        if (!active) return
+        console.error(err)
+        setError(true)
+        setLoading(false)
+      },
+    )
     return () => {
       active = false
     }
+  }, [attempt])
+
+  const retry = useCallback(() => {
+    setLoading(true)
+    setError(false)
+    setAttempt((n) => n + 1)
   }, [])
 
   const currentAccountsTotal = accounts.filter((a) => !a.archivedAt).reduce((sum, a) => sum + a.balance, 0)
@@ -139,5 +156,5 @@ export function useDashboardCharts(
     netWorthTrend.push({ date: key, netWorth: cumulative + currentInvestmentsTotal - currentDebtsTotal })
   }
 
-  return { loading, categoryBreakdown, incomeVsExpense, netWorthTrend }
+  return { loading, error, retry, categoryBreakdown, incomeVsExpense, netWorthTrend }
 }

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Button } from '../components/ui/Button'
 import { ConfirmDialog } from '../components/ui/ConfirmDialog'
 import { Dialog } from '../components/ui/Dialog'
+import { LoadStatus } from '../components/ui/LoadStatus'
 import { useAccounts } from '../features/accounts/useAccounts'
 import { useCategories } from '../features/categories/useCategories'
 import { TransactionFiltersBar } from '../features/transactions/TransactionFiltersBar'
@@ -14,7 +15,7 @@ import styles from './Transactions.module.css'
 
 export function Transactions() {
   const [filters, setFilters] = useState<TransactionFilters>({})
-  const { transactions, loading, create, update, remove } = useTransactions(filters)
+  const { transactions, loading, error, retry, create, update, remove } = useTransactions(filters)
   const { accounts } = useAccounts()
   const { categories } = useCategories()
   const { members } = useHouseholdMembers()
@@ -23,7 +24,6 @@ export function Transactions() {
   const [formOpen, setFormOpen] = useState(false)
   const [editing, setEditing] = useState<Transaction | null>(null)
   const [deleting, setDeleting] = useState<Transaction | null>(null)
-  const [confirmLoading, setConfirmLoading] = useState(false)
 
   return (
     <div className={styles.page}>
@@ -46,9 +46,7 @@ export function Transactions() {
         />
       )}
 
-      {loading ? (
-        <p className={styles.empty}>Cargando…</p>
-      ) : (
+      <LoadStatus loading={loading} error={error} onRetry={retry}>
         <TransactionList
           transactions={transactions}
           accounts={accounts}
@@ -56,7 +54,7 @@ export function Transactions() {
           members={members}
           onSelect={(transaction) => setEditing(transaction)}
         />
-      )}
+      </LoadStatus>
 
       <Dialog open={formOpen} onClose={() => setFormOpen(false)} title="Nuevo movimiento">
         <TransactionForm
@@ -99,15 +97,12 @@ export function Transactions() {
         onClose={() => setDeleting(null)}
         onConfirm={async () => {
           if (!deleting) return
-          setConfirmLoading(true)
           await remove(deleting.id)
-          setConfirmLoading(false)
           setDeleting(null)
         }}
         title="Eliminar movimiento"
         description="Esta acción no se puede deshacer. El saldo de la cuenta se ajusta automáticamente."
         tone="delete"
-        loading={confirmLoading}
       />
     </div>
   )

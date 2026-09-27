@@ -7,14 +7,29 @@ export function useDebts() {
   const { householdId } = useHouseholdId()
   const [debts, setDebts] = useState<Debt[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
+  // `loading` cubre solo la primera carga y los reintentos: las recargas
+  // después de guardar actualizan la lista sin reemplazarla por "Cargando…".
   const refresh = useCallback(async () => {
-    setLoading(true)
-    setDebts(await listDebts())
-    setLoading(false)
+    try {
+      setDebts(await listDebts())
+      setError(false)
+    } catch (err) {
+      console.error(err)
+      setError(true)
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => {
+    refresh()
+  }, [refresh])
+
+  const retry = useCallback(() => {
+    setLoading(true)
+    setError(false)
     refresh()
   }, [refresh])
 
@@ -39,5 +54,5 @@ export function useDebts() {
     await refresh()
   }
 
-  return { debts, loading, create, update, toggleArchived, remove }
+  return { debts, loading, error, retry, create, update, toggleArchived, remove }
 }

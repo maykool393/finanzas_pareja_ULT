@@ -1,3 +1,6 @@
+import { useAsyncAction } from '../../hooks/useAsyncAction'
+import { ERROR_MESSAGES } from '../../lib/errorMessages'
+import { FormError } from './FormError'
 import styles from './ArchivedList.module.css'
 
 interface ArchivedItem {
@@ -7,7 +10,7 @@ interface ArchivedItem {
 
 interface ArchivedListProps<T extends ArchivedItem> {
   items: T[]
-  onUnarchive: (item: T) => void
+  onUnarchive: (item: T) => Promise<void>
   onDelete: (item: T) => void
   emptyLabel?: string
 }
@@ -19,24 +22,37 @@ export function ArchivedList<T extends ArchivedItem>({
   onDelete,
   emptyLabel = 'Ninguna archivada.',
 }: ArchivedListProps<T>) {
+  const { pending, error, run } = useAsyncAction()
+
   if (items.length === 0) return <p className={styles.empty}>{emptyLabel}</p>
 
   return (
-    <ul className={styles.list}>
-      {items.map((item) => (
-        <li key={item.id} className={styles.row}>
-          <span className={styles.name}>{item.name}</span>
-          <div className={styles.actions}>
-            <button type="button" onClick={() => onUnarchive(item)}>
-              Reactivar
-            </button>
-            <button type="button" onClick={() => onDelete(item)}>
-              Eliminar
-            </button>
-          </div>
-        </li>
-      ))}
-    </ul>
+    <>
+      <ul className={styles.list}>
+        {items.map((item) => (
+          <li key={item.id} className={styles.row}>
+            <span className={styles.name}>{item.name}</span>
+            <div className={styles.actions}>
+              <button
+                type="button"
+                onClick={() => run(() => onUnarchive(item), ERROR_MESSAGES.unarchive)}
+                disabled={pending}
+              >
+                Reactivar
+              </button>
+              <button type="button" onClick={() => onDelete(item)} disabled={pending}>
+                Eliminar
+              </button>
+            </div>
+          </li>
+        ))}
+      </ul>
+      {error && (
+        <div className={styles.error}>
+          <FormError>{error}</FormError>
+        </div>
+      )}
+    </>
   )
 }
 

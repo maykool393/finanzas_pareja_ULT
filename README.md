@@ -133,6 +133,51 @@ Las seis etapas están implementadas. Falta:
 
 ---
 
+## Plan de mejoras 2 (segunda auditoría, 2026-09-27)
+
+Segunda pasada sobre el código completo, después de cerrar M0–M6. Lo que ya estaba bien no se toca: hovers condicionados, transiciones con propiedades nombradas, animaciones solo de `transform`/`opacity`, textos alternativos. Lo que queda son fallos que el usuario puede ver (sobre todo sin conexión, que en una PWA es lo normal), accesibilidad y diferencias entre DESIGN.md y el código.
+
+| Etapa | Qué resuelve | Skill que manda | Estado |
+|---|---|---|---|
+| M7 | Errores y carga | impeccable | ✅ Completo |
+| M8 | Rutas y navegación | impeccable | Pendiente |
+| M9 | Limpieza de componentes y tokens | impeccable | Pendiente |
+| M10 | DESIGN.md y configuración | — | Pendiente |
+
+### M7 — Errores y carga ✅
+Ningún formulario, borrado ni carga de datos manejaba errores: la capa `api.ts` lanza la excepción y nadie la atrapaba.
+- [x] Guardar: si falla, el botón quedaba en "Guardando…" para siempre y sin mensaje. Ahora los 6 formularios muestran el error sobre el botón y se puede reintentar (`useAsyncAction` + `FormError`).
+- [x] Eliminar y archivar: el diálogo de confirmación quedaba cargando. Ahora maneja su propia carga y muestra el error; los 10 lugares que lo usan ya no llevan su propio `confirmLoading`.
+- [x] Reactivar un archivado (cuentas, deudas, inversiones, categorías): fallaba sin aviso.
+- [x] Cargar listas: `loading` no volvía a `false`. Ahora cada lista muestra el error con "Reintentar" (`LoadStatus`).
+- [x] `loading` cubre solo la primera carga y los reintentos: las recargas después de guardar actualizan la lista sin reemplazarla por "Cargando…", así no parpadea. *(Detectado al implementar.)*
+- [x] Dashboard: el patrimonio mostraba $0 mientras cargaba (ahora un bloque del mismo alto) y los totales de sección también ($0 → vacío). "Actualizado hoy" era un texto fijo; ahora dice cómo se calcula. "Últimos movimientos" mostraba "Aún no hay movimientos" antes de cargar. Si fallan los gráficos, se ve el error en vez de desaparecer.
+- [x] Un solo estado de carga para todas las listas (antes "Cargando…" en unas pantallas y nada en otras).
+- [x] Los mensajes de error se anuncian a los lectores de pantalla (`role="alert"`), también en login, recuperar contraseña y onboarding.
+- [ ] Verificar en el navegador: con la red cortada (DevTools → Network → Offline), guardar, eliminar, reactivar y recargar una pantalla; ver el mensaje y que "Reintentar" funcione al volver la red.
+
+### M8 — Rutas y navegación
+- [ ] Página 404: una URL desconocida mostraba una pantalla en blanco.
+- [ ] "Estadísticas": hoy es un `<p>` suelto en la navegación principal. Necesita un estado vacío diseñado.
+- [ ] `theme-color` según el tema: en modo oscuro la barra de estado del celular queda blanca.
+- [ ] `<h1>` en el Dashboard (es la única pantalla sin él) y `aria-label` en la navegación del encabezado y en "Ver más".
+
+### M9 — Limpieza de componentes y tokens
+- [ ] **El patrimonio no se actualiza al guardar desde el dashboard.** `Dashboard` y cada sección llaman a `useAccounts`/`useDebts`/`useInvestments` por separado, con estados independientes: al crear o editar una cuenta, la sección se refresca, pero el total del encabezado y los gráficos no, hasta recargar la página. Se resuelve al extraer lo repetido de las secciones (abajo): los datos se cargan una vez en `Dashboard` y bajan como props. *(Detectado en M7.)*
+- [ ] `ItemCard` como `<button>` real, en vez de `<article role="button">`. El dueño se anuncia de verdad (hoy es un `aria-label` en un `<span>`, que se ignora) y con un texto que sirve para deudas e inversiones, no solo "Cuenta de…".
+- [ ] Valores sueltos a tokens: color del acento del onboarding (`#3D5FA8`), radio y sombra de la hoja, fondo del diálogo, avatar de `ItemCard`, riel de la barra de progreso, color del monto en `TransactionList`.
+- [ ] `100dvh` en `RequireAuth`, `AppShell` y `reset.css`.
+- [ ] Extraer lo repetido de `AccountsSection`, `DebtsSection` e `InvestmentsSection` (≈170 líneas cada una, casi iguales) y la regla `.dangerRow`, copiada en 4 archivos.
+
+### M10 — DESIGN.md y configuración
+- [ ] Quitar la mención al hover con opacidad 0.9 en los botones de eliminar: contradice la regla "hover = fondo, nunca opacidad".
+- [ ] Marcar como pendientes los casos de animación que no existen (conteo de montos, entrada de transacciones nuevas).
+- [ ] Decidir el degradado de marca en modo oscuro: hoy la hoja del onboarding sale oscura bajo un encabezado claro.
+- [ ] Excluir `.claude/` del lint: `npm run lint` suma 112 avisos de los scripts de las skills a los del proyecto.
+- [ ] Los 13 avisos del proyecto: 10 `set-state-in-effect` (los hooks de datos y `Login`, `RequireHousehold`, `useHousehold`, `useHouseholdId`) y 3 `only-export-components` en `icons.tsx`. Revisar cada uno: corregir o silenciar con el motivo escrito.
+
+---
+
 ## Convenciones transversales (aplican a todas las fases)
 
 **RLS**: todas las tablas nuevas o alteradas usan exactamente el patrón ya establecido en la migración base — `enable row level security` + una sola policy `for all to authenticated using (household_id = public.current_household_id()) with check (...)`. No se repite en cada fase salvo que un módulo necesite algo distinto (ninguno lo necesita).

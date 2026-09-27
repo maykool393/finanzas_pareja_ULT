@@ -1,0 +1,28 @@
+.loading {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  margin-top: var(--space-sm);
+}
+
+.error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: var(--space-md);
+  margin-top: var(--space-sm);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--loss-text);
+}
+
+/* Enlace de texto (DESIGN.md § Botones): sin fondo ni escala, solo color. */
+.retry {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-secondary);
+  transition: color var(--duration-fast) ease;
+}
+
+.retry:hover {
+  color: var(--text-primary);
+}

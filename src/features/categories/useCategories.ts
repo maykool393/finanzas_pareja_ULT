@@ -14,14 +14,29 @@ export function useCategories() {
   const { householdId } = useHouseholdId()
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
+  // `loading` cubre solo la primera carga y los reintentos: las recargas
+  // después de guardar actualizan la lista sin reemplazarla por "Cargando…".
   const refresh = useCallback(async () => {
-    setLoading(true)
-    setCategories(await listCategories())
-    setLoading(false)
+    try {
+      setCategories(await listCategories())
+      setError(false)
+    } catch (err) {
+      console.error(err)
+      setError(true)
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => {
+    refresh()
+  }, [refresh])
+
+  const retry = useCallback(() => {
+    setLoading(true)
+    setError(false)
     refresh()
   }, [refresh])
 
@@ -46,5 +61,5 @@ export function useCategories() {
     await refresh()
   }
 
-  return { categories, loading, create, update, toggleArchived, remove }
+  return { categories, loading, error, retry, create, update, toggleArchived, remove }
 }

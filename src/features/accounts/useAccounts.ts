@@ -14,14 +14,29 @@ export function useAccounts() {
   const { householdId } = useHouseholdId()
   const [accounts, setAccounts] = useState<Account[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
+  // `loading` cubre solo la primera carga y los reintentos: las recargas
+  // después de guardar actualizan la lista sin reemplazarla por "Cargando…".
   const refresh = useCallback(async () => {
-    setLoading(true)
-    setAccounts(await listAccounts())
-    setLoading(false)
+    try {
+      setAccounts(await listAccounts())
+      setError(false)
+    } catch (err) {
+      console.error(err)
+      setError(true)
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => {
+    refresh()
+  }, [refresh])
+
+  const retry = useCallback(() => {
+    setLoading(true)
+    setError(false)
     refresh()
   }, [refresh])
 
@@ -46,5 +61,5 @@ export function useAccounts() {
     await refresh()
   }
 
-  return { accounts, loading, create, update, toggleArchived, remove }
+  return { accounts, loading, error, retry, create, update, toggleArchived, remove }
 }

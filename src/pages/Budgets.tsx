@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Button } from '../components/ui/Button'
 import { ConfirmDialog } from '../components/ui/ConfirmDialog'
 import { Dialog } from '../components/ui/Dialog'
+import { LoadStatus } from '../components/ui/LoadStatus'
 import { BudgetForm } from '../features/budgets/BudgetForm'
 import { BudgetList } from '../features/budgets/BudgetList'
 import { useBudgets } from '../features/budgets/useBudgets'
@@ -11,13 +12,12 @@ import type { BudgetProgress } from '../types/domain'
 import styles from './Budgets.module.css'
 
 export function Budgets() {
-  const { budgets, loading, periodMonth, create, update, remove } = useBudgets()
+  const { budgets, loading, error, retry, periodMonth, create, update, remove } = useBudgets()
   const { categories } = useCategories()
 
   const [formOpen, setFormOpen] = useState(false)
   const [editing, setEditing] = useState<BudgetProgress | null>(null)
   const [deleting, setDeleting] = useState<BudgetProgress | null>(null)
-  const [confirmLoading, setConfirmLoading] = useState(false)
 
   const existingCategoryIds = budgets.map((b) => b.categoryId)
   const deletingCategoryName = categories.find((c) => c.id === deleting?.categoryId)?.name
@@ -29,16 +29,14 @@ export function Budgets() {
         <Button onClick={() => setFormOpen(true)}>Nuevo presupuesto</Button>
       </div>
 
-      {loading ? (
-        <p className={styles.empty}>Cargando…</p>
-      ) : (
+      <LoadStatus loading={loading} error={error} onRetry={retry}>
         <BudgetList
           budgets={budgets}
           categories={categories}
           onEdit={(budget) => setEditing(budget)}
           onDelete={(budget) => setDeleting(budget)}
         />
-      )}
+      </LoadStatus>
 
       <Dialog open={formOpen} onClose={() => setFormOpen(false)} title="Nuevo presupuesto">
         <BudgetForm
@@ -72,15 +70,12 @@ export function Budgets() {
         onClose={() => setDeleting(null)}
         onConfirm={async () => {
           if (!deleting) return
-          setConfirmLoading(true)
           await remove(deleting.id)
-          setConfirmLoading(false)
           setDeleting(null)
         }}
         title="Eliminar presupuesto"
         description={`Se eliminará el límite de "${deletingCategoryName}" para este mes.`}
         tone="delete"
-        loading={confirmLoading}
       />
     </div>
   )

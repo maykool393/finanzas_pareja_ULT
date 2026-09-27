@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react'
 import { Card } from '../components/ui/Card'
+import { LoadError, LoadStatus } from '../components/ui/LoadStatus'
 import { AccountsSection } from '../features/accounts/AccountsSection'
 import { useAccounts } from '../features/accounts/useAccounts'
 import { useCategories } from '../features/categories/useCategories'
@@ -31,66 +32,88 @@ const sum = (values: number[]) => values.reduce((acc, v) => acc + v, 0)
 
 export function Dashboard() {
   const currency = useCurrency()
-  const { accounts } = useAccounts()
-  const { debts } = useDebts()
-  const { investments } = useInvestments()
+  const accountsQuery = useAccounts()
+  const debtsQuery = useDebts()
+  const investmentsQuery = useInvestments()
+  const { accounts } = accountsQuery
+  const { debts } = debtsQuery
+  const { investments } = investmentsQuery
   const { categories } = useCategories()
   const { members } = useHouseholdMembers()
-  const { transactions } = useTransactions()
-  const recentTransactions = transactions.slice(0, 5)
-  const { loading: chartsLoading, categoryBreakdown, incomeVsExpense, netWorthTrend } = useDashboardCharts(
-    accounts,
-    debts,
-    investments,
-    categories,
-  )
+  const transactionsQuery = useTransactions()
+  const recentTransactions = transactionsQuery.transactions.slice(0, 5)
+  const charts = useDashboardCharts(accounts, debts, investments, categories)
 
   const accountsTotal = sum(accounts.filter((a) => !a.archivedAt).map((a) => a.balance))
   const debtsTotal = sum(debts.filter((d) => !d.archivedAt).map((d) => d.remaining))
   const investmentsTotal = sum(investments.filter((i) => !i.archivedAt).map((i) => i.currentValue))
   const netWorth = accountsTotal + investmentsTotal - debtsTotal
 
+  // El patrimonio suma tres listas: si falta una, el total sería falso.
+  const totalsLoading = accountsQuery.loading || debtsQuery.loading || investmentsQuery.loading
+  const totalsError = accountsQuery.error || debtsQuery.error || investmentsQuery.error
+
   return (
     <>
       <header className={styles.hero}>
         <p className="label">Patrimonio neto · {formatMonth(new Date())}</p>
-        <p className={`amount ${styles.heroTotal}`}>{formatCurrency(netWorth, currency)}</p>
-        <p className={styles.heroMeta}>Actualizado hoy</p>
+        {totalsError ? (
+          <p className={styles.heroError}>No se pudo calcular: faltan datos por cargar.</p>
+        ) : totalsLoading ? (
+          <p className={`amount ${styles.heroTotal}`} aria-busy="true">
+            <span className={styles.heroSkeleton} />
+          </p>
+        ) : (
+          <p className={`amount ${styles.heroTotal}`}>{formatCurrency(netWorth, currency)}</p>
+        )}
+        <p className={styles.heroMeta}>Cuentas e inversiones, menos deudas</p>
       </header>
 
       <AccountsSection />
       <DebtsSection />
       <InvestmentsSection />
 
-      {!chartsLoading && (
+      {charts.error && (
+        <Card title="Gráficos" className={styles.wide}>
+          <LoadError onRetry={charts.retry} />
+        </Card>
+      )}
+
+      {!charts.loading && !charts.error && (
         <>
           <Card title="Gastos por categoría" className={styles.wide}>
             <Suspense fallback={<div className={styles.chartPlaceholder} aria-busy="true" />}>
-              <CategoryBreakdownChart items={categoryBreakdown} />
+              <CategoryBreakdownChart items={charts.categoryBreakdown} />
             </Suspense>
           </Card>
 
           <Card title="Ingresos vs. gastos" className={styles.wide}>
             <Suspense fallback={<div className={styles.chartPlaceholder} aria-busy="true" />}>
-              <IncomeVsExpenseChart data={incomeVsExpense} />
+              <IncomeVsExpenseChart data={charts.incomeVsExpense} />
             </Suspense>
           </Card>
 
           <Card title="Evolución del patrimonio" className={styles.wide}>
             <Suspense fallback={<div className={styles.chartPlaceholder} aria-busy="true" />}>
-              <NetWorthTrendChart data={netWorthTrend} />
+              <NetWorthTrendChart data={charts.netWorthTrend} />
             </Suspense>
           </Card>
         </>
       )}
 
       <Card title="Últimos movimientos" className={styles.wide}>
-        <TransactionList
-          transactions={recentTransactions}
-          accounts={accounts}
-          categories={categories}
-          members={members}
-        />
+        <LoadStatus
+          loading={transactionsQuery.loading}
+          error={transactionsQuery.error}
+          onRetry={transactionsQuery.retry}
+        >
+          <TransactionList
+            transactions={recentTransactions}
+            accounts={accounts}
+            categories={categories}
+            members={members}
+          />
+        </LoadStatus>
       </Card>
     </>
   )

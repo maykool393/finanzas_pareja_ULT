@@ -2,6 +2,7 @@ import { type FormEvent, useState } from 'react'
 import { OnboardingLayout } from '../components/auth/OnboardingLayout'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
+import { FormError } from '../components/ui/FormError'
 import { ArrowRightIcon, BoltIcon, ClockIcon, PeopleIcon, PersonIcon, SlidersIcon } from '../components/ui/icons'
 import { InviteCodeBadge } from '../components/ui/InviteCodeBadge'
 import { InviteQrCode } from '../components/ui/InviteQrCode'
@@ -206,7 +207,7 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
             </>
           )}
 
-          {error && <p className={styles.error}>{error}</p>}
+          {error && <FormError>{error}</FormError>}
 
           <button type="submit" className={styles.cta} disabled={submitting}>
             <span>{submitting ? 'Guardando…' : 'Continuar'}</span>
@@ -263,7 +264,7 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
             placeholder="00000000-0000-0000-0000-000000000000"
           />
 
-          {error && <p className={styles.error}>{error}</p>}
+          {error && <FormError>{error}</FormError>}
 
           <button type="submit" className={styles.cta} disabled={submitting}>
             <span>{submitting ? 'Uniéndote…' : 'Unirme'}</span>
@@ -293,7 +294,7 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
           : 'Crea tu espacio compartido para empezar a registrar cuentas y movimientos.'}
       </p>
 
-      {joinError && <p className={styles.error}>{joinError}</p>}
+      {joinError && <FormError>{joinError}</FormError>}
 
       <RadioCardGroup
         value={createMode}
@@ -311,7 +312,7 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
           placeholder={createMode === 'individual' ? 'Casa de Juan' : 'Casa de Mery y Pablo'}
         />
 
-        {error && <p className={styles.error}>{error}</p>}
+        {error && <FormError>{error}</FormError>}
 
         <button type="submit" className={styles.cta} disabled={submitting}>
           <span>{submitting ? 'Creando…' : 'Crear'}</span>

@@ -24,31 +24,46 @@ export function useBudgets() {
   const [budgets, setBudgets] = useState<Budget[]>([])
   const [spentByCategory, setSpentByCategory] = useState<Record<string, number>>({})
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
+  // `loading` cubre solo la primera carga y los reintentos: las recargas
+  // después de guardar actualizan la lista sin reemplazarla por "Cargando…".
   const refresh = useCallback(async () => {
-    setLoading(true)
-    const [budgetRows, transactions] = await Promise.all([
-      listBudgets(periodMonth),
-      listTransactions({ from: periodMonth, to: endOfMonth(periodMonth) }),
-    ])
-    setBudgets(budgetRows)
-    // Suma el valor absoluto de toda transacción categorizada, sin filtrar por
-    // signo: una categoría es siempre de un solo tipo (gasto o ingreso), así
-    // que sus transacciones ya tienen el signo correcto por construcción —
-    // esto cubre presupuestos de gasto (límite) e ingreso (meta) por igual.
-    setSpentByCategory(
-      transactions
-        .filter((t) => t.categoryId)
-        .reduce<Record<string, number>>((acc, t) => {
-          const key = t.categoryId as string
-          acc[key] = (acc[key] ?? 0) + Math.abs(t.amount)
-          return acc
-        }, {}),
-    )
-    setLoading(false)
+    try {
+      const [budgetRows, transactions] = await Promise.all([
+        listBudgets(periodMonth),
+        listTransactions({ from: periodMonth, to: endOfMonth(periodMonth) }),
+      ])
+      setBudgets(budgetRows)
+      // Suma el valor absoluto de toda transacción categorizada, sin filtrar por
+      // signo: una categoría es siempre de un solo tipo (gasto o ingreso), así
+      // que sus transacciones ya tienen el signo correcto por construcción —
+      // esto cubre presupuestos de gasto (límite) e ingreso (meta) por igual.
+      setSpentByCategory(
+        transactions
+          .filter((t) => t.categoryId)
+          .reduce<Record<string, number>>((acc, t) => {
+            const key = t.categoryId as string
+            acc[key] = (acc[key] ?? 0) + Math.abs(t.amount)
+            return acc
+          }, {}),
+      )
+      setError(false)
+    } catch (err) {
+      console.error(err)
+      setError(true)
+    } finally {
+      setLoading(false)
+    }
   }, [periodMonth])
 
   useEffect(() => {
+    refresh()
+  }, [refresh])
+
+  const retry = useCallback(() => {
+    setLoading(true)
+    setError(false)
     refresh()
   }, [refresh])
 
@@ -73,5 +88,5 @@ export function useBudgets() {
     await refresh()
   }
 
-  return { budgets: progress, loading, periodMonth, create, update, remove }
+  return { budgets: progress, loading, error, retry, periodMonth, create, update, remove }
 }

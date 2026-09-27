@@ -27,11 +27,6 @@
   color: var(--text-primary);
 }
 
-.empty {
-  font-size: var(--text-sm);
-  color: var(--text-muted);
-}
-
 .dangerRow {
   display: flex;
   gap: var(--space-md);

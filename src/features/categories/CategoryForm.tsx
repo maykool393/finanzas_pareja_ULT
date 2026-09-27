@@ -2,10 +2,13 @@ import { type FormEvent, useState } from 'react'
 import { Button } from '../../components/ui/Button'
 import { ColorPicker } from '../../components/ui/ColorPicker'
 import formStyles from '../../components/ui/form.module.css'
+import { FormError } from '../../components/ui/FormError'
 import { CATEGORY_ICON_OPTIONS, type CategoryIconKey } from '../../components/ui/icons'
 import { IconPicker } from '../../components/ui/IconPicker'
 import { TextField } from '../../components/ui/TextField'
 import { TypeToggle } from '../../components/ui/TypeToggle'
+import { useAsyncAction } from '../../hooks/useAsyncAction'
+import { ERROR_MESSAGES } from '../../lib/errorMessages'
 import type { Category, CategoryColor, CategoryType } from '../../types/domain'
 import type { CategoryInput } from './api'
 import { CATEGORY_COLOR_OPTIONS } from './colors'
@@ -26,13 +29,11 @@ export function CategoryForm({ initial, onSubmit, onCancel }: CategoryFormProps)
   const [type, setType] = useState<CategoryType>(initial?.type ?? 'expense')
   const [icon, setIcon] = useState<CategoryIconKey>((initial?.icon as CategoryIconKey) ?? 'other')
   const [color, setColor] = useState<CategoryColor>(initial?.color ?? 'green')
-  const [submitting, setSubmitting] = useState(false)
+  const { pending: submitting, error, run } = useAsyncAction()
 
-  async function handleSubmit(event: FormEvent) {
+  function handleSubmit(event: FormEvent) {
     event.preventDefault()
-    setSubmitting(true)
-    await onSubmit({ name, type, icon, color })
-    setSubmitting(false)
+    run(() => onSubmit({ name, type, icon, color }), ERROR_MESSAGES.save)
   }
 
   return (
@@ -48,6 +49,8 @@ export function CategoryForm({ initial, onSubmit, onCancel }: CategoryFormProps)
       />
 
       <ColorPicker value={color} onChange={(v) => setColor(v as CategoryColor)} options={CATEGORY_COLOR_OPTIONS} />
+
+      {error && <FormError>{error}</FormError>}
 
       <Button type="submit" variant="primary" disabled={submitting}>
         {submitting ? 'Guardando…' : 'Guardar'}

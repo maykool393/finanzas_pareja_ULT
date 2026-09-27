@@ -89,11 +89,6 @@
   color: var(--text-primary);
 }
 
-.error {
-  font-size: var(--text-sm);
-  color: var(--loss-text);
-}
-
 .notice {
   font-size: var(--text-sm);
   color: var(--text-secondary);

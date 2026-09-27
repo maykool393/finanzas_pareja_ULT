@@ -1,6 +1,7 @@
 import { type FormEvent, useState } from 'react'
 import { Button } from '../../components/ui/Button'
 import { ColorPicker } from '../../components/ui/ColorPicker'
+import { FormError } from '../../components/ui/FormError'
 import { ACCOUNT_ICON_OPTIONS, type AccountIconKey } from '../../components/ui/icons'
 import { IconPicker } from '../../components/ui/IconPicker'
 import { MemberSelect } from '../../components/ui/MemberSelect'
@@ -8,6 +9,8 @@ import { NumberField } from '../../components/ui/NumberField'
 import { Select } from '../../components/ui/Select'
 import { TextField } from '../../components/ui/TextField'
 import formStyles from '../../components/ui/form.module.css'
+import { useAsyncAction } from '../../hooks/useAsyncAction'
+import { ERROR_MESSAGES } from '../../lib/errorMessages'
 import type { Account, ColorVariant, AccountType } from '../../types/domain'
 import type { AccountInput } from './api'
 
@@ -36,13 +39,11 @@ export function AccountForm({ initial, onSubmit, onCancel }: AccountFormProps) {
   const [icon, setIcon] = useState<AccountIconKey>((initial?.icon as AccountIconKey) ?? 'bank')
   const [colorVariant, setColorVariant] = useState<ColorVariant>(initial?.colorVariant ?? 'a')
   const [initialBalance, setInitialBalance] = useState<number | null>(initial?.initialBalance ?? 0)
-  const [submitting, setSubmitting] = useState(false)
+  const { pending: submitting, error, run } = useAsyncAction()
 
-  async function handleSubmit(event: FormEvent) {
+  function handleSubmit(event: FormEvent) {
     event.preventDefault()
-    setSubmitting(true)
-    await onSubmit({ name, type, ownerId, icon, colorVariant }, initialBalance ?? 0)
-    setSubmitting(false)
+    run(() => onSubmit({ name, type, ownerId, icon, colorVariant }, initialBalance ?? 0), ERROR_MESSAGES.save)
   }
 
   return (
@@ -60,6 +61,8 @@ export function AccountForm({ initial, onSubmit, onCancel }: AccountFormProps) {
       <IconPicker value={icon} onChange={(v) => setIcon(v as AccountIconKey)} options={ACCOUNT_ICON_OPTIONS} />
 
       <ColorPicker value={colorVariant} onChange={(v) => setColorVariant(v as ColorVariant)} options={ACCOUNT_COLOR_OPTIONS} />
+
+      {error && <FormError>{error}</FormError>}
 
       <Button type="submit" variant="primary" disabled={submitting}>
         {submitting ? 'Guardando…' : 'Guardar'}

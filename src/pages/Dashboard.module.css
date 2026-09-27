@@ -9,6 +9,23 @@
   margin-top: var(--space-sm);
 }
 
+/* Ocupa el lugar del monto mientras cargan las tres listas: el alto lo da la
+   línea del <p>, así que el encabezado no salta cuando llega el total. */
+.heroSkeleton {
+  display: inline-block;
+  width: 5em;
+  height: 0.8em;
+  vertical-align: middle;
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken);
+}
+
+.heroError {
+  margin-top: var(--space-sm);
+  font-size: var(--text-sm);
+  color: var(--loss-text);
+}
+
 .heroMeta {
   margin-top: var(--space-xs);
   font-size: var(--text-sm);
@@ -21,9 +38,4 @@
    página no salte cuando llega. */
 .chartPlaceholder {
   height: 220px;
-}
-
-.empty {
-  font-size: var(--text-sm);
-  color: var(--text-muted);
 }

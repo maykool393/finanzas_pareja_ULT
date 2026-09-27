@@ -2,6 +2,7 @@ import { type FormEvent, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AuthLayout } from '../components/auth/AuthLayout'
 import styles from '../components/auth/authForm.module.css'
+import { FormError } from '../components/ui/FormError'
 import { supabase } from '../lib/supabase'
 import { translateAuthError } from '../lib/authErrors'
 
@@ -50,7 +51,7 @@ export function ForgotPassword() {
             />
           </label>
 
-          {error && <p className={styles.error}>{error}</p>}
+          {error && <FormError>{error}</FormError>}
 
           <button type="submit" className={styles.submit} disabled={submitting}>
             {submitting ? 'Enviando…' : 'Enviar enlace'}

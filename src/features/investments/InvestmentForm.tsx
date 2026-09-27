@@ -2,11 +2,14 @@ import { type FormEvent, useState } from 'react'
 import { Button } from '../../components/ui/Button'
 import { ColorPicker } from '../../components/ui/ColorPicker'
 import formStyles from '../../components/ui/form.module.css'
+import { FormError } from '../../components/ui/FormError'
 import { ACCOUNT_ICON_OPTIONS, type AccountIconKey } from '../../components/ui/icons'
 import { IconPicker } from '../../components/ui/IconPicker'
 import { MemberSelect } from '../../components/ui/MemberSelect'
 import { NumberField } from '../../components/ui/NumberField'
 import { TextField } from '../../components/ui/TextField'
+import { useAsyncAction } from '../../hooks/useAsyncAction'
+import { ERROR_MESSAGES } from '../../lib/errorMessages'
 import type { ColorVariant, Investment } from '../../types/domain'
 import type { InvestmentInput } from './api'
 
@@ -33,12 +36,11 @@ export function InvestmentForm({ initial, onSubmit, onCancel }: InvestmentFormPr
   const [invested, setInvested] = useState<number | null>(initial?.invested ?? null)
   const [currentValue, setCurrentValue] = useState<number | null>(initial?.currentValue ?? null)
   const [investedAt, setInvestedAt] = useState(initial?.investedAt ?? today())
-  const [submitting, setSubmitting] = useState(false)
+  const { pending: submitting, error, run } = useAsyncAction()
 
-  async function handleSubmit(event: FormEvent) {
+  function handleSubmit(event: FormEvent) {
     event.preventDefault()
-    setSubmitting(true)
-    await onSubmit({
+    const input: InvestmentInput = {
       name,
       ownerId,
       icon,
@@ -46,8 +48,8 @@ export function InvestmentForm({ initial, onSubmit, onCancel }: InvestmentFormPr
       invested: invested ?? 0,
       currentValue: currentValue ?? 0,
       investedAt,
-    })
-    setSubmitting(false)
+    }
+    run(() => onSubmit(input), ERROR_MESSAGES.save)
   }
 
   return (
@@ -68,6 +70,8 @@ export function InvestmentForm({ initial, onSubmit, onCancel }: InvestmentFormPr
         onChange={(v) => setColorVariant(v as ColorVariant)}
         options={INVESTMENT_COLOR_OPTIONS}
       />
+
+      {error && <FormError>{error}</FormError>}
 
       <Button type="submit" variant="primary" disabled={submitting}>
         {submitting ? 'Guardando…' : 'Guardar'}

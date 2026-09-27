@@ -1,10 +1,13 @@
 import { type FormEvent, useState } from 'react'
 import { Button } from '../../components/ui/Button'
 import formStyles from '../../components/ui/form.module.css'
+import { FormError } from '../../components/ui/FormError'
 import fieldStyles from '../../components/ui/formField.module.css'
 import { NumberField } from '../../components/ui/NumberField'
 import { Select } from '../../components/ui/Select'
 import { TypeToggle } from '../../components/ui/TypeToggle'
+import { useAsyncAction } from '../../hooks/useAsyncAction'
+import { ERROR_MESSAGES } from '../../lib/errorMessages'
 import type { BudgetProgress, CategoryType } from '../../types/domain'
 import { useCategories } from '../categories/useCategories'
 import type { BudgetInput } from './api'
@@ -46,7 +49,7 @@ export function BudgetForm({ initial, existingCategoryIds, periodMonth, onSubmit
   // Guardar nunca se habilitaría.
   const [categoryId, setCategoryId] = useState<string | null>(initial?.categoryId ?? null)
   const [amount, setAmount] = useState<number | null>(initial?.amount ?? null)
-  const [submitting, setSubmitting] = useState(false)
+  const { pending: submitting, error, run } = useAsyncAction()
 
   const effectiveCategoryId = categoryId ?? available[0]?.id ?? ''
   const amountLabel = type === 'income' ? 'Meta de ingreso' : 'Monto límite'
@@ -56,11 +59,9 @@ export function BudgetForm({ initial, existingCategoryIds, periodMonth, onSubmit
     setCategoryId(null) // la categoría elegida ya no es válida para el otro tipo
   }
 
-  async function handleSubmit(event: FormEvent) {
+  function handleSubmit(event: FormEvent) {
     event.preventDefault()
-    setSubmitting(true)
-    await onSubmit({ categoryId: effectiveCategoryId, periodMonth, amount: amount ?? 0 })
-    setSubmitting(false)
+    run(() => onSubmit({ categoryId: effectiveCategoryId, periodMonth, amount: amount ?? 0 }), ERROR_MESSAGES.save)
   }
 
   return (
@@ -85,6 +86,8 @@ export function BudgetForm({ initial, existingCategoryIds, periodMonth, onSubmit
       )}
 
       <NumberField label={amountLabel} value={amount} onChange={setAmount} required min={1} />
+
+      {error && <FormError>{error}</FormError>}
 
       <Button type="submit" variant="primary" disabled={submitting || !effectiveCategoryId}>
         {submitting ? 'Guardando…' : 'Guardar'}
