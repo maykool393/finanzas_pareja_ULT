@@ -52,13 +52,16 @@
   padding-bottom: 9.5px;
 }
 
-/* Código de invitación: se lee carácter por carácter. Es el UUID del hogar
-   (36 caracteres), así que va en --text-md: a más tamaño no cabe en un teléfono. */
+/* Código de invitación (XXXX-XXXX): se lee carácter por carácter. Las
+   mayúsculas son solo visuales: join_household acepta minúsculas. */
 .code {
+  height: 56px;
   font-family: var(--font-mono);
-  font-size: var(--text-md);
-  letter-spacing: 0.02em;
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-code);
   text-align: center;
+  text-transform: uppercase;
 }
 
 select.input {

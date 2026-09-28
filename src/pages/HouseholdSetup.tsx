@@ -14,7 +14,8 @@ import { TextField } from '../components/ui/TextField'
 import { type ExpenseSplit, SPLIT_OPTIONS } from '../features/household/preferences'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useSession } from '../hooks/useSession'
-import { ERROR_MESSAGES, isNetworkError } from '../lib/errorMessages'
+import { ERROR_MESSAGES } from '../lib/errorMessages'
+import { formatInviteCode, inviteUrl, joinHousehold } from '../lib/inviteCode'
 import { supabase } from '../lib/supabase'
 import styles from './HouseholdSetup.module.css'
 
@@ -60,14 +61,15 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
   // fila en la base y compartir el código/QR llevaría a un link roto
   // (quien lo abra intentaría unirse a un household que no existe).
   const [createdHouseholdId, setCreatedHouseholdId] = useState<string | null>(null)
+  const [inviteCode, setInviteCode] = useState<string | null>(null)
 
   const totalSteps = createMode === 'pareja' ? 3 : 2
 
-  async function handleShare(inviteUrl: string) {
+  async function handleShare(url: string) {
     if (navigator.share) {
-      await navigator.share({ title: 'Únete a nuestro hogar en Twoney', url: inviteUrl })
+      await navigator.share({ title: 'Únete a nuestro hogar en Twoney', url })
     } else {
-      await navigator.clipboard.writeText(inviteUrl)
+      await navigator.clipboard.writeText(url)
     }
   }
 
@@ -109,7 +111,23 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
       return
     }
 
+    // El código lo genera la base al crear el hogar; recién ahora, ya
+    // vinculado, households_select_member deja leerlo.
+    const { data: created, error: codeError } = await supabase
+      .from('households')
+      .select('invite_code')
+      .eq('id', householdId)
+      .single()
+
+    if (codeError) {
+      console.error(codeError)
+      setError(ERROR_MESSAGES.createHousehold)
+      setSubmitting(false)
+      return
+    }
+
     setSubmitting(false)
+    setInviteCode(created.invite_code)
     setCreatedHouseholdId(householdId)
     // El household ya existe: para "pareja" primero se comparte el código,
     // "individual" no tiene con quién compartirlo y va directo a preferencias.
@@ -122,21 +140,12 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
     setError(null)
     setSubmitting(true)
 
-    const { error: joinUpdateError } = await supabase
-      .from('profiles')
-      .update({ household_id: code.trim() })
-      .eq('id', user.id)
-      .select()
-      .single()
+    // join_household (en la base) busca el hogar por el código y vincula el
+    // perfil. El mensaje nombra la causa: código inexistente, hogar lleno o sin conexión.
+    const failure = await joinHousehold(code)
 
-    if (joinUpdateError) {
-      console.error(joinUpdateError)
-      // Sin conexión no es culpa del código: antes cualquier fallo decía "no es válido".
-      setError(
-        isNetworkError(joinUpdateError)
-          ? ERROR_MESSAGES.joinHousehold
-          : 'Ese código no es válido. Pídele a tu pareja que lo copie de nuevo desde "Ver más".',
-      )
+    if (failure) {
+      setError(failure)
       setSubmitting(false)
       return
     }
@@ -215,8 +224,8 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
     )
   }
 
-  if (step === 'invite' && createdHouseholdId) {
-    const inviteUrl = `${window.location.origin}/unirse/${createdHouseholdId}`
+  if (step === 'invite' && inviteCode) {
+    const url = inviteUrl(inviteCode)
 
     return (
       <OnboardingLayout step={2} total={totalSteps} titleLine1="¡Ya casi!" titleLine2="invita a tu pareja">
@@ -225,17 +234,17 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
         <Card className={styles.panel}>
           <div>
             <span className={`label ${styles.codeLabel}`}>Código de vinculación</span>
-            <InviteCodeBadge code={createdHouseholdId} />
+            <InviteCodeBadge code={formatInviteCode(inviteCode)} />
           </div>
           <div className={styles.actionsRow}>
-            <Button type="button" variant="secondary" onClick={() => handleShare(inviteUrl)}>
+            <Button type="button" variant="secondary" onClick={() => handleShare(url)}>
               Compartir
             </Button>
             <Button type="button" variant="secondary" onClick={() => setShowQr((v) => !v)}>
               Ver QR
             </Button>
           </div>
-          {showQr && <InviteQrCode url={inviteUrl} />}
+          {showQr && <InviteQrCode url={url} />}
         </Card>
 
         <button type="button" className={styles.cta} onClick={() => setStep('preferences')}>
@@ -258,7 +267,7 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
             onChange={setCode}
             required
             autoComplete="off"
-            placeholder="00000000-0000-0000-0000-000000000000"
+            placeholder="XXXX-XXXX"
             variant="code"
           />
 

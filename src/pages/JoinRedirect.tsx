@@ -5,21 +5,21 @@ import { useSession } from '../hooks/useSession'
 import { setPendingInvite } from '../lib/pendingInvite'
 
 /**
- * Destino del link/QR de invitación (/unirse/:householdId). Guarda el id
+ * Destino del link/QR de invitación (/unirse/:code). Guarda el código
  * pendiente y redirige: con sesión sigue a /dashboard (RequireHousehold
  * hace la unión real); sin sesión, a registrarse. También es el destino de
  * vuelta tras confirmar el correo (ver emailRedirectTo en Login.tsx), por
- * eso el id se re-guarda aquí siempre, incluso si ya estaba.
+ * eso el código se re-guarda aquí siempre, incluso si ya estaba.
  */
 export function JoinRedirect() {
-  const { householdId } = useParams<{ householdId: string }>()
+  const { code } = useParams<{ code: string }>()
   const { session, loading } = useSession()
 
   useEffect(() => {
-    if (householdId) setPendingInvite(householdId)
-  }, [householdId])
+    if (code) setPendingInvite(code)
+  }, [code])
 
-  if (!householdId) return <Navigate to="/" replace />
+  if (!code) return <Navigate to="/" replace />
   if (loading) return <div className={styles.splash} aria-busy="true" />
 
   return <Navigate to={session ? '/dashboard' : '/registro'} replace />

@@ -64,7 +64,7 @@ export function Login() {
         options: {
           data: { display_name: displayName },
           // Si venía de un link/QR de invitación, el correo de confirmación
-          // debe traer de vuelta a /unirse/:id (ver JoinRedirect) en vez de
+          // debe traer de vuelta a /unirse/:code (ver JoinRedirect) en vez de
           // al destino por defecto — así funciona aunque el link se abra en
           // otro navegador donde no exista el localStorage de esta sesión.
           emailRedirectTo: pendingInvite ? `${window.location.origin}/unirse/${pendingInvite}` : undefined,

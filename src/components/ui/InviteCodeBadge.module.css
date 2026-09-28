@@ -5,6 +5,7 @@
   gap: var(--space-sm);
 }
 
+/* El código se lee carácter por carácter (XXXX-XXXX): monoespaciado y grande. */
 .badge {
   flex: 1;
   min-width: 0;
@@ -12,10 +13,12 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  letter-spacing: 0.02em;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-code);
+  text-align: center;
   color: var(--text-primary);
-  background: var(--surface-page);
+  background: var(--surface-card);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-control);
   padding: var(--space-sm) var(--space-md);

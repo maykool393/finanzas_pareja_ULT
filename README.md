@@ -387,6 +387,19 @@ R5, R6 y R7 no dependen entre sí: se pueden hacer en cualquier orden. R6 y R7 t
 - [x] Commit.
 - Se movieron a su etapa: el **botón flotante** a R4, donde se usa, y la **píldora de porcentaje** a R6 (hoja de composición).
 
+### Código de invitación de 8 caracteres 🟨
+Pedido el 2026-09-28: el código de 36 caracteres no se podía dictar.
+- [x] Migración `20260928204816_household_invite_code.sql`: columna `invite_code` (única, con formato validado) y función `join_household`.
+- [x] Probada en un Postgres real (PGlite) con las tablas y policies de la migración base:
+  - Los hogares existentes reciben código al migrar, y 2000 códigos generados salen sin repetidos.
+  - Se puede unir con minúsculas y guion.
+  - Un código inexistente, alguien que ya tiene hogar y un hogar lleno dan cada uno su error.
+  - Un usuario sin sesión no puede ejecutar la función, y nadie ve los códigos de otros hogares.
+- [x] App: `lib/inviteCode.ts` (normalizar, mostrar como `XXXX-XXXX` y unirse con mensajes según la causa); onboarding, "Invitar a tu pareja", link `/unirse/:code` y unión automática desde el link.
+- [ ] **Correr la migración en el SQL Editor de Supabase.** Sin eso, crear un hogar y unirse fallan.
+- [ ] Revisar los avisos de seguridad del proyecto en Supabase (Advisors) después de correrla.
+- [ ] Verificar en vivo: crear en pareja, compartir el código y que la otra persona se una escribiéndolo y desde el QR.
+
 ### R4 — Estructura de la app ⬜
 - [ ] **Navegación inferior de 5 pestañas:** Resumen, Patrimonio, Presupuesto, Movimientos y Ver más.
   - Estadísticas desaparece (página, ruta y enlace).
@@ -518,7 +531,6 @@ Decidido esperar; no entra en R1–R8.
 - **Metas:** módulo nuevo (tabla `goals` con RLS, `src/features/goals/`, formulario) y la historia 4 del Resumen, ya diseñada en DESIGN.md.
 - **Presupuestos de Inversión y Deuda:** es un módulo propio. Hay que definir qué se presupuesta en una deuda o una inversión, de dónde sale lo pagado o invertido en el mes, el formulario y la migración. Cuando exista, reemplaza a las dos barras de categorías de la historia 3.
 - **Filtro por persona en la cabecera:** "Nuestro resumen" / "Mi resumen" / el de la otra persona.
-- **Códigos de invitación cortos** (tipo "TWNY-4XQ9", como en el prototipo): hoy el código es el UUID del hogar, de 36 caracteres. Uno corto necesita una columna nueva con índice único y buscar el hogar por ella al unirse.
 
 ---
 
@@ -964,7 +976,10 @@ Nuevos: `CategoryBreakdownChart.tsx`, `IncomeVsExpenseChart.tsx`, `NetWorthTrend
 - `RequireHousehold` hace la unión y limpia la invitación pendiente, tanto si sale bien como si falla (así no queda reintentando). Si el código ya no es válido, muestra el error y cae al flujo normal.
 - Si el usuario **ya pertenece** a un hogar, la invitación se ignora: nunca se lo cambia de hogar automáticamente.
 
-**El código de invitación es el UUID del household**: no hace falta columna ni tabla nueva. Es imposible de adivinar (128 bits al azar) y unirse es solo `update profiles set household_id = <código> where id = auth.uid()`, cubierto por la policy `profiles_update_self`.
+**El código de invitación tiene 8 caracteres** (desde el 2026-09-28, migración `20260928204816_household_invite_code.sql`). Antes era el UUID del household, de 36 caracteres, imposible de dictar o escribir a mano.
+- La base lo genera al crear el hogar (`households.invite_code`), a partir de un alfabeto de 32 sin los que se confunden (0/O, 1/I): 32^8 ≈ 1,1 billones de combinaciones.
+- Unirse pasa por la función `join_household(p_code)`, `security definer` porque quien se une todavía no puede ver el hogar. Solo la pueden ejecutar usuarios con sesión; solo cambia el perfil de quien llama y solo si no tiene hogar; rechaza un hogar que ya tiene dos personas. Cada error trae su código: P0002 no existe, TW002 ya tiene hogar, TW003 hogar lleno.
+- El link del QR y de "Compartir" es `/unirse/<código>`. Los links viejos con el UUID dejan de funcionar.
 
 **`InviteHousehold`** (`pages/InviteHousehold.tsx`, ruta `/invitar`, desde "Ver más"): para ver, copiar o mostrar como QR el código después de crear el hogar, y ver quién ya se unió.
 

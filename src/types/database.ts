@@ -241,6 +241,7 @@ export type Database = {
           currency: string
           expense_split: string
           id: string
+          invite_code: string
           name: string
         }
         Insert: {
@@ -248,6 +249,7 @@ export type Database = {
           currency?: string
           expense_split?: string
           id?: string
+          invite_code?: string
           name: string
         }
         Update: {
@@ -255,6 +257,7 @@ export type Database = {
           currency?: string
           expense_split?: string
           id?: string
+          invite_code?: string
           name?: string
         }
         Relationships: []
@@ -428,6 +431,8 @@ export type Database = {
     }
     Functions: {
       current_household_id: { Args: never; Returns: string }
+      generate_invite_code: { Args: never; Returns: string }
+      join_household: { Args: { p_code: string }; Returns: string }
     }
     Enums: {
       [_ in never]: never

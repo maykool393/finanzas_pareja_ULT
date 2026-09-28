@@ -57,7 +57,7 @@ export default function App() {
         <Route path="/registro" element={<Login />} />
         <Route path="/recuperar" element={<ForgotPassword />} />
         <Route path="/restablecer" element={<ResetPassword />} />
-        <Route path="/unirse/:householdId" element={<JoinRedirect />} />
+        <Route path="/unirse/:code" element={<JoinRedirect />} />
         <Route element={<ProtectedLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/presupuesto" element={<Budgets />} />

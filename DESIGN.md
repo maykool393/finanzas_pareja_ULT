@@ -412,7 +412,7 @@ Un flujo por pasos, con el fondo de manchas y sin hoja inferior ni encabezado de
 
 - **CTA por paso:** "Continuar" (tipo y nombre, invitación), "Unirme" (código), "Empezar" (moneda) e "Ir a mi hogar" (final).
 - **Bloque de invitación:** caja con borde 1.5px `--border-strong` y 16px de relleno. Dentro:
-  - El código en `--font-mono`, `--text-sm`, y puede ocupar dos líneas. Es el UUID del hogar (36 caracteres): el prototipo mostraba un código corto ("TWNY-4XQ9") en `--text-xl`, que la app no tiene.
+  - El código en `--font-mono`, `--text-xl` bold, con `--tracking-code`, en dos grupos: `48GW-GDKH`. Son 8 caracteres de un alfabeto sin los que se confunden (sin 0, O, 1 ni I), generados por la base (`households.invite_code`).
   - Tres acciones apiladas que llenan el alto disponible, cada una con ícono de 20px y texto `--text-sm` medium, borde `--border` y radio 8px: "Copiar" (pasa a "Copiado" con un check durante 1.6 s y lo anuncia un `aria-live`), "WhatsApp" (comparte con `wa.me`; el ícono es un globo de chat propio, no el logo) y "Ver QR" (abre el QR en un diálogo).
 
 ## Pantallas principales
@@ -535,7 +535,7 @@ Las historias del mes, a pantalla completa entre la cabecera y la barra inferior
 **Campos**
 - **Estándar:** borde 1.5px `--border-control`, radio `--radius-control`, fondo `--surface-card`, texto `--text-md`. Con foco, el borde pasa a `--brand-strong` y aparece el anillo de foco.
 - **Subrayado** (nombre del hogar): solo línea inferior de 1.5px en `--border-control`, sin caja, texto `--text-xl` medium. Con foco, la línea pasa a 2px `--brand-strong`. Es para un campo único y protagonista de un paso; en un formulario va el estándar.
-- **Código** (unirse): campo estándar con `--font-mono`, `--text-md` y centrado. El código es el UUID del hogar (36 caracteres), así que a más tamaño no cabe en un teléfono; el prototipo usaba `--text-2xl` para un código corto que la app no tiene.
+- **Código** (unirse): campo estándar de 56px de alto, con `--font-mono`, `--text-2xl` bold, mayúsculas, centrado y con `--tracking-code`. Placeholder "XXXX-XXXX". Acepta minúsculas, espacios y guiones: la base los normaliza.
 - Placeholders en `--text-muted`. Todo campo tiene su `<label>`: en el campo subrayado, el título del paso hace de etiqueta (`aria-labelledby`).
 
 **Selector de moneda**

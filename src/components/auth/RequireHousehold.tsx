@@ -1,6 +1,7 @@
 import { type ReactNode, useEffect, useState } from 'react'
 import { useHouseholdId } from '../../hooks/useHouseholdId'
 import { useSession } from '../../hooks/useSession'
+import { joinHousehold } from '../../lib/inviteCode'
 import { clearPendingInvite, getPendingInvite } from '../../lib/pendingInvite'
 import { supabase } from '../../lib/supabase'
 import { HouseholdSetup } from '../../pages/HouseholdSetup'
@@ -28,22 +29,18 @@ export function RequireHousehold({ children }: { children: ReactNode }) {
 
     let cancelled = false
 
-    supabase
-      .from('profiles')
-      .update({ household_id: pending })
-      .eq('id', user.id)
-      .then(({ error }) => {
-        clearPendingInvite()
-        if (cancelled) return
-        if (error) {
-          setJoinError('El código de invitación ya no es válido. Pídele a tu pareja que comparta uno nuevo.')
-          setJoiningInvite(false)
-          return
-        }
-        refresh().then(() => {
-          if (!cancelled) setJoiningInvite(false)
-        })
+    joinHousehold(pending).then((failure) => {
+      clearPendingInvite()
+      if (cancelled) return
+      if (failure) {
+        setJoinError(failure)
+        setJoiningInvite(false)
+        return
+      }
+      refresh().then(() => {
+        if (!cancelled) setJoiningInvite(false)
       })
+    })
 
     return () => {
       cancelled = true

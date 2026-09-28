@@ -7,6 +7,8 @@ export interface Household {
   name: string
   currency: string
   expenseSplit: ExpenseSplit
+  /** Código de 8 caracteres para que la pareja se una (ver lib/inviteCode.ts). */
+  inviteCode: string
 }
 
 export interface HouseholdPreferences {
@@ -24,11 +26,17 @@ export interface HouseholdPreferences {
 const householdQuery = createSharedQuery<Household | null>(async () => {
   const { data, error } = await supabase
     .from('households')
-    .select('id, name, currency, expense_split')
+    .select('id, name, currency, expense_split, invite_code')
     .maybeSingle()
   if (error) throw error
   return data
-    ? { id: data.id, name: data.name, currency: data.currency, expenseSplit: data.expense_split as ExpenseSplit }
+    ? {
+        id: data.id,
+        name: data.name,
+        currency: data.currency,
+        expenseSplit: data.expense_split as ExpenseSplit,
+        inviteCode: data.invite_code,
+      }
     : null
 }, null)
 
