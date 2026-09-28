@@ -1,6 +1,7 @@
 import type { Profile } from '../../types/domain'
 import { FinanceSection } from '../dashboard/FinanceSection'
 import { InvestmentForm } from './InvestmentForm'
+import { InvestmentList } from './InvestmentList'
 import type { useInvestments } from './useInvestments'
 
 interface InvestmentsSectionProps {
@@ -18,7 +19,9 @@ export function InvestmentsSection({ query, members }: InvestmentsSectionProps) 
       members={members}
       defaultIcon="trend-up"
       amount={(investment) => investment.currentValue}
+      renderActive={(investments, edit) => <InvestmentList items={investments} onSelect={edit} />}
       text={{
+        add: 'Añadir inversión',
         empty: {
           title: 'Aún no hay inversiones',
           description: 'Agrega depósitos a plazo, fondos o acciones con su valor actual. Se suman al patrimonio.',

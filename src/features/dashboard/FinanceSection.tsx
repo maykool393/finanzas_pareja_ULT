@@ -5,11 +5,12 @@ import { ConfirmDialog } from '../../components/ui/ConfirmDialog'
 import { DangerRow } from '../../components/ui/DangerRow'
 import { Dialog } from '../../components/ui/Dialog'
 import { EmptyState } from '../../components/ui/EmptyState'
+import { HouseholdAvatars } from '../../components/ui/HouseholdAvatars'
 import { ICONS, type AccountIconKey } from '../../components/ui/iconRegistry'
 import { ItemCard, type ItemVariant } from '../../components/ui/ItemCard'
 import { LoadStatus } from '../../components/ui/LoadStatus'
 import { SectionHeader } from '../../components/ui/SectionHeader'
-import { SkeletonCards } from '../../components/ui/Skeleton'
+import { SkeletonCards, SkeletonRows } from '../../components/ui/Skeleton'
 import styles from '../../components/ui/sectionGrid.module.css'
 import { useCurrency } from '../../hooks/useCurrency'
 import { formatCurrency } from '../../lib/format'
@@ -49,7 +50,16 @@ interface FinanceSectionProps<T extends FinanceItem> {
   amount: (item: T) => number
   /** Solo deudas: proporción pagada (0–1). */
   progress?: (item: T) => number
+  /** Solo deudas: pie de la tarjeta, bajo la barra ("$173.000 · 48 pagos"). */
+  caption?: (item: T) => string | null
+  /**
+   * Cómo se muestran los ítems activos, si no son tarjetas (inversiones: una
+   * lista). Recibe los ítems y la función que abre la edición.
+   */
+  renderActive?: (items: T[], edit: (item: T) => void) => ReactNode
   text: {
+    /** Nombre accesible del botón + del encabezado, ej. "Añadir cuenta". */
+    add: string
     /** Estado vacío que guía: qué va aquí, para qué sirve y el texto del botón para crear lo primero. */
     empty: { title: string; description: string; action: string }
     archivedEmpty: string
@@ -72,12 +82,13 @@ export function FinanceSection<T extends FinanceItem>({
   defaultIcon,
   amount,
   progress,
+  caption,
+  renderActive,
   text,
   renderForm,
 }: FinanceSectionProps<T>) {
   const currency = useCurrency()
 
-  const [expanded, setExpanded] = useState(true)
   const [showArchived, setShowArchived] = useState(false)
   const [formOpen, setFormOpen] = useState(false)
   const [editing, setEditing] = useState<T | null>(null)
@@ -98,62 +109,63 @@ export function FinanceSection<T extends FinanceItem>({
       <SectionHeader
         title={title}
         total={query.loading || query.error ? undefined : formatCurrency(total, currency)}
-        expanded={expanded}
-        onToggle={() => setExpanded((e) => !e)}
         onAdd={() => setFormOpen(true)}
+        addLabel={text.add}
       />
 
-      {expanded && (
-        <LoadStatus loading={query.loading} error={query.error} onRetry={query.retry} skeleton={<SkeletonCards />}>
-          {!showArchived && active.length === 0 && (
-            <EmptyState
-              title={text.empty.title}
-              description={text.empty.description}
-              action={
-                <Button variant="secondary" onClick={() => setFormOpen(true)}>
-                  {text.empty.action}
-                </Button>
-              }
-            />
-          )}
+      <LoadStatus loading={query.loading} error={query.error} onRetry={query.retry} skeleton={renderActive ? <SkeletonRows count={2} /> : <SkeletonCards />}>
+        {!showArchived && active.length === 0 && (
+          <EmptyState
+            title={text.empty.title}
+            description={text.empty.description}
+            action={
+              <Button variant="secondary" onClick={() => setFormOpen(true)}>
+                {text.empty.action}
+              </Button>
+            }
+          />
+        )}
 
-          {!showArchived && active.length > 0 && (
-            <div className={styles.cardRow}>
-              {active.map((item) => {
-                const Icon = ICONS[item.icon as AccountIconKey] ?? ICONS[defaultIcon]
-                return (
-                  <ItemCard
-                    key={item.id}
-                    name={item.name}
-                    amount={formatCurrency(amount(item), currency)}
-                    variant={`${kind}-${item.colorVariant === 'b' ? 'b' : 'a'}` satisfies ItemVariant}
-                    icon={<Icon />}
-                    owner={ownerName(item.ownerId)}
-                    progress={progress?.(item)}
-                    onClick={() => setEditing(item)}
-                  />
-                )
-              })}
-            </div>
-          )}
+        {!showArchived && active.length > 0 && renderActive?.(active, setEditing)}
 
-          {showArchived && (
-            <ArchivedList
-              items={archived}
-              onUnarchive={async (item) => {
-                await query.toggleArchived(item.id, false)
-                setShowArchived(false)
-              }}
-              onDelete={(item) => setDeleting(item)}
-              emptyLabel={text.archivedEmpty}
-            />
-          )}
+        {!showArchived && active.length > 0 && !renderActive && (
+          <div className={styles.cardRow}>
+            {active.map((item) => {
+              const Icon = ICONS[item.icon as AccountIconKey] ?? ICONS[defaultIcon]
+              return (
+                <ItemCard
+                  key={item.id}
+                  name={item.name}
+                  amount={formatCurrency(amount(item), currency)}
+                  variant={`${kind}-${item.colorVariant === 'b' ? 'b' : 'a'}` satisfies ItemVariant}
+                  icon={<Icon />}
+                  owner={ownerName(item.ownerId)}
+                  avatars={<HouseholdAvatars members={members} ownerId={item.ownerId} />}
+                  progress={progress?.(item)}
+                  caption={caption?.(item)}
+                  onClick={() => setEditing(item)}
+                />
+              )
+            })}
+          </div>
+        )}
 
-          {archived.length > 0 && (
-            <ArchivedToggle count={archived.length} showing={showArchived} onToggle={() => setShowArchived((v) => !v)} />
-          )}
-        </LoadStatus>
-      )}
+        {showArchived && (
+          <ArchivedList
+            items={archived}
+            onUnarchive={async (item) => {
+              await query.toggleArchived(item.id, false)
+              setShowArchived(false)
+            }}
+            onDelete={(item) => setDeleting(item)}
+            emptyLabel={text.archivedEmpty}
+          />
+        )}
+
+        {archived.length > 0 && (
+          <ArchivedToggle count={archived.length} showing={showArchived} onToggle={() => setShowArchived((v) => !v)} />
+        )}
+      </LoadStatus>
 
       <Dialog open={formOpen} onClose={() => setFormOpen(false)} title={text.createTitle}>
         {renderForm(null, () => setFormOpen(false))}

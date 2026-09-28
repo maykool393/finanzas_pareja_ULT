@@ -39,9 +39,14 @@
               transform var(--duration-fast) var(--ease-out);
 }
 
+/* Botón principal: degradado de marca con la capa de hover en la sombra
+   interna (ver Button.module.css). */
 .confirmArchive {
-  background: var(--surface-inverse);
-  color: var(--text-inverse);
+  background: var(--gradient-brand);
+  color: var(--text-on-brand);
+  box-shadow: inset 0 0 0 100px rgba(255, 255, 255, 0);
+  transition: box-shadow var(--duration-fast) ease,
+              transform var(--duration-fast) var(--ease-out);
 }
 
 .confirmDelete {
@@ -49,9 +54,12 @@
   color: var(--text-on-danger);
 }
 
+/* Deshabilitado con fondo y texto propios, no con opacidad (ver Button.module.css). */
 .confirmArchive:disabled,
 .confirmDelete:disabled {
-  opacity: 0.6;
+  background: var(--surface-sunken);
+  color: var(--text-disabled);
+  box-shadow: none;
   cursor: default;
 }
 
@@ -62,7 +70,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .confirmArchive:not(:disabled):hover {
-    background: var(--surface-inverse-hover);
+    box-shadow: inset 0 0 0 100px rgba(255, 255, 255, 0.16);
   }
 
   .confirmDelete:not(:disabled):hover {

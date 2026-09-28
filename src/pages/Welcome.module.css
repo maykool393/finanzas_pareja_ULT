@@ -60,8 +60,8 @@
 .logo {
   height: 28px;
   width: auto;
-  /* logo.svg es negro; se fuerza a blanco siempre en esta pantalla (foto, no superficie de tema) */
-  filter: brightness(0) invert(1);
+  /* Blanco siempre en esta pantalla: va sobre la foto, no sobre una superficie de tema. */
+  color: #ffffff;
 }
 
 .content {

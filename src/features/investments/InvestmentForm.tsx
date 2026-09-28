@@ -14,8 +14,8 @@ import type { ColorVariant, Investment } from '../../types/domain'
 import type { InvestmentInput } from './api'
 
 const INVESTMENT_COLOR_OPTIONS = [
-  { key: 'a', label: 'Morado', swatch: 'var(--investment-a-bg)' },
-  { key: 'b', label: 'Verde', swatch: 'var(--investment-b-bg)' },
+  { key: 'a', label: 'Ámbar', swatch: 'var(--tone-ambar-bg)' },
+  { key: 'b', label: 'Lavanda', swatch: 'var(--tone-lavanda-bg)' },
 ]
 
 function today() {

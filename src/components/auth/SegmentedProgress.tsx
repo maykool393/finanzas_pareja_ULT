@@ -7,7 +7,7 @@ interface SegmentedProgressProps {
   total: number
 }
 
-/** Barra de progreso por pasos — ver DESIGN.md § Barra de progreso por pasos (onboarding). */
+/** Barra de progreso por pasos. Provisoria: DESIGN.md § Onboarding la cambia por una línea con un punto. */
 export function SegmentedProgress({ step, total }: SegmentedProgressProps) {
   return (
     <div className={styles.row} role="group" aria-label={`Paso ${step} de ${total}`}>
@@ -15,8 +15,8 @@ export function SegmentedProgress({ step, total }: SegmentedProgressProps) {
         <div className={styles.segment} key={index}>
           <ProgressBar
             ratio={index < step ? 1 : 0}
-            trackColor="var(--brand-track)"
-            fillColor="var(--gradient-brand-dark)"
+            trackColor="var(--border)"
+            fillColor="var(--brand-strong)"
           />
         </div>
       ))}

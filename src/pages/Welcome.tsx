@@ -1,6 +1,7 @@
 import { Link, Navigate } from 'react-router-dom'
 import welcomeHero from '../assets/welcome-hero.webp'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
+import { Logo } from '../components/ui/Logo'
 import { useSession } from '../hooks/useSession'
 import styles from './Welcome.module.css'
 
@@ -28,7 +29,7 @@ export function Welcome() {
       <div className={styles.bottomOverlay} aria-hidden="true" />
 
       <header className={styles.header}>
-        <img src="/logo.svg" alt="Twoney" className={styles.logo} />
+        <Logo className={styles.logo} />
       </header>
 
       <div className={styles.content}>

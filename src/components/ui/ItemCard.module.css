@@ -1,14 +1,25 @@
+/* DESIGN.md § Tarjeta de cuenta y de deuda. */
 .card {
   position: relative;
   width: 100%;
-  min-width: 200px;
   border-radius: var(--radius-card);
-  padding: var(--space-md);
+  padding: var(--space-lg);
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: 40px;
   text-align: left;
-  transition: transform var(--duration-fast) var(--ease-out);
+  color: var(--text-primary);
+  /* Una sola elevación: en claro la sombra (el borde es transparente); en
+     oscuro el borde de su tono (la sombra pasa a none). */
+  border: 1px solid var(--tone-border);
+  box-shadow: var(--shadow-card);
+  transition: transform var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) ease;
+}
+
+/* Las deudas llevan barra y pie: menos aire entre la fila de arriba y el monto. */
+.withProgress {
+  gap: 22px;
 }
 
 /* Siempre abre algo (la edición), así que siempre reacciona. */
@@ -19,94 +30,107 @@
 @media (hover: hover) and (pointer: fine) {
   .card:hover {
     transform: translateY(var(--hover-lift));
+    box-shadow: var(--shadow-card-hover);
   }
 }
 
 .card:focus-visible {
-  outline: 2px solid var(--text-primary);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
 .top {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--space-sm);
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
 }
 
 .icon {
   display: flex;
-  width: 22px;
-  height: 22px;
-  opacity: 0.85;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
 }
 
 .icon svg { width: 100%; height: 100%; }
 
 .name {
-  font-size: var(--text-sm);
-  font-weight: var(--weight-medium);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-regular);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.star {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  color: var(--star);
+}
+
+.bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .amount {
-  font-size: var(--text-lg);
-  font-weight: var(--weight-medium);
-  margin-top: var(--space-xs);
+  font-size: var(--text-4xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  text-align: right;
 }
 
-/* La barra termina antes del avatar (26px + separación), que está en la
-   esquina inferior derecha: antes pasaba por debajo de él. */
 .progress {
-  margin-right: calc(26px + var(--space-sm));
-}
-
-.avatar {
-  position: absolute;
-  right: var(--space-md);
-  bottom: var(--space-md);
-  width: 26px;
-  height: 26px;
-  border-radius: var(--radius-full);
-  background: var(--surface-on-category);
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--text-2xs);
-  font-weight: var(--weight-medium);
+  flex-direction: column;
+  gap: var(--space-sm);
+  --bar-height: 6px;
 }
 
-.avatar svg {
-  width: 14px;
-  height: 14px;
+.caption {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  text-align: right;
 }
 
+/* Asignación de tonos: ver DESIGN.md § Tonos de tarjeta. El texto es siempre
+   --text-primary, no un color propio del tono. */
 .account-a {
-  background: var(--account-a-bg);
-  color: var(--account-a-text);
+  background: var(--tone-turquesa-bg);
+  --tone-border: var(--tone-turquesa-border);
 }
 
 .account-b {
-  background: var(--account-b-bg);
-  color: var(--account-b-text);
+  background: var(--tone-lavanda-bg);
+  --tone-border: var(--tone-lavanda-border);
 }
 
 .debt-a {
-  background: var(--debt-a-bg);
-  color: var(--debt-a-text);
-  --fill: var(--debt-a-fill);
+  background: var(--tone-pizarra-bg);
+  --tone-border: var(--tone-pizarra-border);
 }
 
 .debt-b {
-  background: var(--debt-b-bg);
-  color: var(--debt-b-text);
-  --fill: var(--debt-b-fill);
+  background: var(--tone-celeste-bg);
+  --tone-border: var(--tone-celeste-border);
 }
 
 .investment-a {
-  background: var(--investment-a-bg);
-  color: var(--investment-a-text);
+  background: var(--tone-ambar-bg);
+  --tone-border: var(--tone-ambar-border);
 }
 
 .investment-b {
-  background: var(--investment-b-bg);
-  color: var(--investment-b-text);
+  background: var(--tone-lavanda-bg);
+  --tone-border: var(--tone-lavanda-border);
 }

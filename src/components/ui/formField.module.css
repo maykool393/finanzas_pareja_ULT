@@ -5,24 +5,60 @@
   width: 100%;
 }
 
+/* El borde es lo único que marca dónde está el campo: --border-control (3:1),
+   no --border-strong (1.5:1). Ver DESIGN.md § Campos. */
 .input {
   height: 44px;
   padding: 0 var(--space-md);
-  border: 1px solid var(--border-strong);
+  border: 1.5px solid var(--border-control);
   border-radius: var(--radius-control);
-  background: var(--surface-sunken);
+  background: var(--surface-card);
   color: var(--text-primary);
   font-size: var(--text-md);
   width: 100%;
+  transition: border-color var(--duration-fast) ease;
 }
 
 .input:focus-visible {
-  outline: 2px solid var(--text-primary);
+  border-color: var(--brand-strong);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 1px;
 }
 
+/* Deshabilitado con fondo y texto propios, no con opacidad. Exento de contraste. */
 .input:disabled {
-  opacity: 0.6;
+  background: var(--surface-sunken);
+  border-color: var(--border);
+  color: var(--text-disabled);
+}
+
+/* Subrayado: para el campo único y protagonista de un paso (nombre del hogar).
+   Solo la línea de abajo, que pasa a 2px de marca con foco; sin caja ni anillo:
+   la línea engrosada y de color ya marca el foco (3.6:1). */
+.underline {
+  height: auto;
+  padding: 10px 2px;
+  border: none;
+  border-bottom: 1.5px solid var(--border-control);
+  border-radius: 0;
+  background: transparent;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-medium);
+}
+
+.underline:focus-visible {
+  outline: none;
+  border-bottom: 2px solid var(--brand-strong);
+  padding-bottom: 9.5px;
+}
+
+/* Código de invitación: se lee carácter por carácter. Es el UUID del hogar
+   (36 caracteres), así que va en --text-md: a más tamaño no cabe en un teléfono. */
+.code {
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  letter-spacing: 0.02em;
+  text-align: center;
 }
 
 select.input {

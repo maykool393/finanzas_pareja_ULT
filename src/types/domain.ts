@@ -79,6 +79,8 @@ export interface Profile {
   householdId: string | null
   displayName: string
   avatarUrl: string | null
+  /** Orden de registro: quien se registró primero es la persona "a" (ver personTone). */
+  createdAt: string
 }
 
 export type CategoryType = 'expense' | 'income'

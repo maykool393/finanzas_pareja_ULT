@@ -16,8 +16,7 @@ interface RadioListGroupProps<T extends string> {
   label: string
 }
 
-/** Lista de opciones tipo radio con descripción — variante de fila del mismo
- * patrón de RadioCardGroup (ver DESIGN.md § Tarjeta de selección). */
+/** Lista de opciones tipo radio con descripción (ver DESIGN.md § Tarjeta de selección). */
 export function RadioListGroup<T extends string>({ value, onChange, options, label }: RadioListGroupProps<T>) {
   const radioProps = useRadioGroupKeys(options.map((o) => o.value), value, onChange)
 

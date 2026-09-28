@@ -4,9 +4,10 @@
 
 .cardRow {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  /* 280px: la tarjeta lleva el monto en --text-4xl. En un teléfono, una por fila. */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: var(--space-md);
-  margin-top: var(--space-sm);
+  margin-top: var(--space-md);
 }
 
 .empty {

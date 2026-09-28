@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
+import { useThemeColor } from '../../hooks/useThemeColor'
 import { BarChartIcon, MoreIcon, PieChartIcon, SwapIcon, WalletIcon } from '../ui/icons'
+import { Logo } from '../ui/Logo'
 import { ThemeToggle } from '../ui/ThemeToggle'
 import { supabase } from '../../lib/supabase'
 import styles from './AppShell.module.css'
@@ -14,6 +16,10 @@ const NAV = [
 ]
 
 export function AppShell({ children }: { children: ReactNode }) {
+  // El color del encabezado, que queda pegado arriba. Pasa a '--surface-header'
+  // cuando el encabezado sea la cabecera azul marino (DESIGN.md § Estructura).
+  useThemeColor('--surface-card')
+
   return (
     <div className={styles.shell}>
       {/* Primer elemento con Tab: evita recorrer el encabezado (logo, 5 enlaces,
@@ -23,7 +29,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       </a>
       <header className={styles.header}>
         <div className={styles.headerInner}>
-          <img src="/logo.svg" alt="Twoney" className={styles.brand} />
+          <Logo className={styles.brand} />
           {/* Misma etiqueta que la barra inferior: nunca se ven las dos a la vez (display: none). */}
           <nav className={styles.nav} aria-label="Navegación principal">
             {NAV.map(({ to, label, end }) => (

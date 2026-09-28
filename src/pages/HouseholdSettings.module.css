@@ -1,5 +1,5 @@
 .title {
-  font-size: var(--text-lg);
+  font-size: var(--text-xl);
   font-weight: var(--weight-medium);
   color: var(--text-primary);
   margin-bottom: var(--space-lg);

@@ -4,11 +4,13 @@
   justify-content: center;
 }
 
+/* El anillo toma el color de la superficie de atrás, así los círculos
+   solapados se separan en ambos modos. */
 .avatar {
   width: 64px;
   height: 64px;
   border-radius: var(--radius-full);
-  border: 3px solid #ffffff;
+  border: 3px solid var(--surface-page);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -16,21 +18,22 @@
   color: var(--text-on-brand);
 }
 
+/* Colores de las dos personas del hogar (DESIGN.md § Personas del hogar). */
 .pink {
-  background: var(--brand-pink);
+  background: var(--person-a);
 }
 
 .blue {
-  background: var(--brand-blue);
+  background: var(--person-b);
 }
 
 .heart {
   width: 32px;
   height: 32px;
   border-radius: var(--radius-full);
-  background: var(--text-on-brand);
-  border: 3px solid #ffffff;
-  color: #ffffff;
+  background: var(--surface-header);
+  border: 3px solid var(--surface-page);
+  color: var(--text-on-header);
   display: flex;
   align-items: center;
   justify-content: center;

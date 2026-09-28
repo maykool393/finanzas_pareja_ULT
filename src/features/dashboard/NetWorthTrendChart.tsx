@@ -29,8 +29,8 @@ export function NetWorthTrendChart({ data }: { data: NetWorthPoint[] }) {
         <AreaChart data={data}>
           <defs>
             <linearGradient id="netWorthFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="var(--account-b)" stopOpacity={0.3} />
-              <stop offset="100%" stopColor="var(--account-b)" stopOpacity={0} />
+              <stop offset="0%" stopColor="var(--series-indigo)" stopOpacity={0.3} />
+              <stop offset="100%" stopColor="var(--series-indigo)" stopOpacity={0} />
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
@@ -52,7 +52,7 @@ export function NetWorthTrendChart({ data }: { data: NetWorthPoint[] }) {
             itemStyle={CHART_TOOLTIP_ITEM_STYLE}
             labelStyle={CHART_TOOLTIP_LABEL_STYLE}
           />
-          <Area type="monotone" dataKey="netWorth" stroke="var(--account-b)" strokeWidth={2} fill="url(#netWorthFill)" />
+          <Area type="monotone" dataKey="netWorth" stroke="var(--series-indigo)" strokeWidth={2} fill="url(#netWorthFill)" />
         </AreaChart>
       </ResponsiveContainer>
     </>

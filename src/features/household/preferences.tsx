@@ -17,19 +17,19 @@ export const SPLIT_OPTIONS = [
   {
     value: 'proporcional',
     label: 'Proporcional',
-    description: 'Ajustado según el nivel de ingresos de cada uno para una contribución justa.',
+    description: 'Los gastos compartidos se dividen según el ingreso de cada uno.',
     icon: <SlidersIcon />,
   },
   {
     value: 'indiferente',
     label: 'Indiferente',
-    description: 'Todo se maneja de forma conjunta, sin divisiones entre los dos.',
+    description: 'Todo se maneja en conjunto, sin dividir los gastos entre los dos.',
     icon: <ClockIcon />,
   },
   {
     value: '50-50',
     label: '50 / 50',
-    description: 'Ambos aportan exactamente el mismo porcentaje a las cuentas del hogar.',
+    description: 'Cada uno paga la mitad de los gastos compartidos.',
     icon: <BoltIcon />,
   },
 ] as const

@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react'
+import { useThemeColor } from '../../hooks/useThemeColor'
 import { RippleBackground } from '../RippleBackground'
+import { Logo } from '../ui/Logo'
 import styles from './authForm.module.css'
 
 /**
@@ -8,11 +10,13 @@ import styles from './authForm.module.css'
  * título visible (404).
  */
 export function AuthLayout({ title, children }: { title?: string; children: ReactNode }) {
+  useThemeColor('--surface-page')
+
   return (
     <RippleBackground>
       <div className={styles.page}>
         <div className={styles.card}>
-          <img src="/logo.svg" alt="Twoney" className={styles.logo} />
+          <Logo className={styles.logo} />
           {title && <h1 className="visually-hidden">{title}</h1>}
           {children}
         </div>

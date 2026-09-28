@@ -1,6 +1,7 @@
+/* 5px por defecto; quien la contiene puede cambiarlo con --bar-height (deudas: 6px). */
 .track {
   display: block;
-  height: 5px;
+  height: var(--bar-height, 5px);
   border-radius: var(--radius-full);
   overflow: hidden;
 }

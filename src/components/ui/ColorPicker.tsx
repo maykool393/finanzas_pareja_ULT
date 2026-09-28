@@ -4,7 +4,7 @@ import styles from './Picker.module.css'
 export interface ColorOption {
   key: string
   label: string
-  /** Valor CSS listo para usar en `background`, ej. "var(--account-a-bg)". */
+  /** Valor CSS listo para usar en `background`, ej. "var(--tone-turquesa-bg)". */
   swatch: string
 }
 

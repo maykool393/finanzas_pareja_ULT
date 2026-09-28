@@ -109,7 +109,9 @@ export function useDashboardCharts(
         categoryId,
         name: category?.name ?? 'Sin categoría',
         amount,
-        bg: tone?.bg ?? 'var(--surface-sunken)',
+        // El color sólido y no el `background` del tono: es el relleno SVG de
+        // la torta, y en oscuro el tono es un degradado en capas.
+        bg: tone?.solid ?? 'var(--surface-sunken)',
         text: tone?.text ?? 'var(--text-primary)',
       }
     })

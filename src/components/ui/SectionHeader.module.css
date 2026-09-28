@@ -1,89 +1,28 @@
 .header {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-}
-
-.heading {
-  flex: 1;
-  display: flex;
-  font: inherit;
-}
-
-.toggle {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) 0;
+  justify-content: space-between;
+  gap: var(--space-md);
   min-height: 44px;
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--border);
 }
 
 .title {
-  font-size: var(--text-md);
-  font-weight: var(--weight-medium);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
   color: var(--text-primary);
 }
 
-.total {
-  margin-left: auto;
-  font-size: var(--text-sm);
-  color: var(--text-secondary);
-}
-
-.chevron {
-  width: 18px;
-  height: 18px;
-  color: var(--text-muted);
-  transition: transform var(--duration-fast) var(--ease-out);
-}
-
-.chevronExpanded {
-  transform: rotate(180deg);
-}
-
-/* Girar es movimiento: con reducir movimiento el chevron cambia sin animar. */
-@media (prefers-reduced-motion: reduce) {
-  .chevron {
-    transition: none;
-  }
-}
-
-.add {
-  position: relative;
+.end {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: var(--radius-full);
-  color: var(--text-secondary);
-  flex-shrink: 0;
-  transition: background-color var(--duration-fast) ease,
-              color var(--duration-fast) ease,
-              transform var(--duration-fast) var(--ease-out);
+  /* La zona táctil del botón + sobresale 10px: con 16px no pisa el total. */
+  gap: var(--space-md);
 }
 
-/* Se ve de 28px, se toca en 44px. El gap del header (8px) evita que se
-   superponga con el botón de la fila. */
-.add::before {
-  content: '';
-  position: absolute;
-  inset: -8px;
-}
-
-.add:active {
-  transform: scale(var(--press-scale));
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .add:hover {
-    background: var(--surface-sunken);
-    color: var(--text-primary);
-  }
-}
-
-.add svg {
-  width: 16px;
-  height: 16px;
+.total {
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
 }

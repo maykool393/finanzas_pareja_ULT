@@ -12,22 +12,24 @@
               transform var(--duration-fast) var(--ease-out);
 }
 
-.base:disabled {
-  opacity: 0.6;
-  cursor: default;
-}
-
 .base:not(:disabled):active {
   transform: scale(var(--press-scale));
 }
 
+/* Un degradado no transiciona de color: el hover es una capa blanca al 16%
+   pintada con una sombra interna (encima del fondo, debajo del texto).
+   Aclara en vez de oscurecer porque el texto es oscuro: sube el contraste
+   (8.3 → 9.2:1). */
 .primary {
-  background: var(--surface-inverse);
-  color: var(--text-inverse);
+  background: var(--gradient-brand);
+  color: var(--text-on-brand);
+  box-shadow: inset 0 0 0 100px rgba(255, 255, 255, 0);
+  transition: box-shadow var(--duration-fast) ease,
+              transform var(--duration-fast) var(--ease-out);
 }
 
 .secondary {
-  background: var(--surface-page);
+  background: var(--surface-card);
   color: var(--text-primary);
   border: 1px solid var(--border-strong);
 }
@@ -37,11 +39,30 @@
   color: var(--text-on-danger);
 }
 
+/* Sobre la cabecera o la historia oscura, en ambos modos (5.8:1 el borde). */
+.onDark {
+  background: transparent;
+  color: var(--text-on-header);
+  border: 1.5px solid rgba(255, 255, 255, 0.55);
+  --focus-ring: var(--text-on-header);
+}
+
+/* Deshabilitado con su propio fondo y texto, no con opacidad: un botón de
+   color a medio transparentar parece activo. Va después de las variantes
+   para ganarles. Exento de contraste. */
+.base:disabled {
+  background: var(--surface-sunken);
+  color: var(--text-disabled);
+  border-color: transparent;
+  box-shadow: none;
+  cursor: default;
+}
+
 /* Hover como cambio de fondo, no de opacidad: la opacidad casi no se nota en
    el botón oscuro y en el de color aclara el fondo y baja el contraste. */
 @media (hover: hover) and (pointer: fine) {
   .primary:not(:disabled):hover {
-    background: var(--surface-inverse-hover);
+    box-shadow: inset 0 0 0 100px rgba(255, 255, 255, 0.16);
   }
 
   .secondary:not(:disabled):hover {
@@ -50,5 +71,9 @@
 
   .danger:not(:disabled):hover {
     background: var(--danger-bg-hover);
+  }
+
+  .onDark:not(:disabled):hover {
+    background: rgba(255, 255, 255, 0.08);
   }
 }

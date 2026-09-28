@@ -3,11 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <!-- Color de la barra del navegador: --surface-card de cada modo, igual al
-         encabezado de la app. Si cambian esos tokens, cambian aquí y en
-         src/hooks/useTheme.ts (THEME_COLORS). -->
-    <meta name="theme-color" content="#FAFAFA" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#1e1e1e" media="(prefers-color-scheme: dark)" />
+    <!-- Color de la barra del navegador antes de que monte React: --surface-page
+         de cada modo (la primera pantalla es la bienvenida o el login). Después
+         lo maneja useThemeColor, que lo lee del CSS. Si cambia --surface-page,
+         cambia aquí también: un <meta> no puede leer una variable CSS. -->
+    <meta name="theme-color" content="#F8FAFC" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0E1627" media="(prefers-color-scheme: dark)" />
     <script>
       // Aplica el tema elegido a mano antes del primer pintado. Sin esto se
       // pintaba el del sistema hasta que montaba React (un parpadeo), y la
@@ -17,7 +18,7 @@
           var theme = localStorage.getItem('theme')
           if (theme !== 'light' && theme !== 'dark') return
           document.documentElement.dataset.theme = theme
-          var color = theme === 'dark' ? '#1e1e1e' : '#FAFAFA'
+          var color = theme === 'dark' ? '#0E1627' : '#F8FAFC'
           document.querySelectorAll('meta[name="theme-color"]').forEach(function (meta) {
             meta.content = color
           })

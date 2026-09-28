@@ -1,14 +1,14 @@
 /* Mismas medidas que el contenido real: la grilla de sectionGrid.cardRow con
-   tarjetas de ItemCard (≈96px), y las filas de TransactionList (≈56px). */
+   tarjetas de ItemCard (≈150px), y las filas de las listas (≈56px). */
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: var(--space-md);
-  margin-top: var(--space-sm);
+  margin-top: var(--space-md);
 }
 
 .card {
-  height: 96px;
+  height: 150px;
   border-radius: var(--radius-card);
   background: var(--surface-sunken);
 }

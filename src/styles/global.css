@@ -13,16 +13,18 @@
 
 /* Lo que dibuja el navegador también toma la paleta, no sus colores por
    defecto (selección azul, calendario de fecha azul, scrollbar gris del
-   sistema). Neutros, como el resto de la interfaz. */
+   sistema). Ver DESIGN.md § Superficies del navegador. */
 :root {
-  accent-color: var(--text-primary);
+  /* --brand-strong y no --brand: el control nativo necesita 3:1. */
+  accent-color: var(--brand-strong);
   /* --text-muted y no --border-strong: el pulgar es un control que se
-     arrastra y necesita 3:1 contra el fondo (--border-strong da 1.7:1). */
+     arrastra y necesita 3:1 contra el fondo (--border-strong da 1.5:1). */
   scrollbar-color: var(--text-muted) transparent;
 }
 
+/* Texto seleccionado sobre tinte de marca: 15.7:1 en claro, 8.8:1 en oscuro. */
 ::selection {
-  background: var(--border-strong);
+  background: var(--selection);
   color: var(--text-primary);
 }
 
@@ -36,7 +38,7 @@
 /* Cifras: tabular para que las columnas de montos no bailen */
 .amount {
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.01em;
+  letter-spacing: var(--tracking-amount);
 }
 
 .visually-hidden {
@@ -57,8 +59,8 @@
   z-index: 20;
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-control);
-  background: var(--surface-inverse);
-  color: var(--text-inverse);
+  background: var(--surface-header);
+  color: var(--text-on-header);
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
   transform: translateY(calc(-100% - var(--space-md)));

@@ -22,8 +22,8 @@ const TYPE_OPTIONS: { value: AccountType; label: string }[] = [
 ]
 
 const ACCOUNT_COLOR_OPTIONS = [
-  { key: 'a', label: 'Verde', swatch: 'var(--account-a-bg)' },
-  { key: 'b', label: 'Morado', swatch: 'var(--account-b-bg)' },
+  { key: 'a', label: 'Turquesa', swatch: 'var(--tone-turquesa-bg)' },
+  { key: 'b', label: 'Lavanda', swatch: 'var(--tone-lavanda-bg)' },
 ]
 
 interface AccountFormProps {

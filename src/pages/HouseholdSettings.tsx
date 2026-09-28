@@ -1,12 +1,12 @@
 import { type FormEvent, useState } from 'react'
 import { Button } from '../components/ui/Button'
+import { CurrencyPicker } from '../components/ui/CurrencyPicker'
 import { FormError } from '../components/ui/FormError'
 import formStyles from '../components/ui/form.module.css'
 import { LoadStatus } from '../components/ui/LoadStatus'
 import { RadioListGroup } from '../components/ui/RadioListGroup'
-import { Select } from '../components/ui/Select'
 import { TextField } from '../components/ui/TextField'
-import { CURRENCY_OPTIONS, type ExpenseSplit, SPLIT_OPTIONS } from '../features/household/preferences'
+import { type ExpenseSplit, SPLIT_OPTIONS } from '../features/household/preferences'
 import { useAsyncAction } from '../hooks/useAsyncAction'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { type Household, type HouseholdPreferences, useHousehold } from '../hooks/useHousehold'
@@ -74,7 +74,7 @@ function SettingsForm({
       <TextField label="Nombre del hogar" value={name} onChange={edited(setName)} required autoComplete="off" />
 
       <div className={styles.field}>
-        <Select label="Moneda principal" value={currency} onChange={edited(setCurrency)} options={CURRENCY_OPTIONS} required />
+        <CurrencyPicker value={currency} onChange={edited(setCurrency)} />
         {/* Los montos se guardan como números, sin moneda: cambiarla no los convierte. */}
         <p className={currencyChanged ? styles.warning : styles.hint}>
           Cambiar la moneda no convierte los montos ya registrados: solo cambia el símbolo con que se muestran.

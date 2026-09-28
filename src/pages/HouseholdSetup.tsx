@@ -1,16 +1,17 @@
 import { type FormEvent, useState } from 'react'
 import { OnboardingLayout } from '../components/auth/OnboardingLayout'
+import { AccountTypeIllustration } from '../components/illustrations/AccountTypeIllustration'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { FormError } from '../components/ui/FormError'
-import { ArrowRightIcon, PeopleIcon, PersonIcon } from '../components/ui/icons'
+import { CurrencyPicker } from '../components/ui/CurrencyPicker'
+import { ArrowRightIcon } from '../components/ui/icons'
 import { InviteCodeBadge } from '../components/ui/InviteCodeBadge'
 import { InviteQrCode } from '../components/ui/InviteQrCode'
-import { RadioCardGroup } from '../components/ui/RadioCardGroup'
+import { OptionRows } from '../components/ui/OptionRows'
 import { RadioListGroup } from '../components/ui/RadioListGroup'
-import { Select } from '../components/ui/Select'
 import { TextField } from '../components/ui/TextField'
-import { CURRENCY_OPTIONS, type ExpenseSplit, SPLIT_OPTIONS } from '../features/household/preferences'
+import { type ExpenseSplit, SPLIT_OPTIONS } from '../features/household/preferences'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useSession } from '../hooks/useSession'
 import { ERROR_MESSAGES, isNetworkError } from '../lib/errorMessages'
@@ -21,8 +22,18 @@ type CreateMode = 'individual' | 'pareja'
 type Step = 'choose' | 'join' | 'invite' | 'preferences'
 
 const CREATE_MODE_OPTIONS = [
-  { value: 'individual', label: 'Cuenta individual', icon: <PersonIcon /> },
-  { value: 'pareja', label: 'Cuentas en pareja', icon: <PeopleIcon /> },
+  {
+    value: 'individual',
+    title: 'Solo yo',
+    description: 'Llevas tus finanzas de forma individual',
+    illustration: <AccountTypeIllustration people={1} />,
+  },
+  {
+    value: 'pareja',
+    title: 'Crear en pareja',
+    description: 'Creas el hogar y comparten los gastos juntos',
+    illustration: <AccountTypeIllustration people={2} />,
+  },
 ] as const
 
 interface HouseholdSetupProps {
@@ -175,7 +186,7 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
             <p className={styles.lead}>Elige la moneda en la que quieres ver tus cuentas y movimientos.</p>
           )}
 
-          <Select label="Moneda principal" value={currency} onChange={setCurrency} options={CURRENCY_OPTIONS} required />
+          <CurrencyPicker value={currency} onChange={setCurrency} />
 
           {createMode === 'individual' && (
             <p className={styles.lead}>Podrás cambiarla más adelante desde los ajustes de tu hogar.</p>
@@ -248,6 +259,7 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
             required
             autoComplete="off"
             placeholder="00000000-0000-0000-0000-000000000000"
+            variant="code"
           />
 
           {error && <FormError>{error}</FormError>}
@@ -282,20 +294,21 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
 
       {joinError && <FormError>{joinError}</FormError>}
 
-      <RadioCardGroup
+      <OptionRows
         value={createMode}
         onChange={setCreateMode}
         options={CREATE_MODE_OPTIONS}
-        label="¿Cómo quieren llevar las finanzas?"
+        label="¿Cómo vas a usar Twoney?"
       />
 
       <form className={styles.form} onSubmit={handleCreate}>
         <TextField
-          label="Nombre del hogar"
+          label="Ponle nombre a tu hogar"
           value={name}
           onChange={setName}
           required
-          placeholder={createMode === 'individual' ? 'Casa de Juan' : 'Casa de Mery y Pablo'}
+          placeholder="Ej. Casa Feliz"
+          variant="underline"
         />
 
         {error && <FormError>{error}</FormError>}

@@ -58,16 +58,15 @@
   color: var(--text-primary);
 }
 
-/* Botón de acción principal del flujo — degradado de marca, ver DESIGN.md
-   § Identidad de marca. Excepción intencional: no usa el componente Button
-   compartido (esos estilos son neutros y app-wide; este es un caso puntual
-   de un flujo de onboarding). Texto en --text-on-brand: el fondo es siempre
-   claro, no sigue var(--text-inverse) que se invierte en modo oscuro. */
+/* Botón de acción principal del flujo: el primario de a todo el ancho (ver
+   DESIGN.md § Botones). Texto en --text-on-brand: el degradado es igual en
+   ambos modos, así que el texto no puede seguir --text-primary, que en oscuro
+   pasa a claro. */
 .cta {
   height: 52px;
   width: 100%;
   border-radius: var(--radius-control);
-  background: var(--gradient-brand-dark);
+  background: var(--gradient-brand);
   color: var(--text-on-brand);
   font-size: var(--text-md);
   font-weight: var(--weight-medium);
@@ -75,8 +74,8 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-sm);
-  /* La primera sombra (interna, transparente en reposo) es la capa de hover. */
-  box-shadow: inset 0 0 0 100px rgba(255, 255, 255, 0), var(--shadow-brand-cta);
+  /* Sombra interna, transparente en reposo: es la capa de hover. */
+  box-shadow: inset 0 0 0 100px rgba(255, 255, 255, 0);
   transition: box-shadow var(--duration-fast) ease,
               transform var(--duration-fast) var(--ease-out);
 }
@@ -85,17 +84,20 @@
   transform: scale(var(--press-scale));
 }
 
+/* Deshabilitado con fondo y texto propios, no con opacidad (ver Button.module.css). */
 .cta:disabled {
-  opacity: 0.6;
+  background: var(--surface-sunken);
+  color: var(--text-disabled);
+  box-shadow: none;
   cursor: default;
 }
 
 /* Un degradado no transiciona de color: el hover es una capa blanca al 16%
    pintada con una sombra interna (encima del fondo, debajo del texto).
    Aclara en vez de oscurecer porque el texto es oscuro: sube el contraste
-   (5.3 → 6.7:1 en el extremo azul). */
+   (8.3 → 9.2:1). */
 @media (hover: hover) and (pointer: fine) {
   .cta:not(:disabled):hover {
-    box-shadow: inset 0 0 0 100px rgba(255, 255, 255, 0.16), var(--shadow-brand-cta);
+    box-shadow: inset 0 0 0 100px rgba(255, 255, 255, 0.16);
   }
 }

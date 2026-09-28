@@ -19,6 +19,7 @@ export function AccountsSection({ query, members }: AccountsSectionProps) {
       defaultIcon="bank"
       amount={(account) => account.balance}
       text={{
+        add: 'Añadir cuenta',
         empty: {
           title: 'Aún no hay cuentas',
           description:

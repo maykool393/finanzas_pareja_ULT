@@ -19,7 +19,7 @@ export function InviteQrCode({ url }: InviteQrCodeProps) {
         // El margen blanco va dentro de la imagen, así no hace falta una caja
         // alrededor (sería una tarjeta dentro de otra) y se escanea igual
         // sobre la tarjeta oscura.
-        QRCode.toDataURL(url, { margin: 4, width: 220, color: { dark: '#1a1a1a', light: '#ffffff' } }),
+        QRCode.toDataURL(url, { margin: 4, width: 220, color: { dark: '#0F172A', light: '#FFFFFF' } }),
       )
       .then((result) => {
         if (!cancelled) setDataUrl(result)

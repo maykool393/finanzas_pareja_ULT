@@ -120,6 +120,8 @@ export function Dialog({ open, onClose, title, children }: DialogProps) {
         tabIndex={-1}
         ref={panelRef}
       >
+        {/* Tirador de la hoja inferior: decorativo, solo en móvil. */}
+        <span className={styles.handle} aria-hidden="true" />
         <div className={styles.header}>
           <h2 id={titleId} className={styles.title}>
             {title}

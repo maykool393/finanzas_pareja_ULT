@@ -17,9 +17,11 @@ interface BudgetListProps {
 }
 
 /**
- * Gasto (límite a no superar): <80% verde, 80–100% color propio, ≥100% rojo.
+ * Gasto (límite a no superar): <80% ganancia, 80–100% color de texto de la
+ * categoría, ≥100% pérdida.
  * Ingreso (meta a alcanzar): superarla es bueno, no hay estado de alarma —
- * color propio mientras no se alcanza, verde al llegar o superarla.
+ * color de texto de la categoría mientras no se alcanza, ganancia al llegar o
+ * superarla.
  */
 function fillColorFor(ratio: number, type: CategoryType, categoryTextColor: string | undefined) {
   if (type === 'income') {

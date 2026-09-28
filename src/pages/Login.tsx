@@ -90,7 +90,8 @@ export function Login() {
         <form className={styles.form} onSubmit={handleSubmit}>
           {mode === 'signup' && (
             <label className={styles.field}>
-              <span className="label">Nombre</span>
+              {/* Con apellido: las iniciales del avatar salen de aquí ("MF"). */}
+              <span className="label">Nombre y apellido</span>
               <input
                 type="text"
                 autoComplete="name"

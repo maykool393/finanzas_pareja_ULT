@@ -13,6 +13,7 @@ Ya construido y en producción de desarrollo:
 - **Sistema de diseño**: tokens claro/oscuro (`src/styles/tokens.css`), `RippleBackground`, `AppShell` con nav de 5 secciones, `Card`, `ItemCard`, `SectionHeader`, `ProgressBar`.
 - **Esquema base en Supabase**: `households`, `profiles`, `categories`, `accounts`, `debts`, `investments`, `transactions` (columnas mínimas — este plan las extiende), con RLS por household en todas.
 - **Dashboard** (`src/pages/Dashboard.tsx`): todo con datos reales de Supabase. La sección "Ahorro" con una meta de ejemplo fija en el código (900.000) se eliminó el 2026-09-27; si se quiere un módulo de metas de ahorro, se construye como los demás (tabla propia + `src/features/`).
+- **Rediseño Twoney en curso** (desde el 2026-09-28): nueva identidad visual en toda la app. Ver "Plan de rediseño Twoney" más abajo.
 
 Este documento es el plan de los 7 módulos que faltan. Se actualiza el **Estado** de cada fase a medida que se completa — no se implementa nada de lo descrito aquí hasta acordarlo fase por fase.
 
@@ -289,6 +290,235 @@ Auditoría en el formato de `impeccable audit`: **18/20** (Excelente), contra 15
 - [x] **Unirse con un código sin conexión decía "Ese código no es válido".** `isNetworkError` distingue un fallo de red (Supabase lo devuelve sin `code`, verificado en `postgrest-js`) de un código inválido (`22P02`, `23503`). *(Detectado al volver a auditar.)*
 - [ ] Verificar con sesión: crear una categoría con un nombre que ya existe (activa o archivada) y ver el mensaje nuevo; en el onboarding, con la red cortada, crear un hogar y unirse con un código.
 - [x] **Texto del tooltip de los gráficos ilegible** (reportado al usarlo): tomaba el color de la serie. En "Gastos por categoría" eran los fondos pastel sobre la tarjeta, 1,1:1; en "Ingresos vs. gastos" y "Evolución del patrimonio", 3,3–4,4:1, bajo el 4,5:1 del texto. Ahora los tres usan `--text-primary` (16,7:1 en claro, 14,6:1 en oscuro), con la etiqueta en `--text-secondary`. Verificado con Playwright pasando el mouse sobre el gráfico en claro y oscuro.
+
+---
+
+## Plan de rediseño Twoney (2026-09-28)
+
+Lleva la app a la identidad nueva del prototipo "Twoney" (artefacto en claude.ai: https://claude.ai/artifact/ACWje21BdC9KtSBfeVUWYy). La identidad cambia en cinco cosas:
+- Grises fríos (slate) con turquesa de marca, en vez de grises cálidos con degradado rosa → azul.
+- Modo oscuro en slate azulado.
+- Radio de 8px en todo.
+- Navegación de 5 pestañas: Resumen, Patrimonio, Presupuesto, Movimientos y Ver más.
+- Resumen en historias; Patrimonio con tarjetas que se apilan.
+
+[DESIGN.md](DESIGN.md) ya está reescrito con el diseño nuevo y es la referencia de cada etapa. Donde el prototipo no cumplía contraste, manda el documento.
+
+Las etapas se llaman **R1–R8** para no confundirlas con las fases de módulos ni con las etapas M. Cada una termina con su commit, verificado con `tsc`, lint y build, y se marca aquí al cerrarla.
+
+| Etapa | Qué resuelve | Depende de | Estado |
+|---|---|---|---|
+| R1 | Tokens: paleta, tonos, tipografía, radios, sombras, movimiento | — | 🟨 Commit hecho — falta tu revisión visual |
+| R2 | Estilos globales y superficies del navegador | R1 | 🟨 Commit hecho — falta tu revisión visual |
+| R3 | Componentes compartidos | R1, R2 | 🟨 Commit hecho — falta tu revisión visual |
+| R4 | Estructura: navegación, cabecera, login | R3 | ⬜ Pendiente |
+| R5 | Onboarding nuevo | R3, R4 | ⬜ Pendiente |
+| R6 | Patrimonio | R3, R4 | ⬜ Pendiente |
+| R7 | Resumen (historias) | R3, R4 | ⬜ Pendiente |
+| R8 | Limpieza y verificación final | R1–R7 | ⬜ Pendiente |
+
+R5, R6 y R7 no dependen entre sí: se pueden hacer en cualquier orden. R6 y R7 tienen decisiones pendientes (ver abajo) que conviene cerrar antes de empezarlas.
+
+### R1 — Tokens 🟨
+- [x] `tokens.css` nuevo:
+  - Paleta slate en claro y slate azulado en oscuro, con todos los pares de texto y fondo medidos.
+  - Marca (`--brand`, `--brand-strong`, `--brand-text`, `--brand-tint`), personas del hogar y 6 tonos de tarjeta (en oscuro, vidrio tintado opaco).
+  - Series de gráficos, botón destructivo, radios de 8px, sombras y tokens de movimiento de las animaciones del Resumen.
+- [x] Escala tipográfica nueva (11 a 96px). El `--text-lg` de 20px pasa a `--text-xl` en sus 11 usos, así ninguna pantalla cambió de tamaño.
+- [x] Consumidores de los tokens eliminados:
+  - Botón primario con degradado de marca (`Button`, login, `ConfirmDialog`).
+  - `ItemCard` con los tonos nuevos.
+  - Selección con tinte + borde (`RadioCardGroup`, `RadioListGroup`, `TypeToggle`).
+  - Colores de categoría y de los formularios. Las claves guardadas en la base no cambian; cambian los nombres visibles: Turquesa, Lavanda, Ámbar, Rosa, Pizarra, Celeste.
+  - Gráficos: patrimonio en índigo; la torta usa colores sólidos.
+  - Onboarding actual en versión neutra provisional.
+  - Ondas del login en `--brand`.
+- [x] Build y lint.
+- [ ] Revisión visual en claro y oscuro (`npm run dev`).
+- [x] Commit.
+
+### R2 — Estilos globales y superficies del navegador 🟨
+- [x] `useThemeColor` (hook nuevo): cada layout declara qué superficie queda arriba y el color de la barra del celular se lee del CSS. Reemplaza los colores escritos a mano en `useTheme.ts`.
+- [x] `index.html` y el manifiesto de la PWA con los colores nuevos (`--surface-page` antes de cargar; `#0F172A` en el manifiesto).
+- [x] Fondo de página con `--gradient-page`; selección de texto con `--selection`; `accent-color` en `--brand-strong`.
+- [x] Token `--focus-ring` para el anillo de foco, redefinible a blanco sobre superficies oscuras.
+- [x] QR en el slate nuevo. Tarjetas de selección transparentes, para que no corten el degradado.
+- [x] DESIGN.md § Superficies del navegador actualizado.
+- [ ] Revisión visual, y en un teléfono con la PWA instalada: la barra de estado cambia con el tema.
+- [x] Commit.
+
+### R3 — Componentes compartidos 🟨
+- [x] **Botones:**
+  - Deshabilitado con `--surface-sunken` + `--text-disabled`, no `opacity: 0.6` (en `Button`, login, `ConfirmDialog` y el CTA del onboarding).
+  - Variante `onDark` (contorno sobre fondo oscuro).
+  - `IconButton`: botón de solo ícono circular (24, 28 o 34px), con zona táctil de 44px.
+- [x] **Campos:**
+  - Estándar con borde 1.5px `--border-control`, fondo `--surface-card` y foco `--brand-strong`. Aplica a `TextField`, `NumberField` y `Select`, que comparten `formField.module.css`, y a los campos del login.
+  - Deshabilitado sin opacidad.
+  - `TextField` con variantes `underline` y `code`. El código es el UUID del hogar (36 caracteres), así que va en `--text-md`, no en el `--text-2xl` del prototipo.
+- [x] **Tarjetas de selección** (`RadioListGroup`): borde de 1.5px en ambos estados, ícono de 20px sin burbuja y radio de 20px con anillo `--border-control`.
+- [x] **Componentes nuevos:**
+  - `OptionRows`: "filas de opción", con ilustración y check.
+  - `CurrencyPicker`: `radiogroup` en cuadrícula de 4, con las 7 monedas.
+  - Ya se usan en el onboarding actual y en Ajustes del hogar. Se borró `RadioCardGroup`, que quedó sin uso.
+- [x] **Textos de los modos de reparto** según tu definición: proporcional al ingreso, cada uno la mitad, o todo en conjunto.
+- [x] **`ItemCard`:**
+  - Ícono de 28px + nombre `--text-lg` arriba; avatares de 28px arriba a la derecha.
+  - Monto `--text-4xl` a la derecha; estrella de cuenta principal (lista para R6).
+  - Deudas: barra de 6px y "cuota · N pagos".
+  - Hover con `--shadow-card-hover`.
+  - La grilla pasa a una tarjeta por fila en el teléfono.
+- [x] **`HouseholdAvatars`:** iniciales sobre `--person-a` / `--person-b`, solapados, con anillo `--avatar-ring`.
+  - El orden sale de la fecha de registro (`useHouseholdMembers` ahora trae `created_at`).
+  - Reemplaza al avatar de la tarjeta. `AvatarPair` sigue en el onboarding hasta R5.
+- [x] **`SectionHeader`:** sin plegado; título `--text-xl` bold, total `--text-primary`, botón + circular y divisor.
+- [x] **Lista de inversiones** (`InvestmentList`): filas con nombre, fecha, valor y variación con signo. Los grupos, con su cuadro de ícono, llegan en R6.
+- [x] **Barras de presupuesto:** se mantiene el aviso en tres pasos de `BudgetList` (turquesa, aviso al 80% y magenta al pasarse). DESIGN.md se actualizó para describirlo.
+- [x] **Diálogo:** tirador de 36×4px en la hoja inferior (solo en móvil); el velo ya cerraba al tocarlo.
+- [x] **Íconos nuevos** en `icons.tsx` (grilla de 20): flecha a la izquierda, check, cuatro puntos, móvil, QR, globo de chat, diana, dinero y estrella rellena. Se reusan los que ya existían: casa, barras, tarjeta, banco, rayo, tendencia, copiar y flecha a la derecha.
+- [x] **`Logo`** como componente SVG con `currentColor`, en el login, el encabezado y la bienvenida. Se quitaron los `filter: invert(1)`.
+- [x] **Ilustraciones** en `src/components/illustrations/`:
+  - `AccountTypeIllustration`, ya en el onboarding.
+  - `DoneIllustration`: la casa y la moneda, extraídas del artefacto, con trazos en `currentColor` y la flotación limitada a menos de 5 s.
+- [x] **Esqueletos de carga** al alto real de la tarjeta nueva (150px); en inversiones, filas.
+- [x] Build y lint. Revisión con Playwright en claro y oscuro a 390px, en una página temporal (ya borrada): sin errores de consola. Corregido al revisar: el anillo de los avatares en oscuro.
+- [x] Iniciales de dos letras siempre: nombre y apellido (MF, MP), o las dos primeras letras si solo hay nombre. El registro pide "Nombre y apellido".
+- [ ] Revisión visual tuya en la app (`npm run dev`).
+- [x] Commit.
+- Se movieron a su etapa: el **botón flotante** a R4, donde se usa, y la **píldora de porcentaje** a R6 (hoja de composición).
+
+### R4 — Estructura de la app ⬜
+- [ ] **Navegación inferior de 5 pestañas:** Resumen, Patrimonio, Presupuesto, Movimientos y Ver más.
+  - Estadísticas desaparece (página, ruta y enlace).
+  - "Ver más" sigue con Categorías, Ajustes del hogar e Invitar.
+- [ ] **Pestañas:**
+  - Activa: ícono `--brand-strong`, etiqueta bold y punto de 4px.
+  - Inactiva: `--text-muted`.
+  - En escritorio, las mismas 5 en el encabezado.
+- [ ] **Cabecera `--surface-header`** en las 5 pestañas:
+  - Selector de vista, sin chevron hasta que tenga función.
+  - Cambio de tema a la derecha (34px, zona de 44px).
+  - Borde inferior en oscuro y `--focus-ring` blanco.
+  - `AppShell` pasa a `useThemeColor('--surface-header')`.
+- [ ] **Botón flotante** (componente: 52px, degradado, `--shadow-brand`) en Resumen ("Añadir movimiento") y en Patrimonio ("Añadir cuenta, deuda o inversión").
+- [ ] **Títulos:** `<h1>` oculto en Resumen y Patrimonio; `useDocumentTitle` con los nombres nuevos.
+- [ ] **Login, registro, contraseñas y 404, con glassmorfismo** (decisión 9, DESIGN.md § Fondo — pantallas de autenticación):
+  - Fondo con tres manchas (aguamarina, morado y cian) sobre `#F8FAFC` en claro y azul marino `#0B1120` en oscuro.
+  - Tarjeta de vidrio: blanco al 72% en claro, azul marino al 65% en oscuro, con `blur(24px)`. Sin soporte de `backdrop-filter`, cae a sólido.
+  - Enlaces dentro de la tarjeta en `--text-secondary`.
+  - Ondas en `--brand` al 20%.
+  - Se borran `login-background.webp` y `login-background-dark.webp`, con sus referencias y el precache.
+- [ ] **Bienvenida:**
+  - Recolorear `welcome-hero.webp` con un mapa de degradado por luminosidad (azul marino → morado → aguamarina). Se revisa contigo antes de reemplazar la original.
+  - WebP calidad 90, y verificar un recorte ampliado contra el original.
+  - Color de respaldo = el promedio de la imagen nueva.
+- [ ] **Textos que nombran pantallas:** "Ir a Finanzas" → "Ir a Patrimonio" (estados vacíos de Movimientos y Dashboard).
+- [ ] **Rutas nuevas** (decisión 10): `/resumen`, `/patrimonio`, `/presupuesto`, `/movimientos` y `/mas`. Siguen igual `/categorias`, `/ajustes` e `/invitar`.
+  - El inicio pasa a ser `/resumen`.
+  - Redirecciones: `/dashboard` → `/resumen`, `/mover` → `/movimientos`, `/estadisticas` → `/resumen`.
+  - Todos los usos de las rutas viejas se actualizan: `App.tsx`, `AppShell.tsx`, `SocialAuthButtons.tsx` (`redirectTo`), `Login.tsx`, `JoinRedirect.tsx`, `ResetPassword.tsx`, `Welcome.tsx`, `Transactions.tsx`, `Dashboard.tsx` y `Statistics.tsx` (este se borra).
+  - **Fuera del código:** en Supabase → Authentication → URL Configuration, agregar `…/resumen` a las Redirect URLs, salvo que ya haya un comodín (`/**`). Si no, el login con Google y Apple falla al volver.
+
+### R5 — Onboarding nuevo ⬜
+- [ ] **Layout:**
+  - Fondo de manchas; encabezado con "Volver" y el logo.
+  - Barra de línea con punto (`role="progressbar"`, "Paso 2 de 3") y número de paso decorativo.
+  - Título `--text-3xl` + ayuda; CTA a todo el ancho con flecha.
+  - Reemplaza `OnboardingLayout`, `SegmentedProgress` y `AvatarPair`.
+- [ ] **Recorridos:** Solo yo (tipo y nombre → moneda), Crear en pareja (tipo y nombre → invitación → moneda y reparto) y Unirse (tipo → código). La barra se calcula sobre el recorrido elegido.
+- [ ] **Paso 1, tipo y nombre:** dos filas de opción con ilustración de 72px y, debajo, el campo subrayado del nombre. "Continuar" crea el hogar (decisión 2).
+- [ ] **Paso 2, invitación** (solo pareja): bloque de invitación.
+  - Código monoespaciado.
+  - Acciones: "Copiar" (anunciado con `aria-live`), "WhatsApp" (`wa.me`) y "Ver QR" en un diálogo.
+  - Invitar es opcional: "Continuar" sigue igual.
+- [ ] **Paso código:** solo el campo de código, sin escáner (decisión 3).
+- [ ] **Paso moneda y reparto:** selector de moneda y tarjetas de reparto (Proporcional, Indiferente, 50 / 50).
+- [ ] **Pantalla final:**
+  - Ilustración con sus animaciones, confeti y tres funciones; CTA "Ir a mi hogar".
+  - Con reducir movimiento, sin desplazamientos; bucles de menos de 5 s.
+- [ ] **Verificar en vivo los tres recorridos.** Incluye el pendiente de la Fase 0.5: crear en pareja, compartir el QR y que la segunda persona quede unida.
+
+### R6 — Patrimonio ⬜
+- [ ] **Cabecera:**
+  - Total en `--text-4xl`.
+  - Barra de composición: segmentos separados 2px; es un botón y cada segmento abre su grupo.
+  - Chevron de pista (2 veces).
+- [ ] **Hoja "Composición del patrimonio"** (un `Dialog` más): la fila destacada con fondo y escala 1.02, sin atenuar las demás.
+- [ ] **Píldora de porcentaje** (componente): fondo con el tinte de la serie, texto normal. También la usa la historia 2 de R7.
+- [ ] **Cuentas y Deudas:**
+  - Tarjetas nuevas con efecto de apilado al hacer scroll (`transform` en scroll pasivo, no `sticky`).
+  - Con reducir movimiento, sin apilado; `scroll-margin` para el foco con teclado.
+- [ ] **Inversiones** en lista agrupada (DESIGN.md § Lista de inversiones).
+- [ ] **Cuenta principal** (decisión 7):
+  - Migración: `accounts.is_primary boolean not null default false`, con un índice único parcial para que haya una sola por hogar.
+  - Se elige en el formulario de la cuenta y se muestra con la estrella.
+- [ ] **Grupos de inversiones** (decisión 7):
+  - Migración: tabla `investment_groups` (nombre, ícono, variante de color, `archived_at`, con el patrón de RLS de siempre) e `investments.group_id` nullable (`on delete set null`).
+  - Formulario de grupo; la inversión elige su grupo.
+  - La variante de color pasa al grupo: `investments.color_variant` deja de usarse (se puede quitar después).
+- [ ] **Eliminar los gráficos** (decisión 1):
+  - `CategoryBreakdownChart`, `IncomeVsExpenseChart`, `NetWorthTrendChart` y `tooltipFormat.ts`.
+  - La parte de `useDashboardCharts` que solo los alimenta.
+  - La dependencia `recharts` en `package.json`.
+- [ ] `Dashboard.tsx` pasa a ser la pantalla Patrimonio.
+- [ ] Antes de escribir las migraciones, cargar la skill `supabase-postgres-best-practices`.
+
+### R7 — Resumen (historias) ⬜
+- [ ] **Estructura:**
+  - 3 historias en pareja; 2 en un hogar de una persona o con reparto "Indiferente", porque no hay nada que consolidar. El prototipo mostraba la historia 2 también en individual: era un error. Metas espera (decisión 6).
+  - Un `<button>` real que cubre el área; flechas del teclado; título anunciado con `aria-live`.
+  - Indicador de segmentos y número decorativo.
+- [ ] **Navegador de mes:** los datos de las historias son del mes elegido.
+- [ ] **Historia 1, Ingresos vs. gastos:** anillo con arcos separados, balance que cuenta hasta el valor y tarjetas de vidrio.
+- [ ] **Historia 2, Gastos compartidos** (oscura en ambos modos): semicírculo por persona, "por saldar", tarjeta por persona y "Saldar".
+  - El cálculo está en DESIGN.md § Resumen (decisión 4): gastos sin titular del mes; quién pagó según el dueño de la cuenta; parte de cada uno según `expense_split`; proporcional por los ingresos del mes, con 50 / 50 si falta alguno.
+  - No necesita columnas nuevas: `memberId` vacío ya marca un gasto como compartido, y `ownerId` de la cuenta dice quién pagó.
+- [ ] **"Saldar"**, con el modelo propuesto (se confirma al empezar R7, con la skill `supabase-postgres-best-practices`):
+  - **Transferencia:** dos movimientos enlazados, la salida de la cuenta de quien debe y la entrada en la de quien pagó de más. Mueven los saldos de las cuentas, pero no cuentan como ingreso ni como gasto (ni en el Resumen, ni en los presupuestos, ni en el reparto). Columnas nuevas en `transactions`: `kind` (`'movement'` | `'transfer'`) y `transfer_id`.
+  - **Registro del saldo:** tabla `settlements` (hogar, mes, de quién, a quién, monto y la transferencia). Con el mes saldado por el total, la historia muestra "Saldado".
+  - **Formulario "Saldar":** monto pendiente ya puesto, cuenta de origen y de destino.
+  - **Movimientos:** la lista muestra las transferencias como tales, no como un gasto y un ingreso.
+- [ ] **Historia 3, Presupuestos** (decisión 5): barra "Gasto" (total de los presupuestos de gasto del mes) y las dos categorías con presupuesto más cerca de su límite. Sin presupuestos, un estado vacío con "Crear el primero".
+- [ ] **Animaciones de las excepciones de DESIGN.md:**
+  - Con reducir movimiento: sin desplazamientos, y los números muestran directo el valor final.
+  - El conteo actualiza el nodo, no hace render, y el valor final es accesible desde el primer momento.
+- [ ] **Resumen en texto** (`visually-hidden`) de cada gráfico.
+
+### R8 — Limpieza y verificación final ⬜
+- [ ] **Borrar lo que quede sin uso:**
+  - Página de Estadísticas.
+  - `SegmentedProgress`, `AvatarPair`, `InviteCodeBadge` (si el bloque de invitación de R5 lo reemplaza).
+  - `public/logo.svg`, que ya no se usa (el logo es un componente).
+  - Tokens sin consumidores.
+- [ ] **Verificar con Playwright en claro y oscuro a 390px, en todas las pantallas:** contraste, foco visible y áreas táctiles.
+- [ ] **Lector de pantalla:** historias, cabecera, grupos de opciones y barra de composición.
+- [ ] **Actualizar "Estado actual"** de este README, y DESIGN.md si algo cambió al implementar.
+
+### Decisiones
+Se cierran antes de la etapa que las necesita. Todas resueltas el 2026-09-28.
+
+1. ✅ **Gráficos actuales** ("Evolución del patrimonio", "Gastos por categoría" e "Ingresos vs. gastos"): se eliminan, y con ellos recharts. *(R6)*
+2. ✅ **Código de invitación:** el nombre va en el paso 1, que crea el hogar al continuar; la invitación va en el paso 2. Así se mantiene la regla de la Fase 0.5: el código solo se muestra cuando el hogar ya existe. *(R5)*
+3. ✅ **Escanear QR dentro de la app:** no se implementa. Basta con el link `/unirse/<id>`, que abre la cámara del teléfono. *(R5)*
+4. ✅ **Gastos compartidos y "Saldar":** en el onboarding se elige cómo repartir. Hay gastos individuales y compartidos; el total compartido del mes se reparte entre los dos, y si uno pagó de más, el otro le transfiere la diferencia con "Saldar". Según el modo:
+   - **Proporcional:** los gastos compartidos se dividen en proporción al ingreso de cada uno.
+   - **50 / 50:** cada uno paga la mitad.
+   - **Indiferente:** no hay consolidación; la historia 2 no aparece.
+
+   Un hogar individual tampoco la tiene. El cálculo está en DESIGN.md § Resumen, y el modelo de datos en R7. *(R7)*
+5. ✅ **Presupuestos de Inversión y Deuda:** esperan (ver "Diferido del rediseño"). Mientras tanto, la historia 3 muestra la barra "Gasto" y las dos categorías más cerca de su límite. *(R7)*
+6. ✅ **Metas:** espera. La historia 4 queda diseñada en DESIGN.md, sin implementar (ver "Diferido del rediseño"). *(R7)*
+7. ✅ **Cuenta principal y grupos de inversiones:** se agregan al modelo. *(R6)*
+8. ✅ **Selector de vista de la cabecera:** por ahora es solo un título con los avatares ("Nuestro resumen"), sin flechita ni menú. El filtro por persona espera (ver "Diferido del rediseño"). *(R4)*
+9. ✅ **Login y bienvenida:** el login pasa a glassmorfismo en aguamarina y morado, con versión clara y oscura (azul marino). La bienvenida mantiene su imagen, recoloreada a azul marino, morado y aguamarina. *(R4)*
+10. ✅ **Nombres de las rutas:** `/resumen`, `/patrimonio`, `/presupuesto`, `/movimientos` y `/mas`, con redirecciones desde `/dashboard`, `/mover` y `/estadisticas`. Se actualizan en todo el código (lista en R4). *(R4)*
+
+### Diferido del rediseño
+Decidido esperar; no entra en R1–R8.
+- **Metas:** módulo nuevo (tabla `goals` con RLS, `src/features/goals/`, formulario) y la historia 4 del Resumen, ya diseñada en DESIGN.md.
+- **Presupuestos de Inversión y Deuda:** es un módulo propio. Hay que definir qué se presupuesta en una deuda o una inversión, de dónde sale lo pagado o invertido en el mes, el formulario y la migración. Cuando exista, reemplaza a las dos barras de categorías de la historia 3.
+- **Filtro por persona en la cabecera:** "Nuestro resumen" / "Mi resumen" / el de la otra persona.
+- **Códigos de invitación cortos** (tipo "TWNY-4XQ9", como en el prototipo): hoy el código es el UUID del hogar, de 36 caracteres. Uno corto necesita una columna nueva con índice único y buscar el hogar por ella al unirse.
 
 ---
 

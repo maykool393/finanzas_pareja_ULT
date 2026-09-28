@@ -3,7 +3,7 @@
 }
 
 .heroTotal {
-  font-size: var(--text-2xl);
+  font-size: var(--text-4xl);
   font-weight: var(--weight-light);
   letter-spacing: -0.02em;
   margin-top: var(--space-sm);

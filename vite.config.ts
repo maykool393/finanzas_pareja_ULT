@@ -17,10 +17,12 @@ export default defineConfig({
         start_url: '/',
         scope: '/',
         display: 'standalone',
-        background_color: '#ffffff',
-        // Igual al <meta name="theme-color"> claro de index.html (--surface-card).
-        // El manifiesto no puede cambiar con el tema; en la app manda el <meta>.
-        theme_color: '#FAFAFA',
+        // Pantalla de carga de la app instalada: --surface-page claro.
+        background_color: '#F8FAFC',
+        // --surface-header, la cabecera de la app, igual en ambos modos. El
+        // manifiesto no puede cambiar con la pantalla ni el tema; una vez
+        // cargada la app, manda el <meta> (useThemeColor).
+        theme_color: '#0F172A',
         icons: [
           { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },

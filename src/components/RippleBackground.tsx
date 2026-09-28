@@ -22,7 +22,7 @@ const RING_STAGGER_MS = 140
 const RING_DURATION_MS = 1400
 const MAX_RADIUS = 160
 const WHITE_RGB = '255, 255, 255'
-const FALLBACK_ACCENT_RGB = '127, 119, 221' // #7F77DD, por si la variable no resuelve a tiempo
+const FALLBACK_ACCENT_RGB = '18, 212, 196' // #12D4C4 (--brand), por si la variable no resuelve a tiempo
 
 function easeOutCubic(t: number) {
   return 1 - (1 - t) ** 3
@@ -55,7 +55,7 @@ export function RippleBackground({ children, theme: themeProp }: RippleBackgroun
     // usuario activa "reducir movimiento" con la pantalla ya abierta.
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
 
-    const accent = hexToRgb(getComputedStyle(wrapper).getPropertyValue('--account-b'))
+    const accent = hexToRgb(getComputedStyle(wrapper).getPropertyValue('--brand'))
     if (accent) accentRgbRef.current = accent
 
     function resizeCanvas() {

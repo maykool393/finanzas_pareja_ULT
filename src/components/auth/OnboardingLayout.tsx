@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { useThemeColor } from '../../hooks/useThemeColor'
 import { AvatarPair } from './AvatarPair'
 import styles from './OnboardingLayout.module.css'
 import { SegmentedProgress } from './SegmentedProgress'
@@ -12,10 +13,12 @@ interface OnboardingLayoutProps {
 }
 
 /**
- * Layout de flujos de varios pasos "en pareja" (ver DESIGN.md § Identidad de marca).
+ * Layout de flujos de varios pasos "en pareja" (ver DESIGN.md § Onboarding).
  * Distinto de AuthLayout: ese es para Login/recuperar contraseña/crear cuenta.
  */
 export function OnboardingLayout({ step, total, titleLine1, titleLine2, children }: OnboardingLayoutProps) {
+  useThemeColor('--surface-page')
+
   return (
     <div className={styles.page}>
       <div className={styles.header}>

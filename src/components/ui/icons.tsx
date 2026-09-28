@@ -276,6 +276,86 @@ export function ChevronRightIcon(props: SVGProps<SVGSVGElement>) {
   )
 }
 
+/** Volver (onboarding) y mes anterior (Resumen). */
+export function ChevronLeftIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="m12 5-5 5 5 5" />
+    </svg>
+  )
+}
+
+/** Opción elegida (filas de opción) y "Copiado". */
+export function CheckIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="m4.5 10.5 3.5 3.5 7.5-8" />
+    </svg>
+  )
+}
+
+/** "Ver más": cuatro puntos en cuadrícula, rellenos como MoreIcon. */
+export function GridDotsIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="currentColor" {...props}>
+      <circle cx="6.5" cy="6.5" r="1.6" />
+      <circle cx="13.5" cy="6.5" r="1.6" />
+      <circle cx="6.5" cy="13.5" r="1.6" />
+      <circle cx="13.5" cy="13.5" r="1.6" />
+    </svg>
+  )
+}
+
+export function PhoneIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <rect x="6" y="2.5" width="8" height="15" rx="2" />
+      <path d="M9 15h2" />
+    </svg>
+  )
+}
+
+export function QrIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <rect x="3" y="3" width="5" height="5" rx="1" />
+      <rect x="12" y="3" width="5" height="5" rx="1" />
+      <rect x="3" y="12" width="5" height="5" rx="1" />
+      <path d="M12 12h1.5M15.5 12H17M12 15.5v1.5M15.5 15.5H17V17" />
+    </svg>
+  )
+}
+
+/** Compartir por WhatsApp: un globo de chat propio, no el logo de la marca. */
+export function ChatIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M17 9.6a6.6 6.6 0 0 1-9.8 5.8L3 16.5l1.1-3.9A6.6 6.6 0 1 1 17 9.6Z" />
+    </svg>
+  )
+}
+
+/** Metas (pantalla final del onboarding). */
+export function TargetIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <circle cx="10" cy="10" r="7" />
+      <circle cx="10" cy="10" r="3.8" />
+      <circle cx="10" cy="10" r="0.9" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
+/** "Saldar" en Gastos compartidos. */
+export function MoneyIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M10 2.5v15" />
+      <path d="M13.8 5.5H8.6a2.6 2.6 0 0 0 0 5.2h2.8a2.6 2.6 0 0 1 0 5.2H5.8" />
+    </svg>
+  )
+}
+
 export function SunIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
@@ -332,6 +412,15 @@ export function PersonFilledIcon(props: SVGProps<SVGSVGElement>) {
     <svg viewBox="0 0 20 20" fill="currentColor" {...props}>
       <circle cx="10" cy="7" r="3.3" />
       <path d="M3.5 17c0-3.7 3-6 6.5-6s6.5 2.3 6.5 6" />
+    </svg>
+  )
+}
+
+/** Cuenta principal. Rellena: una estrella de contorno a 13px no se lee (DESIGN.md § Iconografía). */
+export function StarFilledIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="currentColor" {...props}>
+      <path d="m10 2.2 2.4 5 5.4.6-4 3.7 1.1 5.4L10 14.2l-4.9 2.7 1.1-5.4-4-3.7 5.4-.6z" />
     </svg>
   )
 }

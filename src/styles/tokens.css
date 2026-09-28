@@ -1,8 +1,9 @@
 /* =========================================================
    Design tokens — Twoney
-   Ver DESIGN.md. Base neutra; el color se reserva para
-   cuentas, deudas e inversiones. Soporta claro/oscuro desde
-   el inicio vía [data-theme], con fallback a prefers-color-scheme.
+   Ver DESIGN.md. Base slate (grises fríos azulados) con turquesa
+   de marca. Soporta claro/oscuro desde el inicio vía [data-theme],
+   con fallback a prefers-color-scheme. Todo par de texto y fondo
+   está medido: los valores están en DESIGN.md.
    ========================================================= */
 
 :root {
@@ -12,14 +13,18 @@
   --font-sans: 'Ubuntu', system-ui, sans-serif;
   --font-mono: 'Ubuntu Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
-  --text-2xs: 0.6875rem; /* 11px — etiquetas */
-  --text-xs:  0.75rem;   /* 12px */
-  --text-sm:  0.875rem;  /* 14px */
-  --text-md:  1rem;      /* 16px — base */
-  --text-lg:  1.25rem;   /* 20px */
-  --text-xl:  1.75rem;   /* 28px */
-  --text-2xl: 2.5rem;    /* 40px — saldo principal */
+  --text-2xs: 0.6875rem;   /* 11px — etiquetas, iniciales, barra inferior */
+  --text-xs:  0.75rem;     /* 12px — hints, metadatos, píldoras */
+  --text-sm:  0.875rem;    /* 14px — controles, listas, descripciones */
+  --text-md:  1rem;        /* 16px — base, inputs, CTA */
+  --text-lg:  1.125rem;    /* 18px — nombre en tarjeta, opción grande */
+  --text-xl:  1.25rem;     /* 20px — títulos de sección y de pantalla */
+  --text-2xl: 1.5rem;      /* 24px — títulos de historia */
+  --text-3xl: 1.75rem;     /* 28px — título de paso del onboarding */
+  --text-4xl: 2rem;        /* 32px — montos grandes */
+  --text-watermark: 6rem;  /* 96px — número de paso/historia, decorativo */
 
+  /* Ubuntu solo existe en estos cuatro pesos: otro valor lo simula el navegador. */
   --weight-light: 300;
   --weight-regular: 400;
   --weight-medium: 500;
@@ -28,74 +33,101 @@
   --leading-tight: 1.15;
   --leading-normal: 1.5;
   --tracking-label: 0.06em;
+  --tracking-code: 0.1em;
+  --tracking-amount: -0.01em;
 
-  /* ---------- Superficies y texto (neutros) — claro ---------- */
-  --surface-page:    #ffffff;
-  --surface-card:    #FAFAFA;
-  --surface-sunken:  #efefe8;
-  --surface-inverse: #1a1a1a;
-  --surface-inverse-hover: #404040;
+  /* ---------- Superficies y texto — claro ---------- */
+  --surface-page:   #F8FAFC;
+  --gradient-page:  linear-gradient(160deg, #F8FAFC 0%, #F1F5F9 100%);
+  --surface-card:   #FFFFFF;
+  --surface-sunken: #F1F5F9;
 
-  --text-primary:   #1a1a1a;
-  --text-secondary: #5f5e5a;
-  /* ≥4.5:1 contra page, card y sunken (5.3 / 5.1 / 4.6). Ver DESIGN.md § Colores. */
-  --text-muted:     #6d6c66;
-  --text-inverse:   #ffffff;
+  --text-primary:   #0F172A;
+  --text-secondary: #475569;
+  /* ≥4.5:1 contra los dos extremos de la página, card, sunken y --brand-tint. */
+  --text-muted:     #5B6B80;
+  --text-disabled:  #94A3B8;   /* solo deshabilitado: exento de contraste */
 
-  --border:        #e0e0da;
-  --border-strong: #c7c6be;
+  --border:         #E2E8F0;   /* decorativo */
+  --border-strong:  #CBD5E1;   /* decorativo */
+  /* Lo único que marca dónde está un campo o un radio: necesita 3:1. */
+  --border-control: #7C8BA1;
 
-  /* ---------- Categorías financieras (constantes en ambos modos) ---------- */
-  --account-a-bg:   #EAF3DE;
-  --account-a-text: #173404;
-  --account-b-bg:   #EEEDFE;
-  --account-b-text: #26215C;
-  /* Tono base (no bg/text) — fondo de auth y efectos como RippleBackground. */
-  --account-b: #7F77DD;
+  /* Anillo de foco. Una superficie oscura en ambos modos (cabecera, historia
+     oscura) lo redefine a var(--text-on-header): encima de ella el
+     --text-primary del modo claro no se vería. */
+  --focus-ring: var(--text-primary);
 
-  --debt-a-bg:   #FAECE7;
-  --debt-a-text: #4A1B0C;
-  --debt-a-fill: #D85A30;
-  --debt-b-bg:   #FBEAF0;
-  --debt-b-text: #4B1528;
-  --debt-b-fill: #D4537E;
+  /* ---------- Cabecera y historia oscura (fijas en ambos modos) ---------- */
+  --surface-header:        #0F172A;
+  --surface-header-border: transparent;   /* en oscuro la separa de la página */
+  --surface-on-header:     rgba(255, 255, 255, 0.10);
+  --text-on-header:        #FFFFFF;
+  --text-on-header-muted:  rgba(255, 255, 255, 0.65);   /* 8.0:1; al 45% no llegaba */
+  --story-shared-bg:       linear-gradient(160deg, #1E1B3A 0%, #0F172A 100%);
 
-  --investment-a-bg:   #EEEDFE;
-  --investment-a-text: #26215C;
-  /* Reutiliza el verde de --account-a — misma familia de tono, no un color nuevo. */
-  --investment-b-bg:   #EAF3DE;
-  --investment-b-text: #173404;
+  /* ---------- Marca ---------- */
+  /* Fijos: el turquesa claro solo va de fondo, con texto oscuro encima. */
+  --brand:          #12D4C4;
+  --brand-end:      #10C2D8;
+  --gradient-brand: linear-gradient(135deg, #12D4C4 0%, #10C2D8 100%);
+  --text-on-brand:  #0F172A;   /* 8.3–10.4:1 */
+  /* Sobre superficie clara el turquesa no llega a 3:1: íconos, bordes y
+     gráficos usan --brand-strong; el texto, --brand-text. */
+  --brand-strong:   #0B8F86;
+  --brand-text:     #097A88;
+  --brand-tint:     #E7FBF9;
+  --selection:      #D4F7F4;
 
-  /* Capa blanca translúcida sobre el fondo de una categoría: avatar del dueño
-     y riel de la barra de progreso en las tarjetas (ItemCard). */
-  --surface-on-category: rgba(255, 255, 255, 0.55);
-  /* Rellenos (barras, gráficos): basta 3:1. Nunca como color de texto. */
-  --gain-color: #639922;
-  --loss-color: #D85A30;
-  /* Como texto (montos, errores): ≥4.5:1. Cambian en modo oscuro, ver abajo. */
-  --gain-text: #4d771b;
-  --loss-text: #b54c28;
-  /* Botón destructivo. Blanco fijo encima, también en oscuro: 5.4:1 en reposo
-     y ≥4.5:1 en hover (el hover baja la opacidad a 0.9 y aclara el fondo). */
-  --danger-bg: #b14a28;
-  --danger-bg-hover: #923b1f;   /* más oscuro: el hover sube el contraste (7.3:1) */
-  --text-on-danger: #ffffff;
+  /* ---------- Fondos con manchas (decorativos) ---------- */
+  --blob-brand:  rgba(18, 212, 196, 0.10);
+  --blob-indigo: rgba(129, 140, 248, 0.10);
+  --story-goals-bg: linear-gradient(135deg, #DBEAFE 0%, #FCE7F3 100%);
 
-  /* ---------- Identidad de marca — onboarding (ver DESIGN.md) ---------- */
-  --brand-pink: #FFB4E2;
-  --brand-blue: #89BBF0;
-  --gradient-brand:       linear-gradient(94.58deg, var(--brand-pink) -18.95%, var(--brand-blue) 111.62%);
-  --gradient-brand-light: linear-gradient(94.58deg, #FFDDF2 -18.95%, #CAE0F8 111.62%);
-  --gradient-brand-dark:  linear-gradient(94.58deg, #C78CB0 -18.95%, #6B92BB 111.62%);
-  /* Fijos en ambos modos, como el degradado: no se usan --text-primary ni
-     --text-inverse, que se invierten en oscuro y perderían contraste. */
-  --text-on-brand:        #1a1a1a;   /* texto e íconos sobre el degradado (12.9–14:1) */
-  --text-on-brand-accent: #3D5FA8;   /* segunda línea del título a dos tonos (4.6–5.0:1) */
-  --brand-track:          rgba(26, 26, 26, 0.18);   /* segmentos pendientes de la barra por pasos */
-  /* Sombra del CTA teñida con los extremos de --gradient-brand-dark. Esta sí
-     cambia en oscuro (abajo): el botón está sobre la hoja, que sigue el tema, y
-     una sombra de color sobre fondo oscuro se ve como un halo. */
-  --shadow-brand-cta: 0 10px 22px rgba(199, 140, 176, 0.35), 0 6px 16px rgba(107, 146, 187, 0.3);
+  /* ---------- Personas del hogar (fijas) ---------- */
+  --person-a: var(--gradient-brand);
+  --person-b: #818CF8;
+
+  /* ---------- Tonos de tarjeta ----------
+     -bg:     `background` completo (en oscuro es un degradado en capas).
+     -solid:  un solo color, para donde no cabe un degradado (relleno SVG).
+     -border: en claro no hay borde (la tarjeta lleva sombra). */
+  --tone-turquesa-bg: #A7E8DC;  --tone-turquesa-solid: #A7E8DC;  --tone-turquesa-border: transparent;
+  --tone-lavanda-bg:  #D7D3FB;  --tone-lavanda-solid:  #D7D3FB;  --tone-lavanda-border:  transparent;
+  --tone-pizarra-bg:  #D9DEE7;  --tone-pizarra-solid:  #D9DEE7;  --tone-pizarra-border:  transparent;
+  --tone-celeste-bg:  #BFE3F9;  --tone-celeste-solid:  #BFE3F9;  --tone-celeste-border:  transparent;
+  --tone-ambar-bg:    #FDE68A;  --tone-ambar-solid:    #FDE68A;  --tone-ambar-border:    transparent;
+  --tone-rosa-bg:     #FBCFE8;  --tone-rosa-solid:     #FBCFE8;  --tone-rosa-border:     transparent;
+
+  /* Riel y relleno de la barra de progreso sobre una tarjeta de tono (5–6.4:1). */
+  --tone-track: rgba(255, 255, 255, 0.55);
+  /* Anillo de los avatares sobre una tarjeta de tono: separa los solapados. */
+  --avatar-ring: rgba(255, 255, 255, 0.7);
+  --tone-fill:  rgba(15, 23, 42, 0.7);
+
+  /* Cuadro del ícono de una inversión, según su variante. */
+  --tile-ambar-bg:     #FEF3C7;
+  --tile-ambar-icon:   #B45309;
+  --tile-lavanda-bg:   #E0E7FF;
+  --tile-lavanda-icon: #4F46E5;
+
+  --star: #B45309;   /* cuenta principal */
+
+  /* ---------- Ganancia, pérdida y series ---------- */
+  /* Como texto: ≥4.5:1. */
+  --gain-text: var(--brand-text);
+  --loss-text: #C61469;
+  /* Como relleno o gráfico: ≥3:1. */
+  --gain-color: var(--brand-strong);
+  --loss-color: #C61469;
+  --series-indigo:      #6366F1;
+  --series-indigo-text: #4F46E5;
+  --series-pink:        #DB2777;
+
+  /* Botón destructivo. Blanco fijo encima, también en oscuro. */
+  --danger-bg:       #C61469;   /* 5.7:1 */
+  --danger-bg-hover: #A3105A;   /* más oscuro: el hover sube el contraste (7.6:1) */
+  --text-on-danger:  #FFFFFF;
 
   /* ---------- Espaciado y bordes ---------- */
   --space-xs: 4px;
@@ -103,27 +135,32 @@
   --space-md: 16px;
   --space-lg: 24px;
   --space-xl: 32px;
+  --gutter:   20px;   /* margen lateral de las pantallas de la app */
 
-  --radius-card:    12px;
   --radius-control: 8px;
-  --radius-sheet:   20px;  /* hoja del onboarding montada sobre el degradado */
+  --radius-card:    8px;    /* tarjetas, hojas (esquinas superiores), diálogos */
+  --radius-bar:     12px;   /* barras gruesas de las historias */
   --radius-full:    999px;
 
   /* ---------- Sombras ---------- */
-  --shadow-md: 0 2px 12px rgba(26, 26, 26, 0.08);
-  /* Hacia arriba, sobre el degradado del onboarding. Sin variante oscura: cae
-     sobre el degradado, que no cambia con el tema. */
-  --shadow-sheet: 0 -10px 24px rgba(26, 26, 26, 0.06);
-  /* Velo detrás de los diálogos, igual en ambos modos. */
-  --scrim: rgba(0, 0, 0, 0.45);
+  /* Una sola elevación por superficie: en oscuro las tarjetas de tono cambian
+     la sombra (no se ve) por el borde de su tono. */
+  --shadow-card:       0 4px 14px rgba(15, 23, 42, 0.08);
+  --shadow-card-hover: 0 6px 16px rgba(15, 23, 42, 0.09);
+  --shadow-md:         0 2px 12px rgba(15, 23, 42, 0.08);
+  --shadow-brand:      0 10px 22px rgba(18, 212, 196, 0.4);
+  --scrim:             rgba(15, 23, 42, 0.55);
 
   /* ---------- Layout ---------- */
   --container-max: 1120px;
   --header-height: 64px;
 
   /* ---------- Movimiento ----------
-     Animar solo transform/opacity. 150–250ms, nunca > 300ms (ver DESIGN.md). */
-  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+     Animar solo transform/opacity. 150–250ms, nunca > 300ms, salvo las
+     excepciones decididas en DESIGN.md (final del onboarding, Resumen). */
+  --ease-out:    cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);   /* solo las excepciones */
+  --ease-fill:   cubic-bezier(0.22, 0.9, 0.32, 1);    /* barras y líquido que se llenan */
   --duration-fast: 150ms;   /* presión, hover, color, salidas */
   --duration-base: 220ms;   /* entradas, expandir */
 
@@ -131,65 +168,163 @@
      así los componentes no necesitan su propia excepción. */
   --press-scale: 0.97;        /* botones y controles */
   --press-scale-large: 0.99;  /* tarjetas y filas anchas: 0.97 se movería demasiado */
-  --hover-lift: -1px;
+  --hover-lift: -2px;
 }
 
-/* ---------- Oscuro: toggle manual ---------- */
+/* ---------- Oscuro: slate azulado ----------
+   Los mismos valores en los dos bloques: el toggle manual y la preferencia
+   del sistema (sin elección manual). Si cambia uno, cambia el otro. */
 [data-theme='dark'] {
   color-scheme: dark;
 
-  --surface-page:    #121212;
-  --surface-card:    #1e1e1e;
-  --surface-sunken:  #262626;
-  --surface-inverse: #f0f0f0;
-  --surface-inverse-hover: #d0d0d0;
+  --surface-page:   #0E1627;
+  --gradient-page:  linear-gradient(160deg, #0E1627 0%, #0B1120 100%);
+  --surface-card:   #141D2F;
+  --surface-sunken: #1C2638;
 
-  --text-primary:   #f0f0f0;
-  --text-secondary: #a8a8a4;
-  --text-muted:     #8d8d8a;
-  --text-inverse:   #121212;
+  --text-primary:   #F1F5F9;
+  --text-secondary: #B4C0D2;
+  --text-muted:     #8C9AB0;
+  --text-disabled:  #56657A;
 
-  --gain-text: #669b26;
-  --loss-text: #dc6c47;
+  --border:         #243047;
+  --border-strong:  #334155;
+  --border-control: #6B7A90;
 
-  --border:        #2e2e2e;
-  --border-strong: #3d3d3a;
+  --surface-header-border: rgba(255, 255, 255, 0.08);
 
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
-  --shadow-brand-cta: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --brand-strong: #12D4C4;
+  --brand-text:   #12D4C4;
+  --brand-tint:   #143341;
+  --selection:    rgba(18, 212, 196, 0.30);
+
+  --blob-brand:  rgba(18, 212, 196, 0.14);
+  --blob-indigo: rgba(129, 140, 248, 0.14);
+  --story-goals-bg: linear-gradient(135deg, #16223F 0%, #2A1530 100%);
+
+  /* Vidrio tintado: el tono sobre la tarjeta. La capa de --surface-card la
+     hace opaca, porque las tarjetas se apilan al hacer scroll. */
+  --tone-turquesa-bg: linear-gradient(160deg, rgba(18, 212, 196, 0.22) 0%, rgba(18, 212, 196, 0.10) 100%), var(--surface-card);
+  --tone-lavanda-bg:  linear-gradient(160deg, rgba(129, 140, 248, 0.22) 0%, rgba(129, 140, 248, 0.10) 100%), var(--surface-card);
+  --tone-pizarra-bg:  linear-gradient(160deg, rgba(148, 163, 184, 0.22) 0%, rgba(148, 163, 184, 0.10) 100%), var(--surface-card);
+  --tone-celeste-bg:  linear-gradient(160deg, rgba(56, 189, 248, 0.22) 0%, rgba(56, 189, 248, 0.10) 100%), var(--surface-card);
+  --tone-ambar-bg:    linear-gradient(160deg, rgba(245, 158, 11, 0.22) 0%, rgba(245, 158, 11, 0.10) 100%), var(--surface-card);
+  --tone-rosa-bg:     linear-gradient(160deg, rgba(244, 114, 182, 0.22) 0%, rgba(244, 114, 182, 0.10) 100%), var(--surface-card);
+  --tone-turquesa-solid: #144550;
+  --tone-lavanda-solid:  #2C355B;
+  --tone-pizarra-solid:  #303A4D;
+  --tone-celeste-solid:  #1C405B;
+  --tone-ambar-solid:    #463927;
+  --tone-rosa-solid:     #45304D;
+  --tone-turquesa-border: rgba(18, 212, 196, 0.35);
+  --tone-lavanda-border:  rgba(129, 140, 248, 0.35);
+  --tone-pizarra-border:  rgba(148, 163, 184, 0.35);
+  --tone-celeste-border:  rgba(56, 189, 248, 0.35);
+  --tone-ambar-border:    rgba(245, 158, 11, 0.35);
+  --tone-rosa-border:     rgba(244, 114, 182, 0.35);
+
+  --tone-track: rgba(255, 255, 255, 0.12);
+  --tone-fill:  rgba(241, 245, 249, 0.8);
+  --avatar-ring: #141D2F;   /* --surface-card: el blanco pesaba sobre el vidrio oscuro */
+
+  --tile-ambar-bg:     rgba(245, 158, 11, 0.16);
+  --tile-ambar-icon:   #FBBF24;
+  --tile-lavanda-bg:   rgba(129, 140, 248, 0.16);
+  --tile-lavanda-icon: #A5B4FC;
+
+  --star: #FBBF24;
+
+  --loss-text:  #F472B6;
+  --loss-color: #EC4899;
+  --series-indigo:      #818CF8;
+  --series-indigo-text: #A5B4FC;
+  --series-pink:        #F472B6;
+
+  --shadow-card:       none;
+  --shadow-card-hover: none;
+  --shadow-md:    0 4px 16px rgba(0, 0, 0, 0.5);
+  /* La sombra turquesa se vería como un halo sobre fondo oscuro. */
+  --shadow-brand: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --scrim:        rgba(2, 6, 23, 0.7);
 }
 
-/* ---------- Oscuro: preferencia del sistema (sin elección manual) ---------- */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     color-scheme: dark;
 
-    --surface-page:    #121212;
-    --surface-card:    #1e1e1e;
-    --surface-sunken:  #262626;
-    --surface-inverse: #f0f0f0;
-    --surface-inverse-hover: #d0d0d0;
+    --surface-page:   #0E1627;
+    --gradient-page:  linear-gradient(160deg, #0E1627 0%, #0B1120 100%);
+    --surface-card:   #141D2F;
+    --surface-sunken: #1C2638;
 
-    --text-primary:   #f0f0f0;
-    --text-secondary: #a8a8a4;
-    --text-muted:     #8d8d8a;
-    --text-inverse:   #121212;
+    --text-primary:   #F1F5F9;
+    --text-secondary: #B4C0D2;
+    --text-muted:     #8C9AB0;
+    --text-disabled:  #56657A;
 
-    --gain-text: #669b26;
-    --loss-text: #dc6c47;
+    --border:         #243047;
+    --border-strong:  #334155;
+    --border-control: #6B7A90;
 
-    --border:        #2e2e2e;
-    --border-strong: #3d3d3a;
+    --surface-header-border: rgba(255, 255, 255, 0.08);
 
-      --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
-      --shadow-brand-cta: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --brand-strong: #12D4C4;
+    --brand-text:   #12D4C4;
+    --brand-tint:   #143341;
+    --selection:    rgba(18, 212, 196, 0.30);
+
+    --blob-brand:  rgba(18, 212, 196, 0.14);
+    --blob-indigo: rgba(129, 140, 248, 0.14);
+    --story-goals-bg: linear-gradient(135deg, #16223F 0%, #2A1530 100%);
+
+    --tone-turquesa-bg: linear-gradient(160deg, rgba(18, 212, 196, 0.22) 0%, rgba(18, 212, 196, 0.10) 100%), var(--surface-card);
+    --tone-lavanda-bg:  linear-gradient(160deg, rgba(129, 140, 248, 0.22) 0%, rgba(129, 140, 248, 0.10) 100%), var(--surface-card);
+    --tone-pizarra-bg:  linear-gradient(160deg, rgba(148, 163, 184, 0.22) 0%, rgba(148, 163, 184, 0.10) 100%), var(--surface-card);
+    --tone-celeste-bg:  linear-gradient(160deg, rgba(56, 189, 248, 0.22) 0%, rgba(56, 189, 248, 0.10) 100%), var(--surface-card);
+    --tone-ambar-bg:    linear-gradient(160deg, rgba(245, 158, 11, 0.22) 0%, rgba(245, 158, 11, 0.10) 100%), var(--surface-card);
+    --tone-rosa-bg:     linear-gradient(160deg, rgba(244, 114, 182, 0.22) 0%, rgba(244, 114, 182, 0.10) 100%), var(--surface-card);
+    --tone-turquesa-solid: #144550;
+    --tone-lavanda-solid:  #2C355B;
+    --tone-pizarra-solid:  #303A4D;
+    --tone-celeste-solid:  #1C405B;
+    --tone-ambar-solid:    #463927;
+    --tone-rosa-solid:     #45304D;
+    --tone-turquesa-border: rgba(18, 212, 196, 0.35);
+    --tone-lavanda-border:  rgba(129, 140, 248, 0.35);
+    --tone-pizarra-border:  rgba(148, 163, 184, 0.35);
+    --tone-celeste-border:  rgba(56, 189, 248, 0.35);
+    --tone-ambar-border:    rgba(245, 158, 11, 0.35);
+    --tone-rosa-border:     rgba(244, 114, 182, 0.35);
+
+    --tone-track: rgba(255, 255, 255, 0.12);
+    --tone-fill:  rgba(241, 245, 249, 0.8);
+    --avatar-ring: #141D2F;
+
+    --tile-ambar-bg:     rgba(245, 158, 11, 0.16);
+    --tile-ambar-icon:   #FBBF24;
+    --tile-lavanda-bg:   rgba(129, 140, 248, 0.16);
+    --tile-lavanda-icon: #A5B4FC;
+
+    --star: #FBBF24;
+
+    --loss-text:  #F472B6;
+    --loss-color: #EC4899;
+    --series-indigo:      #818CF8;
+    --series-indigo-text: #A5B4FC;
+    --series-pink:        #F472B6;
+
+    --shadow-card:       none;
+    --shadow-card-hover: none;
+    --shadow-md:    0 4px 16px rgba(0, 0, 0, 0.5);
+    --shadow-brand: 0 4px 16px rgba(0, 0, 0, 0.5);
+    --scrim:        rgba(2, 6, 23, 0.7);
   }
 }
 
 /* Reducir movimiento = sin desplazamientos ni escalas, pero con fundidos y
    transiciones de color (ayudan a entender el cambio). Las duraciones se
    mantienen; lo que se anula es el movimiento. Las animaciones de posición
-   propias de un componente (diálogo, barra de progreso, chevron) tienen su
+   propias de un componente (diálogo, barra de progreso, historias) tienen su
    excepción en su módulo. */
 @media (prefers-reduced-motion: reduce) {
   :root {

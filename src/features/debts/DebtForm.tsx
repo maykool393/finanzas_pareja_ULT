@@ -14,8 +14,8 @@ import type { ColorVariant, Debt } from '../../types/domain'
 import type { DebtInput } from './api'
 
 const DEBT_COLOR_OPTIONS = [
-  { key: 'a', label: 'Coral', swatch: 'var(--debt-a-bg)' },
-  { key: 'b', label: 'Rosa', swatch: 'var(--debt-b-bg)' },
+  { key: 'a', label: 'Pizarra', swatch: 'var(--tone-pizarra-bg)' },
+  { key: 'b', label: 'Celeste', swatch: 'var(--tone-celeste-bg)' },
 ]
 
 interface DebtFormProps {
