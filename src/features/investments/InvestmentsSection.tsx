@@ -32,7 +32,7 @@ export function InvestmentsSection({ query, members }: InvestmentsSectionProps) 
         editTitle: 'Editar inversión',
         archiveTitle: 'Archivar inversión',
         deleteTitle: 'Eliminar inversión',
-        archiveDescription: (name) => `"${name}" dejará de aparecer en el dashboard. Puedes recuperarla cuando quieras.`,
+        archiveDescription: (name) => `"${name}" dejará de aparecer en Patrimonio. Puedes recuperarla cuando quieras.`,
         deleteDescription: (name) => `Esta acción no se puede deshacer. Se eliminará "${name}" de forma permanente.`,
       }}
       renderForm={(investment, close) => (

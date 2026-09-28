@@ -1,3 +1,4 @@
+/* DESIGN.md § Estructura de la app. */
 .shell {
   min-height: 100vh;
   min-height: 100dvh;
@@ -5,24 +6,42 @@
   flex-direction: column;
 }
 
+/* Cabecera azul marino, igual en ambos modos. En oscuro la separa de la
+   página un borde (--surface-header-border): los dos colores casi coinciden. */
 .header {
-  height: var(--header-height);
-  display: flex;
-  align-items: center;
-  background: var(--surface-card);
-  border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
   z-index: 10;
+  background: var(--surface-header);
+  border-bottom: 1px solid var(--surface-header-border);
+  color: var(--text-on-header);
   padding-top: env(safe-area-inset-top);
-  transition: background-color var(--duration-base) var(--ease-out),
-              border-color var(--duration-base) var(--ease-out);
+  overflow: hidden;
+  /* Sobre el azul marino el anillo de foco de --text-primary no se vería. */
+  --focus-ring: var(--text-on-header);
+}
+
+/* Dos círculos blancos al 7% que se cruzan en la esquina derecha: decoración. */
+.header::after {
+  content: '';
+  position: absolute;
+  top: -30px;
+  right: -50px;
+  width: 180px;
+  height: 180px;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 33% 50%, rgba(255, 255, 255, 0.07) 30.5%, transparent 31%),
+    radial-gradient(circle at 67% 50%, rgba(255, 255, 255, 0.07) 30.5%, transparent 31%);
 }
 
 .headerInner {
+  position: relative;
+  z-index: 1;
   width: 100%;
   max-width: var(--container-max);
   margin: 0 auto;
+  min-height: var(--header-height);
   padding: 0 var(--space-lg);
   display: flex;
   align-items: center;
@@ -32,7 +51,20 @@
 .brand {
   height: 20px;
   width: auto;
-  color: var(--text-primary);
+  color: var(--text-on-header);
+}
+
+/* Título de la vista: píldora con los avatares del hogar. No es un botón. */
+.viewTitle {
+  display: none;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 5px 14px 5px 5px;
+  border-radius: var(--radius-card);
+  background: var(--surface-on-header);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-on-header);
 }
 
 .nav {
@@ -43,36 +75,36 @@
 
 .link {
   font-size: var(--text-sm);
-  color: var(--text-secondary);
+  color: var(--text-on-header-muted);
   padding: var(--space-sm) 0;
   border-bottom: 2px solid transparent;
-  transition: color var(--duration-fast) var(--ease-out);
+  transition: color var(--duration-fast) ease;
 }
 
-.link:hover { color: var(--text-primary); }
+.link:hover {
+  color: var(--text-on-header);
+}
 
+/* Activa: blanco, bold y subrayado turquesa (9.6:1 sobre el azul marino). */
 .linkActive {
-  color: var(--text-primary);
-  font-weight: var(--weight-medium);
-  border-bottom-color: var(--text-primary);
-}
-
-.actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
+  color: var(--text-on-header);
+  font-weight: var(--weight-bold);
+  border-bottom-color: var(--brand);
 }
 
 .signOut {
+  min-height: 44px;
   font-size: var(--text-sm);
-  color: var(--text-muted);
+  color: var(--text-on-header-muted);
+  transition: color var(--duration-fast) ease;
 }
 
 .signOut:hover {
-  color: var(--text-primary);
+  color: var(--text-on-header);
 }
 
 .main {
+  position: relative;
   flex: 1;
   width: 100%;
   max-width: var(--container-max);
@@ -84,31 +116,33 @@
   display: none;
 }
 
-.tab {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  font-size: var(--text-2xs);
-  color: var(--text-muted);
-  padding: var(--space-xs) 0;
-}
-
-.tabIcon {
-  width: 22px;
-  height: 22px;
-}
-
-.tabActive {
-  color: var(--text-primary);
-}
-
+/* ---------- Móvil: título de la vista arriba, pestañas abajo ---------- */
 @media (max-width: 640px) {
-  .headerInner { gap: var(--space-md); justify-content: space-between; }
-  .nav { display: none; }
+  .shell {
+    /* La usa el botón flotante para quedar sobre la barra. */
+    --tab-bar-height: 64px;
+  }
+
+  .headerInner {
+    min-height: 0;
+    padding: 18px var(--gutter) 16px;
+    justify-content: space-between;
+    gap: var(--space-md);
+  }
+
+  .brand,
+  .nav,
+  .signOut {
+    display: none;
+  }
+
+  .viewTitle {
+    display: flex;
+  }
+
   .main {
-    padding: var(--space-lg) var(--space-md)
-      calc(var(--space-xl) + 56px + env(safe-area-inset-bottom));
+    padding: var(--space-lg) var(--gutter)
+      calc(var(--space-xl) + var(--tab-bar-height) + env(safe-area-inset-bottom));
   }
 
   .tabBar {
@@ -117,14 +151,49 @@
     left: 0;
     right: 0;
     bottom: 0;
+    z-index: 10;
+    height: calc(var(--tab-bar-height) + env(safe-area-inset-bottom));
+    padding: var(--space-sm) var(--space-sm) env(safe-area-inset-bottom);
     background: var(--surface-card);
     border-top: 1px solid var(--border);
-    padding: var(--space-sm) var(--space-sm) calc(var(--space-sm) + env(safe-area-inset-bottom));
-    z-index: 10;
   }
 
+  /* Inactiva: --text-muted (5.4:1 en claro, 5.9:1 en oscuro). */
   .tab {
+    position: relative;
     flex: 1;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+    padding-top: 2px;
+    font-size: var(--text-2xs);
+    font-weight: var(--weight-medium);
+    color: var(--text-muted);
+    transition: color var(--duration-fast) ease;
+  }
+
+  .tabIcon {
+    width: 21px;
+    height: 21px;
+  }
+
+  /* Activa: ícono de marca, etiqueta bold y un punto debajo. El punto la marca
+     también sin depender del color. */
+  .tabActive {
+    color: var(--text-primary);
+    font-weight: var(--weight-bold);
+  }
+
+  .tabActive .tabIcon {
+    color: var(--brand-strong);
+  }
+
+  .tabActive::after {
+    content: '';
+    width: 4px;
+    height: 4px;
+    border-radius: var(--radius-full);
+    background: var(--brand-strong);
   }
 }

@@ -40,3 +40,10 @@
   height: 16px;
   color: var(--text-muted);
 }
+
+/* Cerrar sesión: una fila como las de arriba, separada de ellas. */
+.signOut {
+  width: 100%;
+  margin-top: var(--space-lg);
+  text-align: left;
+}

@@ -6,7 +6,7 @@ type Provider = 'google' | 'apple'
 async function signInWithProvider(provider: Provider) {
   await supabase.auth.signInWithOAuth({
     provider,
-    options: { redirectTo: `${window.location.origin}/dashboard` },
+    options: { redirectTo: `${window.location.origin}/resumen` },
   })
 }
 

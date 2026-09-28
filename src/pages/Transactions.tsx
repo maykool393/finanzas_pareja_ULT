@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
 import { ConfirmDialog } from '../components/ui/ConfirmDialog'
 import { DangerRow } from '../components/ui/DangerRow'
@@ -32,7 +32,15 @@ export function Transactions() {
 
   const [filtersOpen, setFiltersOpen] = useState(false)
   const hasFilters = Object.values(filters).some(Boolean)
-  const [formOpen, setFormOpen] = useState(false)
+  // ?nuevo=1: llega desde el botón flotante del Resumen ("Añadir movimiento"),
+  // con el formulario ya abierto. El parámetro se quita al cerrarlo, para que
+  // volver atrás o recargar no lo abra de nuevo.
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [formOpen, setFormOpenState] = useState(() => searchParams.has('nuevo'))
+  function setFormOpen(open: boolean) {
+    setFormOpenState(open)
+    if (!open && searchParams.has('nuevo')) setSearchParams({}, { replace: true })
+  }
   const [editing, setEditing] = useState<Transaction | null>(null)
   const [deleting, setDeleting] = useState<Transaction | null>(null)
 
@@ -78,10 +86,10 @@ export function Transactions() {
             ) : !accountsLoading && accounts.every((a) => a.archivedAt) ? (
               <EmptyState
                 title="Primero, una cuenta"
-                description="Cada movimiento entra o sale de una cuenta: el banco, el efectivo o una tarjeta. Crea la primera en Finanzas y vuelve aquí."
+                description="Cada movimiento entra o sale de una cuenta: el banco, el efectivo o una tarjeta. Crea la primera en Patrimonio y vuelve aquí."
                 action={
-                  <Button variant="secondary" onClick={() => navigate('/dashboard')}>
-                    Ir a Finanzas
+                  <Button variant="secondary" onClick={() => navigate('/patrimonio')}>
+                    Ir a Patrimonio
                   </Button>
                 }
               />

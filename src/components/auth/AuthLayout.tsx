@@ -10,7 +10,7 @@ import styles from './authForm.module.css'
  * título visible (404).
  */
 export function AuthLayout({ title, children }: { title?: string; children: ReactNode }) {
-  useThemeColor('--surface-page')
+  useThemeColor('--auth-base')
 
   return (
     <RippleBackground>

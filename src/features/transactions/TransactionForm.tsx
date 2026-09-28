@@ -98,7 +98,7 @@ export function TransactionForm({ initial, onSubmit, onCancel }: TransactionForm
       {/* Sin esto, Guardar quedaba desactivado sin decir por qué. */}
       {!accountsLoading && activeAccounts.length === 0 && (
         <p className={formStyles.notice}>
-          Cada movimiento entra o sale de una cuenta, y aún no hay ninguna. Crea la primera desde Finanzas.
+          Cada movimiento entra o sale de una cuenta, y aún no hay ninguna. Crea la primera desde Patrimonio.
         </p>
       )}
 

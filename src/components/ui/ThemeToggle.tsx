@@ -1,22 +1,25 @@
 import { useTheme } from '../../hooks/useTheme'
+import { IconButton } from './IconButton'
 import { MoonIcon, SunIcon } from './icons'
-import styles from './ThemeToggle.module.css'
 
-export function ThemeToggle() {
+/**
+ * Cambio de tema: el botón redondo de la derecha de la cabecera (DESIGN.md §
+ * Estructura de la app), a mano desde cualquier pantalla principal.
+ */
+export function ThemeToggle({ tone = 'onHeader' }: { tone?: 'default' | 'onHeader' }) {
   const { theme, toggle } = useTheme()
   const isDark = theme === 'dark'
 
   return (
-    <button
-      type="button"
-      className={styles.toggle}
-      onClick={toggle}
+    <IconButton
       // Etiqueta fija con aria-pressed: el estado lo da "activado". Una etiqueta que
       // cambiaba ("Cambiar a modo claro") se anunciaba "…, activado", contradictorio.
-      aria-label="Modo oscuro"
+      label="Modo oscuro"
       aria-pressed={isDark}
-    >
-      {isDark ? <SunIcon /> : <MoonIcon />}
-    </button>
+      icon={isDark ? <SunIcon /> : <MoonIcon />}
+      size={34}
+      tone={tone}
+      onClick={toggle}
+    />
   )
 }

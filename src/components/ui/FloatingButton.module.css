@@ -1,0 +1,43 @@
+/* A --gutter del borde derecho y 16px sobre la barra inferior (móvil). */
+.fab {
+  position: fixed;
+  right: var(--gutter);
+  bottom: calc(var(--tab-bar-height, 0px) + var(--space-md) + env(safe-area-inset-bottom));
+  z-index: 20;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  background: var(--gradient-brand);
+  color: var(--text-on-brand);
+  /* La sombra interna es la capa de hover (ver Button.module.css). */
+  box-shadow: inset 0 0 0 100px rgba(255, 255, 255, 0), var(--shadow-brand);
+  transition: box-shadow var(--duration-fast) ease,
+              transform var(--duration-fast) var(--ease-out);
+}
+
+.fab svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2;
+}
+
+.fab:active {
+  transform: scale(var(--press-scale));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .fab:hover {
+    box-shadow: inset 0 0 0 100px rgba(255, 255, 255, 0.16), var(--shadow-brand);
+  }
+}
+
+/* En escritorio no hay barra inferior: esquina de la pantalla. */
+@media (min-width: 641px) {
+  .fab {
+    right: var(--space-xl);
+    bottom: var(--space-xl);
+  }
+}

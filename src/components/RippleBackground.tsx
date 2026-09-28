@@ -1,13 +1,8 @@
 import { type ReactNode, useEffect, useRef } from 'react'
-import darkBg from '../assets/login-background-dark.webp'
-import lightBg from '../assets/login-background.webp'
-import { useTheme } from '../hooks/useTheme'
 import styles from './RippleBackground.module.css'
 
 interface RippleBackgroundProps {
   children: ReactNode
-  /** Tema a usar para elegir el asset de fondo. Si se omite, se detecta vía data-theme. */
-  theme?: 'light' | 'dark'
 }
 
 interface Ripple {
@@ -21,7 +16,6 @@ const RING_COUNT = 3
 const RING_STAGGER_MS = 140
 const RING_DURATION_MS = 1400
 const MAX_RADIUS = 160
-const WHITE_RGB = '255, 255, 255'
 const FALLBACK_ACCENT_RGB = '18, 212, 196' // #12D4C4 (--brand), por si la variable no resuelve a tiempo
 
 function easeOutCubic(t: number) {
@@ -35,10 +29,12 @@ function hexToRgb(hex: string): string | null {
   return `${parseInt(r, 16)}, ${parseInt(g, 16)}, ${parseInt(b, 16)}`
 }
 
-export function RippleBackground({ children, theme: themeProp }: RippleBackgroundProps) {
-  const { theme: detectedTheme } = useTheme()
-  const theme = themeProp ?? detectedTheme
-
+/**
+ * Fondo de las pantallas de autenticación (DESIGN.md § Fondo — pantallas de
+ * autenticación): tres manchas de color dibujadas en CSS, que siguen el tema
+ * solas, y ondas turquesa donde se toca.
+ */
+export function RippleBackground({ children }: RippleBackgroundProps) {
   const wrapperRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const ripplesRef = useRef<Ripple[]>([])
@@ -108,8 +104,9 @@ export function RippleBackground({ children, theme: themeProp }: RippleBackgroun
 
           const t = elapsed / RING_DURATION_MS
           const radius = MAX_RADIUS * easeOutCubic(t)
-          const opacity = (1 - t) * 0.45
-          const rgb = ring % 2 === 0 ? WHITE_RGB : accentRgbRef.current
+          // --brand al 20% como máximo: decoración, no debe competir con el formulario.
+          const opacity = (1 - t) * 0.2
+          const rgb = accentRgbRef.current
 
           ctx!.beginPath()
           ctx!.arc(ripple.x, ripple.y, radius, 0, Math.PI * 2)
@@ -129,11 +126,8 @@ export function RippleBackground({ children, theme: themeProp }: RippleBackgroun
     }
   }, [])
 
-  const backgroundSrc = theme === 'dark' ? darkBg : lightBg
-
   return (
     <div ref={wrapperRef} className={styles.wrapper}>
-      <img src={backgroundSrc} alt="" aria-hidden="true" className={styles.background} />
       <canvas ref={canvasRef} className={styles.canvas} aria-hidden="true" />
       <div className={styles.content}>{children}</div>
     </div>

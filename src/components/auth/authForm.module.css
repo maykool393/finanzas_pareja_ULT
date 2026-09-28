@@ -9,19 +9,31 @@
   padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom));
 }
 
-/* Superficie semi-opaca sobre el degradado de RippleBackground — mantiene
-   contraste sin tapar el fondo (DESIGN.md § Fondo — pantallas de autenticación). */
+/* Tarjeta de vidrio sobre las manchas de RippleBackground (DESIGN.md § Fondo —
+   pantallas de autenticación). Opacidad medida en el peor caso: el vidrio
+   sobre el centro de una mancha. Una sola elevación: el borde, sin sombra.
+   Los enlaces de adentro van en --text-secondary: el turquesa daría 4.4:1
+   sobre la mancha morada. */
 .card {
   width: 100%;
   max-width: 360px;
-  background: color-mix(in srgb, var(--surface-card) 60%, transparent);
-  border: 1px solid var(--border);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  backdrop-filter: blur(24px) saturate(140%);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-card);
   padding: var(--space-xl) var(--space-lg);
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+}
+
+/* Sin desenfoque, el vidrio translúcido dejaría pasar las manchas: sólido. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .card {
+    background: var(--surface-card);
+  }
 }
 
 .logo {

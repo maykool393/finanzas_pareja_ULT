@@ -1,5 +1,5 @@
 import { type ComponentType, lazy, Suspense } from 'react'
-import { Outlet, Route, Routes } from 'react-router-dom'
+import { Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import { RequireAuth } from './components/auth/RequireAuth'
 import { RequireHousehold } from './components/auth/RequireHousehold'
 import { AppShell } from './components/layout/AppShell'
@@ -24,7 +24,7 @@ const JoinRedirect = page('JoinRedirect', () => import('./pages/JoinRedirect'))
 const More = page('More', () => import('./pages/More'))
 const NotFound = page('NotFound', () => import('./pages/NotFound'))
 const ResetPassword = page('ResetPassword', () => import('./pages/ResetPassword'))
-const Statistics = page('Statistics', () => import('./pages/Statistics'))
+const Resumen = page('Resumen', () => import('./pages/Resumen'))
 const Transactions = page('Transactions', () => import('./pages/Transactions'))
 
 /** Mientras llega el fragmento de una pantalla pública: el fondo de página. */
@@ -59,15 +59,19 @@ export default function App() {
         <Route path="/restablecer" element={<ResetPassword />} />
         <Route path="/unirse/:code" element={<JoinRedirect />} />
         <Route element={<ProtectedLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/resumen" element={<Resumen />} />
+          <Route path="/patrimonio" element={<Dashboard />} />
           <Route path="/presupuesto" element={<Budgets />} />
-          <Route path="/mover" element={<Transactions />} />
-          <Route path="/estadisticas" element={<Statistics />} />
+          <Route path="/movimientos" element={<Transactions />} />
           <Route path="/mas" element={<More />} />
           <Route path="/categorias" element={<Categories />} />
           <Route path="/invitar" element={<InviteHousehold />} />
           <Route path="/ajustes" element={<HouseholdSettings />} />
         </Route>
+        {/* Rutas de antes del rediseño: redirigen, para no romper links guardados. */}
+        <Route path="/dashboard" element={<Navigate to="/resumen" replace />} />
+        <Route path="/mover" element={<Navigate to="/movimientos" replace />} />
+        <Route path="/estadisticas" element={<Navigate to="/resumen" replace />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>

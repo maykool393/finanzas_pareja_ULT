@@ -45,7 +45,7 @@ export function Login() {
 
   if (!sessionLoading && session) {
     const from = (location.state as { from?: Location })?.from
-    return <Navigate to={from?.pathname ?? '/dashboard'} replace />
+    return <Navigate to={from?.pathname ?? '/resumen'} replace />
   }
 
   async function handleSubmit(event: FormEvent) {

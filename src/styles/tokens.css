@@ -84,6 +84,16 @@
   --blob-indigo: rgba(129, 140, 248, 0.10);
   --story-goals-bg: linear-gradient(135deg, #DBEAFE 0%, #FCE7F3 100%);
 
+  /* ---------- Login: glassmorfismo (DESIGN.md § Fondo — autenticación) ----------
+     Manchas al 45% en el centro; el vidrio al 72%. Medido en el peor caso,
+     el vidrio sobre el centro de una mancha: muted 4.8, borde de campo 3.1. */
+  --auth-base:         #F8FAFC;
+  --auth-blob-aqua:    rgba(18, 212, 196, 0.45);
+  --auth-blob-violet:  rgba(129, 140, 248, 0.45);
+  --auth-blob-cyan:    rgba(16, 194, 216, 0.45);
+  --glass-bg:          rgba(255, 255, 255, 0.72);
+  --glass-border:      rgba(255, 255, 255, 0.8);
+
   /* ---------- Personas del hogar (fijas) ---------- */
   --person-a: var(--gradient-brand);
   --person-b: #818CF8;
@@ -202,6 +212,14 @@
   --blob-indigo: rgba(129, 140, 248, 0.14);
   --story-goals-bg: linear-gradient(135deg, #16223F 0%, #2A1530 100%);
 
+  /* Login sobre azul marino: los mismos colores, manchas al 35% y vidrio al 65%. */
+  --auth-base:        #0B1120;
+  --auth-blob-aqua:   rgba(18, 212, 196, 0.35);
+  --auth-blob-violet: rgba(129, 140, 248, 0.35);
+  --auth-blob-cyan:   rgba(16, 194, 216, 0.35);
+  --glass-bg:         rgba(15, 23, 42, 0.65);
+  --glass-border:     rgba(255, 255, 255, 0.12);
+
   /* Vidrio tintado: el tono sobre la tarjeta. La capa de --surface-card la
      hace opaca, porque las tarjetas se apilan al hacer scroll. */
   --tone-turquesa-bg: linear-gradient(160deg, rgba(18, 212, 196, 0.22) 0%, rgba(18, 212, 196, 0.10) 100%), var(--surface-card);
@@ -276,6 +294,13 @@
     --blob-brand:  rgba(18, 212, 196, 0.14);
     --blob-indigo: rgba(129, 140, 248, 0.14);
     --story-goals-bg: linear-gradient(135deg, #16223F 0%, #2A1530 100%);
+
+    --auth-base:        #0B1120;
+    --auth-blob-aqua:   rgba(18, 212, 196, 0.35);
+    --auth-blob-violet: rgba(129, 140, 248, 0.35);
+    --auth-blob-cyan:   rgba(16, 194, 216, 0.35);
+    --glass-bg:         rgba(15, 23, 42, 0.65);
+    --glass-border:     rgba(255, 255, 255, 0.12);
 
     --tone-turquesa-bg: linear-gradient(160deg, rgba(18, 212, 196, 0.22) 0%, rgba(18, 212, 196, 0.10) 100%), var(--surface-card);
     --tone-lavanda-bg:  linear-gradient(160deg, rgba(129, 140, 248, 0.22) 0%, rgba(129, 140, 248, 0.10) 100%), var(--surface-card);

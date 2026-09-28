@@ -47,7 +47,7 @@ export function DebtsSection({ query, members }: DebtsSectionProps) {
         editTitle: 'Editar deuda',
         archiveTitle: 'Archivar deuda',
         deleteTitle: 'Eliminar deuda',
-        archiveDescription: (name) => `"${name}" dejará de aparecer en el dashboard. Puedes recuperarla cuando quieras.`,
+        archiveDescription: (name) => `"${name}" dejará de aparecer en Patrimonio. Puedes recuperarla cuando quieras.`,
         deleteDescription: (name) => `Esta acción no se puede deshacer. Se eliminará "${name}" de forma permanente.`,
       }}
       renderForm={(debt, close) => (

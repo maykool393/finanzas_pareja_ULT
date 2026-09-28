@@ -36,7 +36,7 @@ const NetWorthTrendChart = lazy(() =>
 const sum = (values: number[]) => values.reduce((acc, v) => acc + v, 0)
 
 export function Dashboard() {
-  useDocumentTitle('Finanzas')
+  useDocumentTitle('Patrimonio')
   const currency = useCurrency()
   const navigate = useNavigate()
   const accountsQuery = useAccounts()
@@ -68,7 +68,7 @@ export function Dashboard() {
       <header className={styles.hero}>
         {/* Las demás pantallas muestran su título; aquí el encabezado visible es el
             patrimonio, así que el título de la pestaña queda solo para lectores de pantalla. */}
-        <h1 className="visually-hidden">Finanzas</h1>
+        <h1 className="visually-hidden">Patrimonio</h1>
         <p className="label">Patrimonio neto · {formatMonth(new Date())}</p>
         {totalsError ? (
           <p className={styles.heroError}>No se pudo calcular: faltan datos por cargar.</p>
@@ -137,7 +137,7 @@ export function Dashboard() {
                 title="Aún no hay movimientos"
                 description="Aquí aparecen los últimos cinco movimientos registrados."
                 action={
-                  <Button variant="secondary" onClick={() => navigate('/mover')}>
+                  <Button variant="secondary" onClick={() => navigate('/movimientos')}>
                     Ir a Movimientos
                   </Button>
                 }

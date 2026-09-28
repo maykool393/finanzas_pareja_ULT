@@ -19,7 +19,7 @@ export function Welcome() {
   if (loading) return <div className={styles.splash} aria-busy="true" />
 
   if (seen || session) {
-    return <Navigate to={session ? '/dashboard' : '/login'} replace />
+    return <Navigate to={session ? '/resumen' : '/login'} replace />
   }
 
   return (

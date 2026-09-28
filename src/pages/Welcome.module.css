@@ -9,9 +9,10 @@
    y el mismo asset en ambos modos — ver instrucción del usuario. */
 .screen {
   position: relative;
-  /* Color promedio de la foto: es lo que se ve mientras carga (o si falla),
-     en vez del fondo de la página. */
-  background-color: #b3858d;
+  /* Color promedio de la imagen: es lo que se ve mientras carga (o si falla),
+     en vez del fondo de la página. La imagen es la de las ondas, recoloreada
+     a la paleta nueva (DESIGN.md § Bienvenida). */
+  background-color: #2f4475;
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
@@ -101,11 +102,14 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-control);
-  background: #ffffff;
-  color: #1a1a1a;
+  /* El botón principal de toda la app: degradado de marca con texto oscuro
+     fijo, igual en ambos modos (ver Button.module.css). */
+  background: var(--gradient-brand);
+  color: var(--text-on-brand);
+  box-shadow: inset 0 0 0 100px rgba(255, 255, 255, 0);
   font-size: var(--text-md);
-  font-weight: var(--weight-medium);
-  transition: background-color var(--duration-fast) ease,
+  font-weight: var(--weight-bold);
+  transition: box-shadow var(--duration-fast) ease,
               transform var(--duration-fast) var(--ease-out);
 }
 
@@ -113,10 +117,9 @@
   transform: scale(var(--press-scale));
 }
 
-/* Fijo como el resto de esta pantalla (foto, no superficie de tema). */
 @media (hover: hover) and (pointer: fine) {
   .primary:hover {
-    background: #e6e6e6;
+    box-shadow: inset 0 0 0 100px rgba(255, 255, 255, 0.16);
   }
 }
 

@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 
 /** Superficies que pueden quedar pegadas arriba de una pantalla. */
-type TopSurface = '--surface-page' | '--surface-card' | '--surface-header'
+type TopSurface = '--surface-page' | '--surface-card' | '--surface-header' | '--auth-base'
 
 function applyThemeColor(token: TopSurface) {
   const color = getComputedStyle(document.documentElement).getPropertyValue(token).trim()

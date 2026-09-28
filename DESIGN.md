@@ -357,7 +357,7 @@ Cada color de estado tiene dos usos con requisitos distintos: como relleno o gr�
 | Patrimonio | `/patrimonio` | Barras | Cuentas, deudas e inversiones, con el total |
 | Presupuesto | `/presupuesto` | Tarjeta | Presupuestos por categoría |
 | Movimientos | `/movimientos` | Flechas (`SwapIcon`) | Lista de movimientos |
-| Ver más | `/mas` | Cuatro puntos en cuadrícula | Categorías (`/categorias`), ajustes del hogar (`/ajustes`), invitar a tu pareja (`/invitar`) |
+| Ver más | `/mas` | Cuatro puntos en cuadrícula | Categorías (`/categorias`), ajustes del hogar (`/ajustes`), invitar a tu pareja (`/invitar`) y cerrar sesión |
 
 - **Inicio:** `/resumen`. Es adonde lleva todo lo que antes iba a `/dashboard`: después del login (también el de Google y Apple), de unirse a un hogar, de restablecer la contraseña y la bienvenida.
 - **Rutas viejas:** redirigen, para no romper links guardados. `/dashboard` → `/resumen`, `/mover` → `/movimientos`, `/estadisticas` → `/resumen`.
@@ -365,11 +365,12 @@ Cada color de estado tiene dos usos con requisitos distintos: como relleno o gr�
 - **Pestaña activa:** ícono en `--brand-strong`, etiqueta en `--text-primary` bold y un punto de 4px en `--brand-strong` debajo. Además del color, la marca el punto.
 - **Inactiva:** ícono y etiqueta en `--text-muted`, medium (5.4:1 en claro, 5.9:1 en oscuro).
 - Etiquetas en `--text-2xs`. Fondo `--surface-card` con borde superior `--border`.
-- En escritorio las mismas cinco van en el encabezado.
+- En escritorio las mismas cinco van en la cabecera, junto al logo: la activa en blanco bold, subrayada en `--brand` (9.6:1 sobre el azul marino); las demás en `--text-on-header-muted`.
+- La pestaña "Ver más" queda marcada también en sus subpantallas (Categorías, Ajustes, Invitar).
 
 **Cabecera de la app:** bloque `--surface-header` (fijo en ambos modos) arriba de las cinco pestañas, con dos círculos blancos al 7% que se cruzan en la esquina derecha, como decoración.
 - A la izquierda va el **título de la vista**: una píldora `--surface-on-header` con radio `--radius-card`, los avatares del hogar y el nombre ("Nuestro resumen", "Nuestro patrimonio"; "Mi…" en un hogar de una persona). **Por ahora es solo un título** (decidido el 2026-09-28): sin chevron, y no es un botón. El prototipo tenía un chevron que sugería un menú para ver el resumen de una sola persona; ese filtro queda para después.
-- A la derecha va el **cambio de tema**: botón circular de 34px (44 de zona táctil). Es el toggle de modo oscuro, que tiene que estar a mano desde la pantalla principal.
+- A la derecha va el **cambio de tema**: botón circular de 34px (44 de zona táctil). Es el toggle de modo oscuro, que tiene que estar a mano desde la pantalla principal. **Cerrar sesión:** en móvil, como una fila más al final de "Ver más", con ícono; en escritorio, además, como "Salir" en la cabecera, a la derecha del tema. En el onboarding hay un "Cerrar sesión" al pie del primer paso, para quien entró con la cuenta equivocada.
 - **Resumen** agrega debajo el navegador de mes: "SEPTIEMBRE 2026" en `--text-xs` bold con `--tracking-label`, entre dos flechas (`aria-label` "Mes anterior" / "Mes siguiente") en `--text-on-header-muted`.
 - **Patrimonio** agrega el total y la barra de composición (ver Componentes).
 - Sobre la cabecera, el anillo de foco es blanco: el `--text-primary` del modo claro sería invisible.
@@ -703,4 +704,4 @@ Lo que dibuja el navegador también es parte del diseño: toma colores de la pal
 | Barras de scroll | `global.css`, `scrollbar-color` | pulgar `--text-muted`, riel transparente. El pulgar es un control que se arrastra: necesita 3:1 contra el fondo (el prototipo usaba `rgba(15,23,42,0.15)`, 1.4:1) |
 | Controles nativos (calendario de fecha) | `global.css`, `accent-color` | `--brand-strong` |
 | Placeholders | `global.css`, `::placeholder` | `--text-muted` |
-| Barra del navegador y de estado del celular | `useThemeColor` en cada layout; `index.html` y el manifiesto para antes de que cargue | El color de lo que queda pegado arriba. Cada layout declara su superficie con `useThemeColor('--surface-…')`, que lee el color del CSS y lo vuelve a leer al cambiar el tema. En las pantallas con cabecera: `--surface-header` (`#0F172A` en ambos modos). En autenticación y onboarding: `--surface-page`. Antes de que monte React, `index.html` pone `--surface-page` de cada modo (`#F8FAFC` / `#0E1627`), y el manifiesto de la PWA lleva `#0F172A`. Esos dos no pueden leer una variable CSS: si cambian los tokens, se cambian ahí también |
+| Barra del navegador y de estado del celular | `useThemeColor` en cada layout; `index.html` y el manifiesto para antes de que cargue | El color de lo que queda pegado arriba. Cada layout declara su superficie con `useThemeColor('--surface-…')`, que lee el color del CSS y lo vuelve a leer al cambiar el tema. En las pantallas con cabecera: `--surface-header` (`#0F172A` en ambos modos). En autenticación, `--auth-base` (el fondo del login); en el onboarding, `--surface-page`. Antes de que monte React, `index.html` pone `--surface-page` de cada modo (`#F8FAFC` / `#0E1627`), y el manifiesto de la PWA lleva `#0F172A`. Esos dos no pueden leer una variable CSS: si cambian los tokens, se cambian ahí también |

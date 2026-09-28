@@ -32,7 +32,7 @@ export function AccountsSection({ query, members }: AccountsSectionProps) {
         archiveTitle: 'Archivar cuenta',
         deleteTitle: 'Eliminar cuenta',
         archiveDescription: (name) =>
-          `"${name}" dejará de aparecer en el dashboard. Sus movimientos se conservan y puedes recuperarla cuando quieras.`,
+          `"${name}" dejará de aparecer en Patrimonio. Sus movimientos se conservan y puedes recuperarla cuando quieras.`,
         deleteDescription: (name) =>
           `Esta acción no se puede deshacer. Se eliminará "${name}" de forma permanente, junto con sus movimientos.`,
       }}

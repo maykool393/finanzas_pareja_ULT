@@ -15,7 +15,7 @@ export function ResetPassword() {
   const [error, setError] = useState<string | null>(null)
   const [done, setDone] = useState(false)
 
-  if (done) return <Navigate to="/dashboard" replace />
+  if (done) return <Navigate to="/resumen" replace />
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()

@@ -311,7 +311,7 @@ Las etapas se llaman **R1–R8** para no confundirlas con las fases de módulos 
 | R1 | Tokens: paleta, tonos, tipografía, radios, sombras, movimiento | — | 🟨 Commit hecho — falta tu revisión visual |
 | R2 | Estilos globales y superficies del navegador | R1 | 🟨 Commit hecho — falta tu revisión visual |
 | R3 | Componentes compartidos | R1, R2 | 🟨 Commit hecho — falta tu revisión visual |
-| R4 | Estructura: navegación, cabecera, login | R3 | ⬜ Pendiente |
+| R4 | Estructura: navegación, cabecera, login | R3 | 🟨 Implementado — falta tu revisión y commit |
 | R5 | Onboarding nuevo | R3, R4 | ⬜ Pendiente |
 | R6 | Patrimonio | R3, R4 | ⬜ Pendiente |
 | R7 | Resumen (historias) | R3, R4 | ⬜ Pendiente |
@@ -400,37 +400,40 @@ Pedido el 2026-09-28: el código de 36 caracteres no se podía dictar.
 - [ ] Revisar los avisos de seguridad del proyecto en Supabase (Advisors) después de correrla.
 - [ ] Verificar en vivo: crear en pareja, compartir el código y que la otra persona se una escribiéndolo y desde el QR.
 
-### R4 — Estructura de la app ⬜
-- [ ] **Navegación inferior de 5 pestañas:** Resumen, Patrimonio, Presupuesto, Movimientos y Ver más.
-  - Estadísticas desaparece (página, ruta y enlace).
-  - "Ver más" sigue con Categorías, Ajustes del hogar e Invitar.
-- [ ] **Pestañas:**
+### R4 — Estructura de la app 🟨
+- [x] **Navegación inferior de 5 pestañas:** Resumen, Patrimonio, Presupuesto, Movimientos y Ver más.
+  - Estadísticas desaparece: `Statistics.tsx` pasó a ser `Resumen.tsx`.
+  - "Ver más" sigue con Categorías, Ajustes del hogar e Invitar, y su pestaña queda marcada también en esas subpantallas.
+  - "Cerrar sesión": en móvil, una fila con ícono al final de "Ver más" (al principio era un texto chico y no se encontraba); en escritorio, además, "Salir" en la cabecera. También se agregó al primer paso del onboarding, donde antes no había forma de salir.
+- [x] **Pestañas:**
   - Activa: ícono `--brand-strong`, etiqueta bold y punto de 4px.
   - Inactiva: `--text-muted`.
-  - En escritorio, las mismas 5 en el encabezado.
-- [ ] **Cabecera `--surface-header`** en las 5 pestañas:
-  - Selector de vista, sin chevron hasta que tenga función.
-  - Cambio de tema a la derecha (34px, zona de 44px).
-  - Borde inferior en oscuro y `--focus-ring` blanco.
-  - `AppShell` pasa a `useThemeColor('--surface-header')`.
-- [ ] **Botón flotante** (componente: 52px, degradado, `--shadow-brand`) en Resumen ("Añadir movimiento") y en Patrimonio ("Añadir cuenta, deuda o inversión").
-- [ ] **Títulos:** `<h1>` oculto en Resumen y Patrimonio; `useDocumentTitle` con los nombres nuevos.
-- [ ] **Login, registro, contraseñas y 404, con glassmorfismo** (decisión 9, DESIGN.md § Fondo — pantallas de autenticación):
-  - Fondo con tres manchas (aguamarina, morado y cian) sobre `#F8FAFC` en claro y azul marino `#0B1120` en oscuro.
-  - Tarjeta de vidrio: blanco al 72% en claro, azul marino al 65% en oscuro, con `blur(24px)`. Sin soporte de `backdrop-filter`, cae a sólido.
-  - Enlaces dentro de la tarjeta en `--text-secondary`.
+  - En escritorio, las 5 en la cabecera con el logo; la activa, subrayada en turquesa.
+- [x] **Cabecera `--surface-header`** en todas las pantallas de la app:
+  - Título de la vista con los avatares ("Nuestro resumen", "Mis movimientos"…), sin chevron.
+  - Cambio de tema a la derecha (`IconButton` de 34px con zona de 44px).
+  - Círculos decorativos al 7%, borde inferior en oscuro y `--focus-ring` blanco.
+  - `AppShell` usa `useThemeColor('--surface-header')`.
+- [x] **Botón flotante** (`FloatingButton`: 52px, degradado, `--shadow-brand`) en Resumen: "Añadir movimiento" abre Movimientos con el formulario ya abierto (`?nuevo=1`). El de Patrimonio pasa a R6, porque abre los formularios de esa pantalla.
+- [x] **Resumen**, por ahora una pantalla de "en camino" con enlace a Patrimonio, hasta que R7 construya las historias. `<h1>` oculto en Resumen y Patrimonio, y títulos de pestaña nuevos.
+- [x] **Login, registro, contraseñas y 404, con glassmorfismo:**
+  - Tres manchas en CSS (aguamarina, morado y cian) sobre `--auth-base`.
+  - Tarjeta de vidrio con `blur(24px)`, que cae a sólido sin soporte de `backdrop-filter`.
   - Ondas en `--brand` al 20%.
-  - Se borran `login-background.webp` y `login-background-dark.webp`, con sus referencias y el precache.
-- [ ] **Bienvenida:**
-  - Recolorear `welcome-hero.webp` con un mapa de degradado por luminosidad (azul marino → morado → aguamarina). Se revisa contigo antes de reemplazar la original.
-  - WebP calidad 90, y verificar un recorte ampliado contra el original.
-  - Color de respaldo = el promedio de la imagen nueva.
-- [ ] **Textos que nombran pantallas:** "Ir a Finanzas" → "Ir a Patrimonio" (estados vacíos de Movimientos y Dashboard).
-- [ ] **Rutas nuevas** (decisión 10): `/resumen`, `/patrimonio`, `/presupuesto`, `/movimientos` y `/mas`. Siguen igual `/categorias`, `/ajustes` e `/invitar`.
-  - El inicio pasa a ser `/resumen`.
+  - Se borraron `login-background.webp` y `login-background-dark.webp`: el precache bajó de 1516 a 1319 KiB.
+  - La barra del celular toma `--auth-base`.
+- [x] **Bienvenida:**
+  - `welcome-hero.webp` recoloreada con un mapa de degradado por luminosidad (azul marino → morado → aguamarina; la variante elegida entre dos). WebP calidad 90, verificada con un recorte ampliado.
+  - Color de respaldo `#2f4475`.
+  - El botón "Comenzar" pasa al degradado de marca.
+- [x] **Textos que nombran pantallas:** "Ir a Finanzas" → "Ir a Patrimonio", "Crea la primera en Patrimonio" y "dejará de aparecer en Patrimonio" (antes "en el dashboard").
+- [x] **Rutas nuevas:** `/resumen`, `/patrimonio`, `/presupuesto`, `/movimientos` y `/mas`. El inicio es `/resumen`.
   - Redirecciones: `/dashboard` → `/resumen`, `/mover` → `/movimientos`, `/estadisticas` → `/resumen`.
-  - Todos los usos de las rutas viejas se actualizan: `App.tsx`, `AppShell.tsx`, `SocialAuthButtons.tsx` (`redirectTo`), `Login.tsx`, `JoinRedirect.tsx`, `ResetPassword.tsx`, `Welcome.tsx`, `Transactions.tsx`, `Dashboard.tsx` y `Statistics.tsx` (este se borra).
-  - **Fuera del código:** en Supabase → Authentication → URL Configuration, agregar `…/resumen` a las Redirect URLs, salvo que ya haya un comodín (`/**`). Si no, el login con Google y Apple falla al volver.
+  - Actualizadas en `App.tsx`, `AppShell.tsx`, `SocialAuthButtons.tsx`, `Login.tsx`, `JoinRedirect.tsx`, `ResetPassword.tsx`, `Welcome.tsx`, `Transactions.tsx` y `Dashboard.tsx`.
+- [x] Build y lint. Revisión con Playwright en claro, oscuro y escritorio: bienvenida, login, cabecera, pestañas, Ver más y color de la barra del celular. Sin errores de consola. Corregido al revisar: las manchas del login casi no se veían en claro.
+- [ ] **Fuera del código:** en Supabase → Authentication → URL Configuration, agregar `…/resumen` a las Redirect URLs, salvo que ya haya un comodín (`/**`). Si no, el login con Google y Apple falla al volver.
+- [ ] Revisión visual tuya en la app, sobre todo la bienvenida recoloreada.
+- [ ] Commit.
 
 ### R5 — Onboarding nuevo ⬜
 - [ ] **Layout:**
@@ -461,6 +464,7 @@ Pedido el 2026-09-28: el código de 36 caracteres no se podía dictar.
 - [ ] **Cuentas y Deudas:**
   - Tarjetas nuevas con efecto de apilado al hacer scroll (`transform` en scroll pasivo, no `sticky`).
   - Con reducir movimiento, sin apilado; `scroll-margin` para el foco con teclado.
+- [ ] **Botón flotante** "Añadir cuenta, deuda o inversión": abre una elección de las tres y el formulario correspondiente (movido desde R4).
 - [ ] **Inversiones** en lista agrupada (DESIGN.md § Lista de inversiones).
 - [ ] **Cuenta principal** (decisión 7):
   - Migración: `accounts.is_primary boolean not null default false`, con un índice único parcial para que haya una sola por hogar.

@@ -331,6 +331,11 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
       <button type="button" className={styles.joinToggle} onClick={() => setStep('join')}>
         ¿Tienes un código? Únete aquí
       </button>
+
+      {/* Sin esto, quien entró con la cuenta equivocada no tenía cómo salir del onboarding. */}
+      <button type="button" className={styles.backLink} onClick={() => supabase.auth.signOut()}>
+        Cerrar sesión
+      </button>
     </OnboardingLayout>
   )
 }

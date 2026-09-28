@@ -6,7 +6,7 @@ import { setPendingInvite } from '../lib/pendingInvite'
 
 /**
  * Destino del link/QR de invitación (/unirse/:code). Guarda el código
- * pendiente y redirige: con sesión sigue a /dashboard (RequireHousehold
+ * pendiente y redirige: con sesión sigue a /resumen (RequireHousehold
  * hace la unión real); sin sesión, a registrarse. También es el destino de
  * vuelta tras confirmar el correo (ver emailRedirectTo en Login.tsx), por
  * eso el código se re-guarda aquí siempre, incluso si ya estaba.
@@ -22,5 +22,5 @@ export function JoinRedirect() {
   if (!code) return <Navigate to="/" replace />
   if (loading) return <div className={styles.splash} aria-busy="true" />
 
-  return <Navigate to={session ? '/dashboard' : '/registro'} replace />
+  return <Navigate to={session ? '/resumen' : '/registro'} replace />
 }
