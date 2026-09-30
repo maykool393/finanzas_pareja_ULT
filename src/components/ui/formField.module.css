@@ -53,12 +53,13 @@
 }
 
 /* Código de invitación (XXXX-XXXX): se lee carácter por carácter. Las
-   mayúsculas son solo visuales: join_household acepta minúsculas. */
+   mayúsculas son solo visuales: join_household acepta minúsculas. Peso
+   normal: Ubuntu Mono solo se carga en 400 y el navegador simularía la negrita. */
 .code {
   height: 56px;
   font-family: var(--font-mono);
   font-size: var(--text-2xl);
-  font-weight: var(--weight-bold);
+  font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-code);
   text-align: center;
   text-transform: uppercase;

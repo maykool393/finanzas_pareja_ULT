@@ -10,7 +10,8 @@ interface RadioListOption<T extends string> {
 }
 
 interface RadioListGroupProps<T extends string> {
-  value: T
+  /** null: ninguna elegida todavía (la primera es la parada de Tab). */
+  value: T | null
   onChange: (value: T) => void
   options: readonly RadioListOption<T>[]
   label: string
@@ -18,7 +19,7 @@ interface RadioListGroupProps<T extends string> {
 
 /** Lista de opciones tipo radio con descripción (ver DESIGN.md § Tarjeta de selección). */
 export function RadioListGroup<T extends string>({ value, onChange, options, label }: RadioListGroupProps<T>) {
-  const radioProps = useRadioGroupKeys(options.map((o) => o.value), value, onChange)
+  const radioProps = useRadioGroupKeys(options.map((o) => o.value), value ?? options[0].value, onChange)
 
   return (
     <div className={styles.group} role="radiogroup" aria-label={label}>

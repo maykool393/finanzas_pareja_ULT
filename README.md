@@ -312,7 +312,7 @@ Las etapas se llaman **R1–R8** para no confundirlas con las fases de módulos 
 | R2 | Estilos globales y superficies del navegador | R1 | 🟨 Commit hecho — falta tu revisión visual |
 | R3 | Componentes compartidos | R1, R2 | 🟨 Commit hecho — falta tu revisión visual |
 | R4 | Estructura: navegación, cabecera, login | R3 | ✅ Commit hecho |
-| R5 | Onboarding nuevo | R3, R4 | ⬜ Pendiente |
+| R5 | Onboarding nuevo | R3, R4 | 🟨 Implementado — falta verificar en vivo y commit |
 | R6 | Patrimonio | R3, R4 | ⬜ Pendiente |
 | R7 | Resumen (historias) | R3, R4 | ⬜ Pendiente |
 | R8 | Limpieza y verificación final | R1–R7 | ⬜ Pendiente |
@@ -435,24 +435,33 @@ Pedido el 2026-09-28: el código de 36 caracteres no se podía dictar.
 - [x] Revisión visual tuya en la app.
 - [x] Commit.
 
-### R5 — Onboarding nuevo ⬜
-- [ ] **Layout:**
-  - Fondo de manchas; encabezado con "Volver" y el logo.
-  - Barra de línea con punto (`role="progressbar"`, "Paso 2 de 3") y número de paso decorativo.
+### R5 — Onboarding nuevo 🟨
+- [x] **`OnboardingLayout` nuevo:**
+  - Fondo con manchas; encabezado con "Volver" y el logo.
+  - Línea de progreso con punto (`role="progressbar"`, "Paso 2 de 3") y número de paso decorativo.
   - Título `--text-3xl` + ayuda; CTA a todo el ancho con flecha.
-  - Reemplaza `OnboardingLayout`, `SegmentedProgress` y `AvatarPair`.
-- [ ] **Recorridos:** Solo yo (tipo y nombre → moneda), Crear en pareja (tipo y nombre → invitación → moneda y reparto) y Unirse (tipo → código). La barra se calcula sobre el recorrido elegido.
-- [ ] **Paso 1, tipo y nombre:** dos filas de opción con ilustración de 72px y, debajo, el campo subrayado del nombre. "Continuar" crea el hogar (decisión 2).
-- [ ] **Paso 2, invitación** (solo pareja): bloque de invitación.
-  - Código monoespaciado.
-  - Acciones: "Copiar" (anunciado con `aria-live`), "WhatsApp" (`wa.me`) y "Ver QR" en un diálogo.
-  - Invitar es opcional: "Continuar" sigue igual.
-- [ ] **Paso código:** solo el campo de código, sin escáner (decisión 3).
-- [ ] **Paso moneda y reparto:** selector de moneda y tarjetas de reparto (Proporcional, Indiferente, 50 / 50).
-- [ ] **Pantalla final:**
-  - Ilustración con sus animaciones, confeti y tres funciones; CTA "Ir a mi hogar".
-  - Con reducir movimiento, sin desplazamientos; bucles de menos de 5 s.
-- [ ] **Verificar en vivo los tres recorridos.** Incluye el pendiente de la Fase 0.5: crear en pareja, compartir el QR y que la segunda persona quede unida.
+  - Se borraron `SegmentedProgress` y `AvatarPair`.
+- [x] **Recorridos:** Solo yo (tipo y nombre → moneda), Crear en pareja (tipo y nombre → invitación → moneda y reparto) y Unirse (tipo → código). La barra se calcula sobre el elegido. "Volver" solo donde no deshace nada: después de crear el hogar no se vuelve al paso 1.
+- [x] **Paso 1, tipo y nombre:** filas de opción con ilustración de 72px, campo subrayado y "Continuar" (se habilita con opción y nombre, y crea el hogar). Enlaces "¿Ya tienes pareja? Únete a una" y "Cerrar sesión".
+- [x] **Paso 2, invitación:** `InviteBlock` (componente nuevo, también en "Invitar a tu pareja").
+  - Código `XXXX-XXXX`.
+  - Acciones: "Copiar" (anunciado con `aria-live`), "WhatsApp" (link a `wa.me` con el código y el link) y "Ver QR" en un diálogo.
+  - Se borró `InviteCodeBadge`.
+- [x] **Paso código:** campo de código (se habilita con 8 caracteres) y ayuda "¿No tienes código?…". Sin escáner.
+- [x] **Paso moneda y reparto:** selector de moneda y tarjetas de reparto. En pareja hay que elegir el reparto (empieza sin elegir, como en el prototipo).
+- [x] **Pantalla final:** ilustración con aparición, confeti y flotación; título, «nombre del hogar» y tres funciones con aparición escalonada; CTA "Ir a mi hogar".
+  - Al unirse dice "¡Ya eres parte del hogar!".
+  - Con reducir movimiento, solo fundidos.
+  - La tercera función habla de presupuestos, no de metas, que todavía no existen.
+- [x] **Otros:**
+  - Ícono "Teléfono" para cuentas y deudas (el prototipo lo usa en la deuda del iPhone).
+  - Se borraron 8 íconos sin uso.
+  - "Invitar a tu pareja" muestra los miembros con sus avatares y un texto que nombra el enlace nuevo.
+- [x] Build y lint. Revisión con Playwright de los cinco pasos en claro y oscuro, más el diálogo del QR: sin errores de consola.
+  - Corregido al revisar: la línea de progreso desbordaba la página hacia los lados (el punto se movía con un elemento del ancho de la línea).
+  - Corregido al revisar: el código se mostraba en una negrita de Ubuntu Mono que no se carga (el navegador la imitaba).
+- [ ] **Verificar en vivo los tres recorridos.** Incluye el pendiente de la Fase 0.5: crear en pareja, compartir el código o el QR y que la segunda persona quede unida.
+- [ ] Commit.
 
 ### R6 — Patrimonio ⬜
 - [ ] **Cabecera:**
@@ -504,7 +513,6 @@ Pedido el 2026-09-28: el código de 36 caracteres no se podía dictar.
 ### R8 — Limpieza y verificación final ⬜
 - [ ] **Borrar lo que quede sin uso:**
   - Página de Estadísticas.
-  - `SegmentedProgress`, `AvatarPair`, `InviteCodeBadge` (si el bloque de invitación de R5 lo reemplaza).
   - `public/logo.svg`, que ya no se usa (el logo es un componente).
   - Tokens sin consumidores.
 - [ ] **Verificar con Playwright en claro y oscuro a 390px, en todas las pantallas:** contraste, foco visible y áreas táctiles.

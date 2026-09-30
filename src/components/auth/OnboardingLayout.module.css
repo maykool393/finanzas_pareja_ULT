@@ -1,39 +1,163 @@
-/* Provisorio hasta el rediseño del onboarding (DESIGN.md § Onboarding): ya
-   sin encabezado de color ni hoja, sobre el fondo de página. */
+/* DESIGN.md § Onboarding y § Fondos con manchas. */
 .page {
+  position: relative;
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  background: var(--gradient-page);
+  max-width: 480px;
+  margin: 0 auto;
+  background-color: var(--surface-page);
+  /* Dos manchas difuminadas: turquesa arriba a la izquierda, índigo abajo a
+     la derecha. radial-gradient y no filter: blur(). Decorativas. */
+  background-image:
+    radial-gradient(circle 170px at 40px 50px, var(--blob-brand), transparent),
+    radial-gradient(circle 170px at calc(100% - 55px) calc(100% - 55px), var(--blob-indigo), transparent),
+    var(--gradient-page);
+}
+
+/* En pantallas anchas el fondo cubre toda la ventana, no solo la columna. */
+@media (min-width: 481px) {
+  .page {
+    max-width: none;
+    padding-inline: calc((100% - 480px) / 2);
+  }
 }
 
 .header {
-  padding: var(--space-md) var(--space-lg) var(--space-xl);
-  padding-top: calc(var(--space-md) + env(safe-area-inset-top));
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: 22px;
+  padding: calc(40px + env(safe-area-inset-top)) var(--space-lg) 0;
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.spacer {
+  width: 20px;
+  height: 20px;
+}
+
+/* Chevron de 20px sin fondo; la zona de toque llega a 44px. */
+.back {
+  position: relative;
+  display: flex;
+  width: 20px;
+  height: 20px;
+  color: var(--text-secondary);
+  transition: color var(--duration-fast) ease;
+}
+
+.back::before {
+  content: '';
+  position: absolute;
+  inset: -12px;
+}
+
+.back svg {
+  width: 100%;
+  height: 100%;
+}
+
+.back:hover {
+  color: var(--text-primary);
+}
+
+.logo {
+  height: 23px;
+  width: auto;
+  color: var(--text-primary);
+}
+
+/* Línea de 2px con un punto de 8px que avanza de paso en paso. El punto es lo
+   que informa: --brand-strong (3.6:1 o más); la línea es decorativa. */
+.track {
+  position: relative;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--border);
+  /* 100cqw = el ancho de la línea: el punto avanza --progress (0 a 1) de él. */
+  container-type: inline-size;
+}
+
+/* Se mueve solo el punto, con transform: un elemento del ancho de la línea
+   desplazado agrandaba el área desplazable y la página se movía de costado. */
+.dot {
+  position: absolute;
+  top: -3px;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--brand-strong);
+  transform: translateX(calc(var(--progress, 0) * 100cqw - 4px));
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dot {
+    transition: none;
+  }
+}
+
+.body {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  padding: 30px var(--space-lg) 0;
+}
+
+.centered {
+  align-items: center;
+  text-align: center;
+}
+
+/* Número del paso detrás del título. Decorativo (aria-hidden): el número real
+   lo anuncia la barra. */
+.watermark {
+  position: absolute;
+  top: 12px;
+  right: 20px;
+  font-size: var(--text-watermark);
+  font-weight: var(--weight-light);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--surface-sunken);
+  pointer-events: none;
+  user-select: none;
+}
+
+.intro {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  max-width: 270px;
+}
+
+.centered .intro {
+  max-width: 300px;
 }
 
 .title {
-  text-align: center;
-  font-size: var(--text-xl);
+  font-size: var(--text-3xl);
   font-weight: var(--weight-bold);
   line-height: var(--leading-tight);
   color: var(--text-primary);
 }
 
-.titleAccent {
-  color: var(--brand-text);
+.helper {
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--text-secondary);
 }
 
-.sheet {
-  position: relative;
-  flex: 1;
-  padding: var(--space-lg) var(--space-md);
-  padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom));
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
+.footer {
+  padding: 18px var(--space-lg) calc(34px + env(safe-area-inset-bottom));
 }

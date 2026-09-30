@@ -10,6 +10,7 @@ import {
   HealthIcon,
   HomeIcon,
   OtherIcon,
+  PhoneIcon,
   PiggyIcon,
   SalaryIcon,
   SubscriptionsIcon,
@@ -24,7 +25,7 @@ import {
  * etiqueta. Los íconos en sí viven en icons.tsx.
  */
 
-export type AccountIconKey = 'bank' | 'cash' | 'card' | 'piggy' | 'trend-up' | 'wallet'
+export type AccountIconKey = 'bank' | 'cash' | 'card' | 'phone' | 'piggy' | 'trend-up' | 'wallet'
 export type CategoryIconKey =
   | 'groceries'
   | 'home'
@@ -42,6 +43,7 @@ export const ICONS: Record<IconKey, (props: SVGProps<SVGSVGElement>) => ReactEle
   bank: BankIcon,
   cash: CashIcon,
   card: CardIcon,
+  phone: PhoneIcon,
   piggy: PiggyIcon,
   'trend-up': TrendUpIcon,
   wallet: WalletIcon,
@@ -61,6 +63,7 @@ export const ACCOUNT_ICON_OPTIONS: { key: AccountIconKey; label: string }[] = [
   { key: 'bank', label: 'Banco' },
   { key: 'cash', label: 'Efectivo' },
   { key: 'card', label: 'Tarjeta' },
+  { key: 'phone', label: 'Teléfono' },
   { key: 'wallet', label: 'Billetera' },
   { key: 'piggy', label: 'Ahorro' },
   { key: 'trend-up', label: 'Inversión' },
