@@ -1,5 +1,6 @@
 import { type FormEvent, useState } from 'react'
 import { Button } from '../../components/ui/Button'
+import { Checkbox } from '../../components/ui/Checkbox'
 import { ColorPicker } from '../../components/ui/ColorPicker'
 import { FormError } from '../../components/ui/FormError'
 import { ACCOUNT_ICON_OPTIONS, type AccountIconKey } from '../../components/ui/iconRegistry'
@@ -39,11 +40,12 @@ export function AccountForm({ initial, onSubmit, onCancel }: AccountFormProps) {
   const [icon, setIcon] = useState<AccountIconKey>((initial?.icon as AccountIconKey) ?? 'bank')
   const [colorVariant, setColorVariant] = useState<ColorVariant>(initial?.colorVariant ?? 'a')
   const [initialBalance, setInitialBalance] = useState<number | null>(initial?.initialBalance ?? 0)
+  const [isPrimary, setIsPrimary] = useState(initial?.isPrimary ?? false)
   const { pending: submitting, error, run } = useAsyncAction()
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault()
-    run(() => onSubmit({ name, type, ownerId, icon, colorVariant }, initialBalance ?? 0), ERROR_MESSAGES.save)
+    run(() => onSubmit({ name, type, ownerId, icon, colorVariant, isPrimary }, initialBalance ?? 0), ERROR_MESSAGES.save)
   }
 
   return (
@@ -61,6 +63,13 @@ export function AccountForm({ initial, onSubmit, onCancel }: AccountFormProps) {
       <IconPicker value={icon} onChange={(v) => setIcon(v as AccountIconKey)} options={ACCOUNT_ICON_OPTIONS} />
 
       <ColorPicker value={colorVariant} onChange={(v) => setColorVariant(v as ColorVariant)} options={ACCOUNT_COLOR_OPTIONS} />
+
+      <Checkbox
+        label="Cuenta principal"
+        checked={isPrimary}
+        onChange={setIsPrimary}
+        hint="Lleva una estrella en Patrimonio. Hay una sola por hogar: marcar esta desmarca la anterior."
+      />
 
       {error && <FormError>{error}</FormError>}
 

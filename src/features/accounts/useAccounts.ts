@@ -3,10 +3,12 @@ import { createSharedQuery, useSharedQuery } from '../../lib/sharedQuery'
 import type { Account } from '../../types/domain'
 import {
   type AccountInput,
+  clearPrimaryAccount,
   createAccount,
   deleteAccount,
   listAccounts,
   setAccountArchived,
+  setPrimaryAccount,
   updateAccount,
 } from './api'
 
@@ -28,12 +30,16 @@ export function useAccounts() {
 
   async function create(input: AccountInput, initialBalance: number) {
     if (!householdId) return
-    await createAccount(householdId, input, initialBalance)
+    const created = await createAccount(householdId, input, initialBalance)
+    if (input.isPrimary) await setPrimaryAccount(created.id)
     await refresh()
   }
 
   async function update(id: string, input: AccountInput) {
-    await updateAccount(id, input)
+    const updated = await updateAccount(id, input)
+    // Solo si cambió: marcar pasa por set_primary_account, que desmarca la anterior.
+    if (input.isPrimary && !updated.isPrimary) await setPrimaryAccount(id)
+    if (!input.isPrimary && updated.isPrimary) await clearPrimaryAccount(id)
     await refresh()
   }
 

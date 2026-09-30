@@ -372,7 +372,8 @@ Cada color de estado tiene dos usos con requisitos distintos: como relleno o gr�
 - A la izquierda va el **título de la vista**: una píldora `--surface-on-header` con radio `--radius-card`, los avatares del hogar y el nombre ("Nuestro resumen", "Nuestro patrimonio"; "Mi…" en un hogar de una persona). **Por ahora es solo un título** (decidido el 2026-09-28): sin chevron, y no es un botón. El prototipo tenía un chevron que sugería un menú para ver el resumen de una sola persona; ese filtro queda para después.
 - A la derecha va el **cambio de tema**: botón circular de 34px (44 de zona táctil). Es el toggle de modo oscuro, que tiene que estar a mano desde la pantalla principal. **Cerrar sesión:** en móvil, como una fila más al final de "Ver más", con ícono; en escritorio, además, como "Salir" en la cabecera, a la derecha del tema. En el onboarding hay un "Cerrar sesión" al pie del primer paso, para quien entró con la cuenta equivocada.
 - **Resumen** agrega debajo el navegador de mes: "SEPTIEMBRE 2026" en `--text-xs` bold con `--tracking-label`, entre dos flechas (`aria-label` "Mes anterior" / "Mes siguiente") en `--text-on-header-muted`.
-- **Patrimonio** agrega el total y la barra de composición (ver Componentes).
+- **Patrimonio** agrega el total y la barra de composición (ver Patrimonio).
+- **Cómo se agrega:** la cabecera deja un hueco debajo de la fila del título, y la pantalla pone ahí su contenido con `HeaderExtension` (un portal). Así ese contenido queda dentro de la cabecera fija, con su fondo y su anillo de foco blanco. El hueco vacío no ocupa lugar. La cabecera publica su alto en `--app-header-height`, que usan los elementos fijos de la página para quedar justo debajo.
 - Sobre la cabecera, el anillo de foco es blanco: el `--text-primary` del modo claro sería invisible.
 
 ## Onboarding
@@ -472,28 +473,32 @@ Las historias del mes, a pantalla completa entre la cabecera y la barra inferior
 
 ### Patrimonio
 
-- **Cabecera:** el total del patrimonio (cuentas + inversiones − deudas) en `--text-4xl` bold blanco. Debajo, la **barra de composición**:
-  - 7px de alto, riel blanco al 14% y un segmento por grupo en las series de la cabecera, con 2px de separación entre segmentos.
-  - Es un botón ("Ver composición del patrimonio") que abre la hoja de composición. Tocar un segmento abre la hoja con ese grupo destacado.
+- **Cabecera:** el total del patrimonio (cuentas + inversiones − deudas) en `--text-4xl` bold blanco, con "Patrimonio neto:" solo para lectores de pantalla. Mientras cargan las tres listas, un bloque gris del alto de la línea (la cabecera no salta al llegar el total); si una falla, un aviso en `--header-series-debts` en vez de un total incompleto. Con el hogar vacío, debajo: "Agrega tu primera cuenta abajo para empezar a ver el patrimonio."
+- **Barra de composición**, debajo del total:
+  - 7px de alto, riel blanco al 14% y un segmento por grupo en las series de la cabecera, con 2px de separación entre segmentos. Un grupo en cero no dibuja segmento.
+  - Es **un solo botón** de 44px de alto ("Ver composición del patrimonio: Cuentas 48 %, …"), no uno por segmento: un segmento de 7px no se puede tocar. Al tocar, la hoja se abre con el grupo que quedó bajo el dedo destacado; con teclado se abre sin ninguno.
   - Debajo de la barra, un chevron de pista.
-- **Secciones:** Cuentas y Deudas con tarjetas; Inversiones en lista.
-- **Efecto de apilado al hacer scroll** en Cuentas y Deudas:
-  - El título de la sección y la primera tarjeta quedan fijos 150px de scroll mientras la segunda sube y la tapa, hasta dejar asomar 18px de la de abajo. Después, el grupo entero sigue con el scroll.
-  - Se hace con `transform` calculado en el evento de scroll (pasivo), no con `position: sticky`, para que el título y sus tarjetas se suelten a la vez.
+- **Secciones:** Cuentas y Deudas con tarjetas; Inversiones en lista agrupada. Ya no hay "Últimos movimientos" ni gráficos: los movimientos tienen su pestaña.
+- **Efecto de apilado al hacer scroll** en Cuentas y Deudas (solo en móvil, hasta 640px):
+  - El título de la sección queda fijo justo bajo la cabecera (`top: var(--app-header-height)`), con fondo `--surface-page` para que las tarjetas pasen por debajo.
+  - Cada tarjeta queda fija a 72px bajo la cabecera más 18px por su posición (`position: sticky`). La siguiente sube y la tapa, dejando asomar 18px de cada una de arriba. Al terminar la sección, el grupo se va con el scroll.
+  - En móvil las tarjetas van en una columna flex, no en la grilla, que no dejaba apilarlas. En escritorio siguen en la grilla, sin apilado.
   - Con reducir movimiento no hay apilado: las tarjetas van en flujo normal.
-  - Con teclado, la tarjeta enfocada se muestra completa (`scroll-margin`).
+  - Con teclado, la tarjeta que tiene el foco pasa por encima de las que la tapan (`z-index`), así se ve completa.
 - **Hoja de composición:** una hoja inferior (ver Diálogo) titulada "Composición del patrimonio", con una fila por grupo:
   - Borde izquierdo de 4px en el color de la serie.
   - Etiqueta en mayúsculas (`--text-2xs` `--text-muted`) y píldora con el porcentaje.
   - Monto en `--text-2xl` bold y barra de 5px sobre `--surface-sunken`. En esta hoja las series van en sus colores de superficie clara u oscura, no en los de la cabecera.
-  - La fila destacada toma fondo `--surface-sunken` y escala 1.02. Las demás **no se atenúan con opacidad**: el prototipo las bajaba al 50%, y su texto quedaba bajo 4.5:1.
+  - Cada fila es un botón (`aria-pressed`) que la destaca o la suelta.
+  - La fila destacada toma fondo `--surface-sunken` (su riel pasa a `--border`, para no perderse) y escala 1.02. Las demás **no se atenúan con opacidad**: el prototipo las bajaba al 50%, y su texto quedaba bajo 4.5:1.
+- **Botón flotante** "Añadir cuenta, deuda o inversión": abre el diálogo "¿Qué quieres agregar?" con tres filas (Cuenta, Deuda, Inversión), cada una con ícono en un círculo `--brand-tint`, título y descripción. Elegir una cierra el diálogo y abre el formulario de esa sección. Los botones + de cada sección abren su formulario directo.
 
 ## Componentes clave
 
 **Tarjeta de cuenta y de deuda**
 - Fondo del tono asignado (ver "Tonos de tarjeta"), radio `--radius-card`, 24px de relleno.
 - **Arriba:** ícono de 28px y nombre en `--text-lg` regular a la izquierda; a la derecha, los avatares de 28px (uno si es de una persona, los dos si es compartida).
-- **Estrella de cuenta principal:** después del nombre, 13px rellena, `#B45309` en claro (3.5–3.6:1) y `#FBBF24` en oscuro (6.3–7.1:1). Hay una cuenta principal por hogar, que se elige en el formulario de la cuenta (se agrega al modelo en R6).
+- **Estrella de cuenta principal:** después del nombre, 13px rellena, `#B45309` en claro (3.5–3.6:1) y `#FBBF24` en oscuro (6.3–7.1:1). Hay una cuenta principal por hogar, como mucho: se elige con la casilla "Cuenta principal" del formulario de la cuenta, y marcar otra la quita de la anterior (`set_primary_account`, en una sola operación de la base).
 - **Monto:** abajo a la derecha, en `--text-4xl` bold con `--tracking-amount`. 40px de separación entre la fila de arriba y el monto en cuentas; 22px en deudas, que además llevan la barra.
 - **Deudas:** barra de progreso de 6px y, debajo a la derecha, "cuota · N pagos" en `--text-sm` `--text-secondary`.
 - Es un `<button>` (abre la edición), con un `aria-label` armado a mano: "Banesco, $1.284.500, de Mariana", "Crédito auto, $5.400.000, 40 % pagado, compartida". El nombre que saldría del contenido juntaría los textos sin separar y perdería al dueño, que solo se ve como iniciales. "Compartida" concuerda con cuenta, deuda e inversión.
@@ -505,13 +510,16 @@ Las historias del mes, a pantalla completa entre la cabecera y la barra inferior
 - **Las secciones no se pliegan** (decidido el 2026-09-28): no hay chevron ni `aria-expanded`.
 - Cuentas y Deudas comparten el componente de sección con su configuración (textos, monto, ícono por defecto); un cambio de comportamiento se hace ahí, una vez.
 
-**Lista de inversiones** (agrupada; los grupos se agregan al modelo en R6)
+**Lista de inversiones** (agrupada)
 - Un contenedor por grupo: `--surface-card` con borde `--border` y radio `--radius-card`.
 - **Encabezado del grupo:** cuadro de 28px con el ícono, en la variante del grupo, el nombre (`--text-sm` bold) y un botón + circular a la derecha ("Añadir a De giro"). Debajo, un divisor.
 - **Una fila por inversión,** separadas por un divisor:
   - A la izquierda, el nombre (`--text-sm` medium) y debajo la fecha o la cantidad (`--text-xs` `--text-muted`).
   - A la derecha, el valor (`--text-sm` bold) y debajo la variación con signo (`--text-xs` bold, `--gain-text` o `--loss-text`).
 - Las inversiones sin grupo van al final, en un contenedor "Otras" sin cuadro de ícono.
+- **El grupo tiene el color, no la inversión:** dos variantes, Ámbar (`--tile-ambar-bg`) y Lavanda (`--tile-lavanda-bg`), para el cuadro del ícono.
+- **Tocar el nombre del grupo** abre "Editar grupo": nombre, ícono y color, y al pie "Eliminar grupo". Eliminarlo no borra sus inversiones: pasan a "Otras" (lo avisa la confirmación).
+- **En el formulario de la inversión**, el campo "Grupo" ofrece "Sin grupo", los grupos del hogar y "Nuevo grupo…", que muestra ahí mismo el nombre y el color del grupo nuevo. El botón + de un grupo abre el formulario con ese grupo ya elegido.
 
 **Barra de progreso (deudas, presupuestos)**
 - **Deudas:** 6px sobre la tarjeta de color. Claro: riel `rgba(255,255,255,0.55)` y relleno `rgba(15,23,42,0.7)`. Oscuro: riel `rgba(255,255,255,0.12)` y relleno `rgba(241,245,249,0.8)`. Da 5 a 6.4:1 entre relleno y riel.
@@ -540,6 +548,7 @@ Las historias del mes, a pantalla completa entre la cabecera y la barra inferior
 - **Estándar:** borde 1.5px `--border-control`, radio `--radius-control`, fondo `--surface-card`, texto `--text-md`. Con foco, el borde pasa a `--brand-strong` y aparece el anillo de foco.
 - **Subrayado** (nombre del hogar): solo línea inferior de 1.5px en `--border-control`, sin caja, texto `--text-xl` medium. Con foco, la línea pasa a 2px `--brand-strong`. Es para un campo único y protagonista de un paso; en un formulario va el estándar.
 - **Código** (unirse): campo estándar de 56px de alto, con `--font-mono`, `--text-2xl` de peso normal, mayúsculas, centrado y con `--tracking-code`. Placeholder "XXXX-XXXX". Acepta minúsculas, espacios y guiones: la base los normaliza.
+- **Casilla** (cuenta principal): la casilla nativa de 20px, marcada en `--brand-strong` (`accent-color`), con la etiqueta en `--text-md` y una ayuda debajo en `--text-xs` `--text-muted`. Toda la fila es la zona de toque, de 44px de alto como mínimo.
 - Placeholders en `--text-muted`. Todo campo tiene su `<label>`: en el campo subrayado, el título del paso hace de etiqueta (`aria-labelledby`).
 
 **Selector de moneda**
@@ -665,7 +674,7 @@ Esta es una app de uso diario: el movimiento comunica un cambio de estado, no de
 | Patrimonio | Pista bajo la barra de composición | El chevron baja 3px y vuelve, 1.8s, 2 veces |
 | | Barra de composición | Al presionarla se estira en alto (`scaleY(1.4)`) |
 | | Fila destacada de la composición | Escala 1.02, 250ms `--ease-spring` |
-| | Apilado de tarjetas | Ligado al scroll (ver Patrimonio) |
+| | Apilado de tarjetas | Ligado al scroll con `position: sticky`, sin JavaScript (ver Patrimonio) |
 
 Reglas de las excepciones:
 - **Con reducir movimiento**, nada de lo anterior se desplaza ni escala. Los números muestran directo el valor final; las barras, el anillo y los frascos aparecen llenos con un fundido; la casa y la moneda quedan quietas; el apilado no ocurre.

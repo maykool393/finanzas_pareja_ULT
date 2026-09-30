@@ -42,7 +42,7 @@
   max-width: var(--container-max);
   margin: 0 auto;
   min-height: var(--header-height);
-  padding: 0 var(--space-lg);
+  padding: 0 var(--space-lg) 22px;
   display: flex;
   align-items: center;
   gap: var(--space-lg);
@@ -92,6 +92,21 @@
   border-bottom-color: var(--brand);
 }
 
+/* Contenido de cada pantalla dentro de la cabecera (HeaderExtension). Vacío,
+   no ocupa lugar. */
+.headerExtra {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--space-lg) 22px;
+}
+
+.headerExtra:empty {
+  display: none;
+}
+
 .signOut {
   min-height: 44px;
   font-size: var(--text-sm);
@@ -134,6 +149,10 @@
   .nav,
   .signOut {
     display: none;
+  }
+
+  .headerExtra {
+    padding: 0 var(--gutter) 22px;
   }
 
   .viewTitle {

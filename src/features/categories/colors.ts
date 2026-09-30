@@ -7,14 +7,13 @@ import type { CategoryColor } from '../../types/domain'
  * y el nombre visible sí cambiaron: ver DESIGN.md § Tonos de tarjeta.
  *
  * - bg: `background` completo (en oscuro es un degradado en capas).
- * - solid: un solo color, para rellenos SVG donde no cabe un degradado.
  * - text: texto e íconos encima — siempre --text-primary.
  */
-export const CATEGORY_COLOR_TOKENS: Record<CategoryColor, { bg: string; solid: string; text: string }> = {
-  green: { bg: 'var(--tone-turquesa-bg)', solid: 'var(--tone-turquesa-solid)', text: 'var(--text-primary)' },
-  purple: { bg: 'var(--tone-lavanda-bg)', solid: 'var(--tone-lavanda-solid)', text: 'var(--text-primary)' },
-  coral: { bg: 'var(--tone-ambar-bg)', solid: 'var(--tone-ambar-solid)', text: 'var(--text-primary)' },
-  pink: { bg: 'var(--tone-rosa-bg)', solid: 'var(--tone-rosa-solid)', text: 'var(--text-primary)' },
+export const CATEGORY_COLOR_TOKENS: Record<CategoryColor, { bg: string; text: string }> = {
+  green: { bg: 'var(--tone-turquesa-bg)', text: 'var(--text-primary)' },
+  purple: { bg: 'var(--tone-lavanda-bg)', text: 'var(--text-primary)' },
+  coral: { bg: 'var(--tone-ambar-bg)', text: 'var(--text-primary)' },
+  pink: { bg: 'var(--tone-rosa-bg)', text: 'var(--text-primary)' },
 }
 
 export const CATEGORY_COLOR_OPTIONS: ColorOption[] = [

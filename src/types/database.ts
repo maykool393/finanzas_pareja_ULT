@@ -25,6 +25,7 @@ export type Database = {
           icon: string
           id: string
           initial_balance: number
+          is_primary: boolean
           name: string
           owner_id: string | null
           type: string
@@ -40,6 +41,7 @@ export type Database = {
           icon?: string
           id?: string
           initial_balance?: number
+          is_primary?: boolean
           name: string
           owner_id?: string | null
           type: string
@@ -55,6 +57,7 @@ export type Database = {
           icon?: string
           id?: string
           initial_balance?: number
+          is_primary?: boolean
           name?: string
           owner_id?: string | null
           type?: string
@@ -262,12 +265,51 @@ export type Database = {
         }
         Relationships: []
       }
+      investment_groups: {
+        Row: {
+          color_variant: string
+          created_at: string
+          household_id: string
+          icon: string
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          color_variant?: string
+          created_at?: string
+          household_id: string
+          icon?: string
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          color_variant?: string
+          created_at?: string
+          household_id?: string
+          icon?: string
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "investment_groups_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       investments: {
         Row: {
           archived_at: string | null
           color_variant: string
           created_at: string
           current_value: number
+          group_id: string | null
           household_id: string
           icon: string
           id: string
@@ -282,6 +324,7 @@ export type Database = {
           color_variant?: string
           created_at?: string
           current_value: number
+          group_id?: string | null
           household_id: string
           icon?: string
           id?: string
@@ -296,6 +339,7 @@ export type Database = {
           color_variant?: string
           created_at?: string
           current_value?: number
+          group_id?: string | null
           household_id?: string
           icon?: string
           id?: string
@@ -306,6 +350,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "investments_group_fkey"
+            columns: ["group_id", "household_id"]
+            isOneToOne: false
+            referencedRelation: "investment_groups"
+            referencedColumns: ["id", "household_id"]
+          },
           {
             foreignKeyName: "investments_household_id_fkey"
             columns: ["household_id"]
@@ -433,6 +484,7 @@ export type Database = {
       current_household_id: { Args: never; Returns: string }
       generate_invite_code: { Args: never; Returns: string }
       join_household: { Args: { p_code: string }; Returns: string }
+      set_primary_account: { Args: { p_account_id: string }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never

@@ -12,6 +12,7 @@ type AccountRow = {
   icon: string
   color_variant: string
   currency: string
+  is_primary: boolean
   archived_at: string | null
   created_at: string
   updated_at: string
@@ -29,6 +30,8 @@ function mapRow(row: AccountRow): Account {
     icon: row.icon,
     colorVariant: row.color_variant as ColorVariant,
     currency: row.currency,
+    // Boolean(): antes de correr la migración 20260930192842 la columna no existe.
+    isPrimary: Boolean(row.is_primary),
     archivedAt: row.archived_at,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -41,6 +44,8 @@ export interface AccountInput {
   ownerId: string | null
   icon: string
   colorVariant: ColorVariant
+  /** No va en el insert/update: se marca con setPrimaryAccount, que desmarca la anterior. */
+  isPrimary: boolean
 }
 
 export async function listAccounts(): Promise<Account[]> {
@@ -87,6 +92,20 @@ export async function updateAccount(id: string, input: AccountInput): Promise<Ac
     .single()
   if (error) throw error
   return mapRow(data)
+}
+
+/**
+ * La marca como principal y desmarca la que lo era, en una sola transacción
+ * (función set_primary_account, migración 20260930192842).
+ */
+export async function setPrimaryAccount(id: string): Promise<void> {
+  const { error } = await supabase.rpc('set_primary_account', { p_account_id: id })
+  if (error) throw error
+}
+
+export async function clearPrimaryAccount(id: string): Promise<void> {
+  const { error } = await supabase.from('accounts').update({ is_primary: false }).eq('id', id)
+  if (error) throw error
 }
 
 export async function setAccountArchived(id: string, archived: boolean): Promise<void> {

@@ -13,6 +13,8 @@ export interface Account {
   icon: string
   colorVariant: ColorVariant
   currency: string
+  /** Cuenta principal del hogar (a lo sumo una): lleva la estrella. */
+  isPrimary: boolean
   archivedAt: string | null
   createdAt: string
   updatedAt: string
@@ -46,8 +48,22 @@ export interface Investment {
   currentValue: number
   investedAt: string
   icon: string
+  /** Ya no se usa: la variante de color es del grupo (InvestmentGroup). */
   colorVariant: ColorVariant
+  /** null = sin grupo ("Otras"). */
+  groupId: string | null
   archivedAt: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+/** Grupo de inversiones (ej. "De giro"): encabezado con su cuadro de ícono en la lista de Patrimonio. */
+export interface InvestmentGroup {
+  id: string
+  householdId: string
+  name: string
+  icon: string
+  colorVariant: ColorVariant
   createdAt: string
   updatedAt: string
 }

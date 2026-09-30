@@ -312,12 +312,12 @@ Las etapas se llaman **R1–R8** para no confundirlas con las fases de módulos 
 | R2 | Estilos globales y superficies del navegador | R1 | 🟨 Commit hecho — falta tu revisión visual |
 | R3 | Componentes compartidos | R1, R2 | 🟨 Commit hecho — falta tu revisión visual |
 | R4 | Estructura: navegación, cabecera, login | R3 | ✅ Commit hecho |
-| R5 | Onboarding nuevo | R3, R4 | 🟨 Implementado — falta verificar en vivo y commit |
-| R6 | Patrimonio | R3, R4 | ⬜ Pendiente |
+| R5 | Onboarding nuevo | R3, R4 | 🟨 Commit hecho — falta verificar en vivo |
+| R6 | Patrimonio | R3, R4 | 🟨 Implementado — falta correr la migración, verificar en vivo y commit |
 | R7 | Resumen (historias) | R3, R4 | ⬜ Pendiente |
 | R8 | Limpieza y verificación final | R1–R7 | ⬜ Pendiente |
 
-R5, R6 y R7 no dependen entre sí: se pueden hacer en cualquier orden. R6 y R7 tienen decisiones pendientes (ver abajo) que conviene cerrar antes de empezarlas.
+R5, R6 y R7 no dependen entre sí: se pueden hacer en cualquier orden. Las decisiones que tenían pendientes ya están cerradas (ver abajo).
 
 ### R1 — Tokens 🟨
 - [x] `tokens.css` nuevo:
@@ -461,33 +461,35 @@ Pedido el 2026-09-28: el código de 36 caracteres no se podía dictar.
   - Corregido al revisar: la línea de progreso desbordaba la página hacia los lados (el punto se movía con un elemento del ancho de la línea).
   - Corregido al revisar: el código se mostraba en una negrita de Ubuntu Mono que no se carga (el navegador la imitaba).
 - [ ] **Verificar en vivo los tres recorridos.** Incluye el pendiente de la Fase 0.5: crear en pareja, compartir el código o el QR y que la segunda persona quede unida.
-- [ ] Commit.
+- [x] Commit ("Aplicación de mejora R6", que contiene R5).
 
-### R6 — Patrimonio ⬜
-- [ ] **Cabecera:**
-  - Total en `--text-4xl`.
-  - Barra de composición: segmentos separados 2px; es un botón y cada segmento abre su grupo.
+### R6 — Patrimonio 🟨
+- [x] **Migración** `20260930192842_primary_account_investment_groups.sql`, probada con PGlite (16 comprobaciones). **Hay que correrla en el SQL Editor de Supabase antes de usar esta versión:** crear o editar una inversión envía `group_id`, y sin la columna falla. Mientras tanto la lista de grupos queda vacía, sin error.
+- [x] **Cabecera** (con `HeaderExtension`, que pone el contenido de la pantalla dentro de la cabecera fija):
+  - Total en `--text-4xl`, con bloque de carga y aviso si falta una lista.
+  - Barra de composición: segmentos separados 2px. Es un solo botón de 44px; el segmento se elige por dónde se tocó (un segmento de 7px no se puede tocar solo). Con teclado abre sin destacar.
   - Chevron de pista (2 veces).
-- [ ] **Hoja "Composición del patrimonio"** (un `Dialog` más): la fila destacada con fondo y escala 1.02, sin atenuar las demás.
-- [ ] **Píldora de porcentaje** (componente): fondo con el tinte de la serie, texto normal. También la usa la historia 2 de R7.
-- [ ] **Cuentas y Deudas:**
-  - Tarjetas nuevas con efecto de apilado al hacer scroll (`transform` en scroll pasivo, no `sticky`).
-  - Con reducir movimiento, sin apilado; `scroll-margin` para el foco con teclado.
-- [ ] **Botón flotante** "Añadir cuenta, deuda o inversión": abre una elección de las tres y el formulario correspondiente (movido desde R4).
-- [ ] **Inversiones** en lista agrupada (DESIGN.md § Lista de inversiones).
-- [ ] **Cuenta principal** (decisión 7):
-  - Migración: `accounts.is_primary boolean not null default false`, con un índice único parcial para que haya una sola por hogar.
-  - Se elige en el formulario de la cuenta y se muestra con la estrella.
-- [ ] **Grupos de inversiones** (decisión 7):
-  - Migración: tabla `investment_groups` (nombre, ícono, variante de color, `archived_at`, con el patrón de RLS de siempre) e `investments.group_id` nullable (`on delete set null`).
-  - Formulario de grupo; la inversión elige su grupo.
-  - La variante de color pasa al grupo: `investments.color_variant` deja de usarse (se puede quitar después).
-- [ ] **Eliminar los gráficos** (decisión 1):
-  - `CategoryBreakdownChart`, `IncomeVsExpenseChart`, `NetWorthTrendChart` y `tooltipFormat.ts`.
-  - La parte de `useDashboardCharts` que solo los alimenta.
-  - La dependencia `recharts` en `package.json`.
-- [ ] `Dashboard.tsx` pasa a ser la pantalla Patrimonio.
-- [ ] Antes de escribir las migraciones, cargar la skill `supabase-postgres-best-practices`.
+- [x] **Hoja "Composición del patrimonio"** (un `Dialog` más): la fila destacada con fondo y escala 1.02, sin atenuar las demás.
+- [x] **Píldora de porcentaje** (`PercentPill`): fondo con el tinte de la serie, texto normal. También la usará la historia 2 de R7.
+- [x] **Cuentas y Deudas:**
+  - Apilado al hacer scroll en móvil con `position: sticky` (título fijo bajo la cabecera y cada tarjeta 18px más abajo), sin JavaScript. Cambió respecto del plan (`transform` en el evento de scroll): `sticky` no ejecuta nada al hacer scroll y da el mismo efecto.
+  - Con reducir movimiento y en escritorio, sin apilado. La tarjeta con el foco pasa por encima de las que la tapan.
+- [x] **Botón flotante** "Añadir cuenta, deuda o inversión": abre "¿Qué quieres agregar?" con las tres opciones, y cada una abre el formulario de su sección.
+- [x] **Inversiones** en lista agrupada: un contenedor por grupo con su cuadro de ícono y su botón +, y "Otras" al final.
+- [x] **Cuenta principal** (decisión 7):
+  - `accounts.is_primary`, con un índice único parcial: una sola por hogar.
+  - `set_primary_account(id)` cambia la principal en una sola llamada (security invoker: la RLS de siempre decide).
+  - Casilla "Cuenta principal" en el formulario (componente nuevo `Checkbox`); la estrella ya estaba en la tarjeta.
+- [x] **Grupos de inversiones** (decisión 7):
+  - Tabla `investment_groups` (nombre único por hogar, ícono, variante de color) con el patrón de RLS de siempre, e `investments.group_id` nullable. La clave foránea compuesta con `household_id` impide usar el grupo de otro hogar; al borrar el grupo, `group_id` queda en null.
+  - Sin `archived_at`: un grupo se elimina y sus inversiones pasan a "Otras".
+  - La inversión elige su grupo o crea uno nuevo desde su formulario; tocar el nombre del grupo abre "Editar grupo" (nombre, ícono, color y eliminar).
+  - La variante de color pasa al grupo: el formulario ya no la pide. La columna `investments.color_variant` sigue en la base (se puede quitar en R8).
+- [x] **Gráficos eliminados** (decisión 1): los tres componentes, `charts.module.css`, `tooltipFormat.ts`, `useDashboardCharts` y la dependencia `recharts`. El build ya no tiene fragmentos de gráficos (precache 972 KiB). También se quitó "Últimos movimientos" de la pantalla: está en su pestaña.
+- [x] `Dashboard.tsx` pasó a ser `Patrimonio.tsx`, y `features/dashboard` a `features/patrimonio`.
+- [x] Build, lint y `tsc`. Revisión con Playwright en 390px (claro y oscuro, con scroll para ver el apilado y la hoja abierta desde un segmento) y en escritorio: sin errores de consola ni scroll horizontal.
+- [ ] **Verificar en vivo** (después de la migración): marcar una cuenta principal y cambiarla; crear un grupo desde una inversión, editarlo y eliminarlo; el apilado en el teléfono.
+- [ ] Commit.
 
 ### R7 — Resumen (historias) ⬜
 - [ ] **Estructura:**

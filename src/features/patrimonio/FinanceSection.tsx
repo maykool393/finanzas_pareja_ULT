@@ -1,4 +1,4 @@
-import { type ReactNode, useState } from 'react'
+import { type CSSProperties, type ReactNode, useEffect, useState } from 'react'
 import { ArchivedList, ArchivedToggle } from '../../components/ui/ArchivedList'
 import { Button } from '../../components/ui/Button'
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog'
@@ -24,11 +24,13 @@ export interface FinanceItem {
   icon: string
   colorVariant: ColorVariant
   archivedAt: string | null
+  /** Solo cuentas: la principal lleva la estrella. */
+  isPrimary?: boolean
 }
 
 /**
- * Los datos de la sección, que llegan desde Dashboard (no se cargan aquí):
- * así el patrimonio y los gráficos leen el mismo estado que las tarjetas, y
+ * Los datos de la sección, que llegan desde Patrimonio (no se cargan aquí):
+ * así el total y la composición leen el mismo estado que las tarjetas, y
  * se actualizan cuando la sección guarda algo.
  */
 export interface FinanceQuery<T> {
@@ -54,9 +56,15 @@ interface FinanceSectionProps<T extends FinanceItem> {
   caption?: (item: T) => string | null
   /**
    * Cómo se muestran los ítems activos, si no son tarjetas (inversiones: una
-   * lista). Recibe los ítems y la función que abre la edición.
+   * lista). Recibe los ítems, la función que abre la edición y la que abre el
+   * formulario de crear con un contexto (ej. el grupo ya elegido).
    */
-  renderActive?: (items: T[], edit: (item: T) => void) => ReactNode
+  renderActive?: (items: T[], edit: (item: T) => void, create: (context: string | null) => void) => ReactNode
+  /**
+   * Abre el formulario de crear desde fuera de la sección (el botón flotante
+   * de Patrimonio). Cada vez que el número cambia, se abre.
+   */
+  createRequest?: number
   text: {
     /** Nombre accesible del botón + del encabezado, ej. "Añadir cuenta". */
     add: string
@@ -70,8 +78,12 @@ interface FinanceSectionProps<T extends FinanceItem> {
     archiveDescription: (name: string) => string
     deleteDescription: (name: string) => string
   }
-  /** El formulario: vacío para crear (`item` null) o con el ítem para editar. Llama a `close` al guardar o cancelar. */
-  renderForm: (item: T | null, close: () => void) => ReactNode
+  /**
+   * El formulario: vacío para crear (`item` null) o con el ítem para editar.
+   * Llama a `close` al guardar o cancelar. `context` es el que se pasó al
+   * abrir el de crear (ej. el grupo); null si se abrió con el botón +.
+   */
+  renderForm: (item: T | null, close: () => void, context: string | null) => ReactNode
 }
 
 export function FinanceSection<T extends FinanceItem>({
@@ -84,6 +96,7 @@ export function FinanceSection<T extends FinanceItem>({
   progress,
   caption,
   renderActive,
+  createRequest,
   text,
   renderForm,
 }: FinanceSectionProps<T>) {
@@ -91,6 +104,22 @@ export function FinanceSection<T extends FinanceItem>({
 
   const [showArchived, setShowArchived] = useState(false)
   const [formOpen, setFormOpen] = useState(false)
+  const [createContext, setCreateContext] = useState<string | null>(null)
+
+  function openCreate(context: string | null = null) {
+    setCreateContext(context)
+    setFormOpen(true)
+  }
+
+  // El botón flotante de Patrimonio pide abrir el formulario de esta sección.
+  useEffect(() => {
+    // Falso positivo del linter: abre el diálogo en respuesta a un pedido de
+    // afuera (el número cambia), no deriva estado de las props.
+    if (!createRequest) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCreateContext(null)
+    setFormOpen(true)
+  }, [createRequest])
   const [editing, setEditing] = useState<T | null>(null)
   const [archiving, setArchiving] = useState<T | null>(null)
   const [deleting, setDeleting] = useState<T | null>(null)
@@ -106,12 +135,15 @@ export function FinanceSection<T extends FinanceItem>({
 
   return (
     <section className={styles.section}>
-      <SectionHeader
-        title={title}
-        total={query.loading || query.error ? undefined : formatCurrency(total, currency)}
-        onAdd={() => setFormOpen(true)}
-        addLabel={text.add}
-      />
+      {/* En las secciones de tarjetas, el título queda fijo mientras se apilan (ver sectionGrid). */}
+      <div className={renderActive ? undefined : styles.stickyTitle}>
+        <SectionHeader
+          title={title}
+          total={query.loading || query.error ? undefined : formatCurrency(total, currency)}
+          onAdd={() => openCreate(null)}
+          addLabel={text.add}
+        />
+      </div>
 
       <LoadStatus loading={query.loading} error={query.error} onRetry={query.retry} skeleton={renderActive ? <SkeletonRows count={2} /> : <SkeletonCards />}>
         {!showArchived && active.length === 0 && (
@@ -119,32 +151,34 @@ export function FinanceSection<T extends FinanceItem>({
             title={text.empty.title}
             description={text.empty.description}
             action={
-              <Button variant="secondary" onClick={() => setFormOpen(true)}>
+              <Button variant="secondary" onClick={() => openCreate(null)}>
                 {text.empty.action}
               </Button>
             }
           />
         )}
 
-        {!showArchived && active.length > 0 && renderActive?.(active, setEditing)}
+        {!showArchived && active.length > 0 && renderActive?.(active, setEditing, openCreate)}
 
         {!showArchived && active.length > 0 && !renderActive && (
-          <div className={styles.cardRow}>
-            {active.map((item) => {
+          <div className={`${styles.cardRow} ${styles.stack}`}>
+            {active.map((item, index) => {
               const Icon = ICONS[item.icon as AccountIconKey] ?? ICONS[defaultIcon]
               return (
-                <ItemCard
-                  key={item.id}
-                  name={item.name}
-                  amount={formatCurrency(amount(item), currency)}
-                  variant={`${kind}-${item.colorVariant === 'b' ? 'b' : 'a'}` satisfies ItemVariant}
-                  icon={<Icon />}
-                  owner={ownerName(item.ownerId)}
-                  avatars={<HouseholdAvatars members={members} ownerId={item.ownerId} />}
-                  progress={progress?.(item)}
-                  caption={caption?.(item)}
-                  onClick={() => setEditing(item)}
-                />
+                <div key={item.id} className={styles.stackItem} style={{ '--stack-index': index } as CSSProperties}>
+                  <ItemCard
+                    name={item.name}
+                    amount={formatCurrency(amount(item), currency)}
+                    variant={`${kind}-${item.colorVariant === 'b' ? 'b' : 'a'}` satisfies ItemVariant}
+                    icon={<Icon />}
+                    owner={ownerName(item.ownerId)}
+                    primary={item.isPrimary}
+                    avatars={<HouseholdAvatars members={members} ownerId={item.ownerId} />}
+                    progress={progress?.(item)}
+                    caption={caption?.(item)}
+                    onClick={() => setEditing(item)}
+                  />
+                </div>
               )
             })}
           </div>
@@ -168,13 +202,13 @@ export function FinanceSection<T extends FinanceItem>({
       </LoadStatus>
 
       <Dialog open={formOpen} onClose={() => setFormOpen(false)} title={text.createTitle}>
-        {renderForm(null, () => setFormOpen(false))}
+        {renderForm(null, () => setFormOpen(false), createContext)}
       </Dialog>
 
       <Dialog open={editing !== null} onClose={() => setEditing(null)} title={text.editTitle}>
         {editing && (
           <>
-            {renderForm(editing, () => setEditing(null))}
+            {renderForm(editing, () => setEditing(null), null)}
             <DangerRow>
               <button
                 type="button"

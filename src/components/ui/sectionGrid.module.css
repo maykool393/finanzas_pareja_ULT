@@ -15,3 +15,38 @@
   color: var(--text-muted);
   margin-top: var(--space-sm);
 }
+
+/* ---------- Apilado al hacer scroll (DESIGN.md § Patrimonio) ----------
+   Solo en teléfono (una tarjeta por fila) y sin "reducir movimiento". El
+   título queda fijo bajo la cabecera y cada tarjeta se detiene 18px más
+   abajo que la anterior: la siguiente sube y la tapa, dejando asomar su
+   borde. Cuando la sección termina, todo sigue con el scroll. Sin JavaScript:
+   position: sticky, limitado por la sección y por la lista. */
+@media (max-width: 640px) and (prefers-reduced-motion: no-preference) {
+  .stickyTitle {
+    position: sticky;
+    top: var(--app-header-height, 0px);
+    z-index: 3;
+    padding-top: var(--space-sm);
+    /* Tapa las tarjetas que pasan por debajo. */
+    background: var(--surface-page);
+  }
+
+  /* En una grilla, sticky no puede salir de su fila: la lista pasa a columna. */
+  .stack {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stackItem {
+    position: sticky;
+    /* Bajo la cabecera y el título (≈72px), y 18px más por cada tarjeta anterior. */
+    top: calc(var(--app-header-height, 0px) + 72px + var(--stack-index, 0) * 18px);
+    z-index: 1;
+  }
+
+  /* La tarjeta con el foco se ve completa, aunque otra la esté tapando. */
+  .stackItem:focus-within {
+    z-index: 2;
+  }
+}

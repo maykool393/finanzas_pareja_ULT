@@ -16,13 +16,13 @@ const page = <K extends string>(name: K, load: () => Promise<Record<K, Component
 
 const Budgets = page('Budgets', () => import('./pages/Budgets'))
 const Categories = page('Categories', () => import('./pages/Categories'))
-const Dashboard = page('Dashboard', () => import('./pages/Dashboard'))
 const ForgotPassword = page('ForgotPassword', () => import('./pages/ForgotPassword'))
 const HouseholdSettings = page('HouseholdSettings', () => import('./pages/HouseholdSettings'))
 const InviteHousehold = page('InviteHousehold', () => import('./pages/InviteHousehold'))
 const JoinRedirect = page('JoinRedirect', () => import('./pages/JoinRedirect'))
 const More = page('More', () => import('./pages/More'))
 const NotFound = page('NotFound', () => import('./pages/NotFound'))
+const Patrimonio = page('Patrimonio', () => import('./pages/Patrimonio'))
 const ResetPassword = page('ResetPassword', () => import('./pages/ResetPassword'))
 const Resumen = page('Resumen', () => import('./pages/Resumen'))
 const Transactions = page('Transactions', () => import('./pages/Transactions'))
@@ -60,7 +60,7 @@ export default function App() {
         <Route path="/unirse/:code" element={<JoinRedirect />} />
         <Route element={<ProtectedLayout />}>
           <Route path="/resumen" element={<Resumen />} />
-          <Route path="/patrimonio" element={<Dashboard />} />
+          <Route path="/patrimonio" element={<Patrimonio />} />
           <Route path="/presupuesto" element={<Budgets />} />
           <Route path="/movimientos" element={<Transactions />} />
           <Route path="/mas" element={<More />} />

@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { type CSSProperties, type ReactNode, useEffect, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { useHouseholdMembers } from '../../hooks/useHouseholdMembers'
 import { supabase } from '../../lib/supabase'
@@ -8,6 +8,7 @@ import { BarChartIcon, CardIcon, GridDotsIcon, HomeIcon, SwapIcon } from '../ui/
 import { Logo } from '../ui/Logo'
 import { ThemeToggle } from '../ui/ThemeToggle'
 import styles from './AppShell.module.css'
+import { HeaderSlotContext } from './headerSlot'
 
 /** Las cinco pestañas (DESIGN.md § Estructura de la app). */
 const NAV = [
@@ -39,14 +40,28 @@ export function AppShell({ children }: { children: ReactNode }) {
   const titles = VIEW_TITLES[pathname]
   const viewTitle = titles ? titles[members.length >= 2 ? 0 : 1] : 'Ver más'
 
+  // Lugar de la cabecera para el contenido de cada pantalla (HeaderExtension).
+  const [slot, setSlot] = useState<HTMLDivElement | null>(null)
+
+  // Alto de la cabecera pegada arriba: lo usan los títulos y tarjetas que se
+  // apilan al hacer scroll en Patrimonio, para quedar justo debajo de ella.
+  const [header, setHeader] = useState<HTMLElement | null>(null)
+  const [headerHeight, setHeaderHeight] = useState(0)
+  useEffect(() => {
+    if (!header) return
+    const observer = new ResizeObserver(() => setHeaderHeight(header.offsetHeight))
+    observer.observe(header)
+    return () => observer.disconnect()
+  }, [header])
+
   return (
-    <div className={styles.shell}>
+    <div className={styles.shell} style={{ '--app-header-height': `${headerHeight}px` } as CSSProperties}>
       {/* Primer elemento con Tab: evita recorrer la cabecera en cada pantalla.
           Invisible hasta recibir el foco. */}
       <a href="#contenido" className="skip-link">
         Saltar al contenido
       </a>
-      <header className={styles.header}>
+      <header className={styles.header} ref={setHeader}>
         <div className={styles.headerInner}>
           <Logo className={styles.brand} />
 
@@ -78,11 +93,12 @@ export function AppShell({ children }: { children: ReactNode }) {
             Salir
           </button>
         </div>
+        <div ref={setSlot} className={styles.headerExtra} />
       </header>
 
       {/* tabIndex -1: el enlace de arriba le pasa el foco, sin sumarlo al orden de Tab. */}
       <main id="contenido" tabIndex={-1} className={styles.main}>
-        {children}
+        <HeaderSlotContext.Provider value={slot}>{children}</HeaderSlotContext.Provider>
       </main>
 
       <nav className={styles.tabBar} aria-label="Navegación principal">

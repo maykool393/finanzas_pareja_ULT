@@ -1,17 +1,19 @@
 import { useCurrency } from '../../hooks/useCurrency'
 import { formatCurrency } from '../../lib/format'
 import type { Debt, Profile } from '../../types/domain'
-import { FinanceSection } from '../dashboard/FinanceSection'
+import { FinanceSection } from '../patrimonio/FinanceSection'
 import { DebtForm } from './DebtForm'
 import type { useDebts } from './useDebts'
 
 interface DebtsSectionProps {
-  /** De useDebts() en Dashboard, que comparte los datos con el patrimonio y los gráficos. */
+  /** De useDebts() en Patrimonio, que comparte los datos con el total y la composición. */
   query: ReturnType<typeof useDebts>
   members: Profile[]
+  /** El botón flotante de Patrimonio pide abrir el formulario de crear. */
+  createRequest?: number
 }
 
-export function DebtsSection({ query, members }: DebtsSectionProps) {
+export function DebtsSection({ query, members, createRequest }: DebtsSectionProps) {
   const currency = useCurrency()
 
   /** "$173.000 · 48 pagos": cuota y pagos que faltan, cuando la deuda los tiene. */
@@ -31,6 +33,7 @@ export function DebtsSection({ query, members }: DebtsSectionProps) {
       title="Deudas"
       query={{ ...query, items: query.debts }}
       members={members}
+      createRequest={createRequest}
       defaultIcon="card"
       amount={(debt) => debt.remaining}
       progress={(debt) => (debt.principal > 0 ? (debt.principal - debt.remaining) / debt.principal : 0)}

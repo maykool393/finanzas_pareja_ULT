@@ -1,21 +1,24 @@
 import type { Profile } from '../../types/domain'
-import { FinanceSection } from '../dashboard/FinanceSection'
+import { FinanceSection } from '../patrimonio/FinanceSection'
 import { AccountForm } from './AccountForm'
 import type { useAccounts } from './useAccounts'
 
 interface AccountsSectionProps {
-  /** De useAccounts() en Dashboard, que comparte los datos con el patrimonio y los gráficos. */
+  /** De useAccounts() en Patrimonio, que comparte los datos con el total y la composición. */
   query: ReturnType<typeof useAccounts>
   members: Profile[]
+  /** El botón flotante de Patrimonio pide abrir el formulario de crear. */
+  createRequest?: number
 }
 
-export function AccountsSection({ query, members }: AccountsSectionProps) {
+export function AccountsSection({ query, members, createRequest }: AccountsSectionProps) {
   return (
     <FinanceSection
       kind="account"
       title="Cuentas"
       query={{ ...query, items: query.accounts }}
       members={members}
+      createRequest={createRequest}
       defaultIcon="bank"
       amount={(account) => account.balance}
       text={{

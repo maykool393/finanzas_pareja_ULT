@@ -1,0 +1,95 @@
+/* ---------- En la cabecera (HeaderExtension): texto sobre azul marino ---------- */
+.total {
+  font-size: var(--text-4xl);
+  font-weight: var(--weight-bold);
+  line-height: 1.1;
+  color: var(--text-on-header);
+}
+
+/* Ocupa el lugar del monto mientras cargan las tres listas: el alto lo da la
+   línea del <p>, así que la cabecera no salta cuando llega el total. */
+.skeleton {
+  display: inline-block;
+  width: 5em;
+  height: 0.8em;
+  vertical-align: middle;
+  border-radius: var(--radius-control);
+  background: var(--surface-on-header);
+}
+
+/* Rosa claro: el magenta de --loss-text no llega a 4.5:1 sobre el azul marino (6.7:1 este). */
+.error {
+  font-size: var(--text-sm);
+  color: var(--header-series-debts);
+}
+
+.meta {
+  margin-top: var(--space-xs);
+  font-size: var(--text-sm);
+  color: var(--text-on-header-muted);
+}
+
+/* ---------- "¿Qué quieres agregar?" (botón flotante) ---------- */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.option {
+  width: 100%;
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: 12px var(--space-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  text-align: left;
+  transition: background-color var(--duration-fast) ease,
+              transform var(--duration-fast) var(--ease-out);
+}
+
+.option:active {
+  transform: scale(var(--press-scale-large));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .option:hover {
+    background: var(--surface-sunken);
+  }
+}
+
+.optionIcon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  background: var(--brand-tint);
+  color: var(--brand-strong);
+}
+
+.optionIcon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.optionText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.optionTitle {
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+}
+
+.optionDescription {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}

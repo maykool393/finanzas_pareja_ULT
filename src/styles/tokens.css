@@ -65,6 +65,11 @@
   --text-on-header:        #FFFFFF;
   --text-on-header-muted:  rgba(255, 255, 255, 0.65);   /* 8.0:1; al 45% no llegaba */
   --story-shared-bg:       linear-gradient(160deg, #1E1B3A 0%, #0F172A 100%);
+  /* Series sobre la cabecera (barra de composición de Patrimonio): las
+     versiones claras, que sobre el azul marino dan 9.6, 6.0 y 6.7:1. */
+  --header-series-accounts:    var(--brand);
+  --header-series-investments: #818CF8;
+  --header-series-debts:       #F472B6;
 
   /* ---------- Marca ---------- */
   /* Fijos: el turquesa claro solo va de fondo, con texto oscuro encima. */
@@ -100,14 +105,13 @@
 
   /* ---------- Tonos de tarjeta ----------
      -bg:     `background` completo (en oscuro es un degradado en capas).
-     -solid:  un solo color, para donde no cabe un degradado (relleno SVG).
      -border: en claro no hay borde (la tarjeta lleva sombra). */
-  --tone-turquesa-bg: #A7E8DC;  --tone-turquesa-solid: #A7E8DC;  --tone-turquesa-border: transparent;
-  --tone-lavanda-bg:  #D7D3FB;  --tone-lavanda-solid:  #D7D3FB;  --tone-lavanda-border:  transparent;
-  --tone-pizarra-bg:  #D9DEE7;  --tone-pizarra-solid:  #D9DEE7;  --tone-pizarra-border:  transparent;
-  --tone-celeste-bg:  #BFE3F9;  --tone-celeste-solid:  #BFE3F9;  --tone-celeste-border:  transparent;
-  --tone-ambar-bg:    #FDE68A;  --tone-ambar-solid:    #FDE68A;  --tone-ambar-border:    transparent;
-  --tone-rosa-bg:     #FBCFE8;  --tone-rosa-solid:     #FBCFE8;  --tone-rosa-border:     transparent;
+  --tone-turquesa-bg: #A7E8DC;  --tone-turquesa-border: transparent;
+  --tone-lavanda-bg:  #D7D3FB;  --tone-lavanda-border:  transparent;
+  --tone-pizarra-bg:  #D9DEE7;  --tone-pizarra-border:  transparent;
+  --tone-celeste-bg:  #BFE3F9;  --tone-celeste-border:  transparent;
+  --tone-ambar-bg:    #FDE68A;  --tone-ambar-border:    transparent;
+  --tone-rosa-bg:     #FBCFE8;  --tone-rosa-border:     transparent;
 
   /* Riel y relleno de la barra de progreso sobre una tarjeta de tono (5–6.4:1). */
   --tone-track: rgba(255, 255, 255, 0.55);
@@ -228,12 +232,6 @@
   --tone-celeste-bg:  linear-gradient(160deg, rgba(56, 189, 248, 0.22) 0%, rgba(56, 189, 248, 0.10) 100%), var(--surface-card);
   --tone-ambar-bg:    linear-gradient(160deg, rgba(245, 158, 11, 0.22) 0%, rgba(245, 158, 11, 0.10) 100%), var(--surface-card);
   --tone-rosa-bg:     linear-gradient(160deg, rgba(244, 114, 182, 0.22) 0%, rgba(244, 114, 182, 0.10) 100%), var(--surface-card);
-  --tone-turquesa-solid: #144550;
-  --tone-lavanda-solid:  #2C355B;
-  --tone-pizarra-solid:  #303A4D;
-  --tone-celeste-solid:  #1C405B;
-  --tone-ambar-solid:    #463927;
-  --tone-rosa-solid:     #45304D;
   --tone-turquesa-border: rgba(18, 212, 196, 0.35);
   --tone-lavanda-border:  rgba(129, 140, 248, 0.35);
   --tone-pizarra-border:  rgba(148, 163, 184, 0.35);
@@ -308,12 +306,6 @@
     --tone-celeste-bg:  linear-gradient(160deg, rgba(56, 189, 248, 0.22) 0%, rgba(56, 189, 248, 0.10) 100%), var(--surface-card);
     --tone-ambar-bg:    linear-gradient(160deg, rgba(245, 158, 11, 0.22) 0%, rgba(245, 158, 11, 0.10) 100%), var(--surface-card);
     --tone-rosa-bg:     linear-gradient(160deg, rgba(244, 114, 182, 0.22) 0%, rgba(244, 114, 182, 0.10) 100%), var(--surface-card);
-    --tone-turquesa-solid: #144550;
-    --tone-lavanda-solid:  #2C355B;
-    --tone-pizarra-solid:  #303A4D;
-    --tone-celeste-solid:  #1C405B;
-    --tone-ambar-solid:    #463927;
-    --tone-rosa-solid:     #45304D;
     --tone-turquesa-border: rgba(18, 212, 196, 0.35);
     --tone-lavanda-border:  rgba(129, 140, 248, 0.35);
     --tone-pizarra-border:  rgba(148, 163, 184, 0.35);
