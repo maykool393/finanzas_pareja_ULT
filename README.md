@@ -311,7 +311,7 @@ Las etapas se llaman **R1–R8** para no confundirlas con las fases de módulos 
 | R1 | Tokens: paleta, tonos, tipografía, radios, sombras, movimiento | — | 🟨 Commit hecho — falta tu revisión visual |
 | R2 | Estilos globales y superficies del navegador | R1 | 🟨 Commit hecho — falta tu revisión visual |
 | R3 | Componentes compartidos | R1, R2 | 🟨 Commit hecho — falta tu revisión visual |
-| R4 | Estructura: navegación, cabecera, login | R3 | 🟨 Implementado — falta tu revisión y commit |
+| R4 | Estructura: navegación, cabecera, login | R3 | ✅ Commit hecho |
 | R5 | Onboarding nuevo | R3, R4 | ⬜ Pendiente |
 | R6 | Patrimonio | R3, R4 | ⬜ Pendiente |
 | R7 | Resumen (historias) | R3, R4 | ⬜ Pendiente |
@@ -396,11 +396,11 @@ Pedido el 2026-09-28: el código de 36 caracteres no se podía dictar.
   - Un código inexistente, alguien que ya tiene hogar y un hogar lleno dan cada uno su error.
   - Un usuario sin sesión no puede ejecutar la función, y nadie ve los códigos de otros hogares.
 - [x] App: `lib/inviteCode.ts` (normalizar, mostrar como `XXXX-XXXX` y unirse con mensajes según la causa); onboarding, "Invitar a tu pareja", link `/unirse/:code` y unión automática desde el link.
-- [ ] **Correr la migración en el SQL Editor de Supabase.** Sin eso, crear un hogar y unirse fallan.
+- [x] **Correr la migración en el SQL Editor de Supabase.** (2026-09-30)
 - [ ] Revisar los avisos de seguridad del proyecto en Supabase (Advisors) después de correrla.
 - [ ] Verificar en vivo: crear en pareja, compartir el código y que la otra persona se una escribiéndolo y desde el QR.
 
-### R4 — Estructura de la app 🟨
+### R4 — Estructura de la app ✅
 - [x] **Navegación inferior de 5 pestañas:** Resumen, Patrimonio, Presupuesto, Movimientos y Ver más.
   - Estadísticas desaparece: `Statistics.tsx` pasó a ser `Resumen.tsx`.
   - "Ver más" sigue con Categorías, Ajustes del hogar e Invitar, y su pestaña queda marcada también en esas subpantallas.
@@ -432,8 +432,8 @@ Pedido el 2026-09-28: el código de 36 caracteres no se podía dictar.
   - Actualizadas en `App.tsx`, `AppShell.tsx`, `SocialAuthButtons.tsx`, `Login.tsx`, `JoinRedirect.tsx`, `ResetPassword.tsx`, `Welcome.tsx`, `Transactions.tsx` y `Dashboard.tsx`.
 - [x] Build y lint. Revisión con Playwright en claro, oscuro y escritorio: bienvenida, login, cabecera, pestañas, Ver más y color de la barra del celular. Sin errores de consola. Corregido al revisar: las manchas del login casi no se veían en claro.
 - [ ] **Fuera del código:** en Supabase → Authentication → URL Configuration, agregar `…/resumen` a las Redirect URLs, salvo que ya haya un comodín (`/**`). Si no, el login con Google y Apple falla al volver.
-- [ ] Revisión visual tuya en la app, sobre todo la bienvenida recoloreada.
-- [ ] Commit.
+- [x] Revisión visual tuya en la app.
+- [x] Commit.
 
 ### R5 — Onboarding nuevo ⬜
 - [ ] **Layout:**
