@@ -405,6 +405,58 @@ export type Database = {
           },
         ]
       }
+      settlements: {
+        Row: {
+          amount: number
+          created_at: string
+          from_member_id: string | null
+          household_id: string
+          id: string
+          period_month: string
+          to_member_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          from_member_id?: string | null
+          household_id: string
+          id?: string
+          period_month: string
+          to_member_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          from_member_id?: string | null
+          household_id?: string
+          id?: string
+          period_month?: string
+          to_member_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "settlements_from_member_id_fkey"
+            columns: ["from_member_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "settlements_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "settlements_to_member_id_fkey"
+            columns: ["to_member_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       transactions: {
         Row: {
           account_id: string
@@ -417,6 +469,7 @@ export type Database = {
           id: string
           member_id: string | null
           occurred_at: string
+          settlement_id: string | null
           updated_at: string
         }
         Insert: {
@@ -430,6 +483,7 @@ export type Database = {
           id?: string
           member_id?: string | null
           occurred_at?: string
+          settlement_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -443,6 +497,7 @@ export type Database = {
           id?: string
           member_id?: string | null
           occurred_at?: string
+          settlement_id?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -474,6 +529,13 @@ export type Database = {
             referencedRelation: "households"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "transactions_settlement_fkey"
+            columns: ["settlement_id", "household_id"]
+            isOneToOne: false
+            referencedRelation: "settlements"
+            referencedColumns: ["id", "household_id"]
+          },
         ]
       }
     }
@@ -481,6 +543,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_settlement: {
+        Args: {
+          p_amount: number
+          p_from_account_id: string
+          p_occurred_at: string
+          p_period_month: string
+          p_to_account_id: string
+        }
+        Returns: string
+      }
       current_household_id: { Args: never; Returns: string }
       generate_invite_code: { Args: never; Returns: string }
       join_household: { Args: { p_code: string }; Returns: string }

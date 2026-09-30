@@ -3,6 +3,7 @@ import { useHouseholdId } from '../../hooks/useHouseholdId'
 import { useSession } from '../../hooks/useSession'
 import type { Transaction, TransactionFilters } from '../../types/domain'
 import { refreshAccounts } from '../accounts/useAccounts'
+import { deleteSettlement } from '../settlements/api'
 import {
   type TransactionInput,
   createTransaction,
@@ -118,5 +119,24 @@ export function useTransactions(filters: TransactionFilters = {}, { pageSize = 5
     await Promise.all([refresh(), refreshAccounts()])
   }
 
-  return { transactions, hasMore, loading, error, retry, loadMore, loadingMore, loadMoreError, create, update, remove }
+  /** Elimina un saldo: la base borra sus dos movimientos y devuelve los saldos de las cuentas. */
+  async function removeSettlement(settlementId: string) {
+    await deleteSettlement(settlementId)
+    await Promise.all([refresh(), refreshAccounts()])
+  }
+
+  return {
+    transactions,
+    hasMore,
+    loading,
+    error,
+    retry,
+    loadMore,
+    loadingMore,
+    loadMoreError,
+    create,
+    update,
+    remove,
+    removeSettlement,
+  }
 }

@@ -1,0 +1,136 @@
+/* DESIGN.md § Resumen, historia 3: Presupuestos. */
+
+.bars {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 36px;
+}
+
+.bar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.name {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pct {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+}
+
+.over {
+  color: var(--loss-text);
+}
+
+/* Riel --border (claro #E2E8F0, oscuro #243047): los tres rellenos le dan
+   3.2 a 14.5:1. */
+.track {
+  display: block;
+  height: 36px;
+  border-radius: var(--radius-bar);
+  overflow: hidden;
+  background: var(--border);
+}
+
+/* El relleno mide el riel y se corre con translateX, como la barra de
+   progreso: el extremo redondeado no se deforma. Entra desde la izquierda,
+   900ms, escalonado cada 120ms (excepción de DESIGN.md § Transiciones). */
+.fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-bar);
+  background: var(--fill);
+  transform: translateX(calc((var(--progress) - 1) * 100%));
+  animation: grow 900ms var(--ease-fill) both;
+}
+
+@keyframes grow {
+  from { transform: translateX(-100%); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fill {
+    animation-name: fade-in;
+  }
+}
+
+.amounts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  column-gap: var(--space-md);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.amounts b {
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+}
+
+.amounts .over b {
+  color: var(--loss-text);
+}
+
+/* ---------- Sin presupuestos ---------- */
+.empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  text-align: center;
+}
+
+.emptyTitle {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+}
+
+.emptyText {
+  max-width: 280px;
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--text-secondary);
+}
+
+.emptyAction {
+  margin-top: var(--space-sm);
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--space-lg);
+  border-radius: var(--radius-control);
+  background: var(--gradient-brand);
+  color: var(--text-on-brand);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.emptyAction:active {
+  transform: scale(var(--press-scale));
+}

@@ -88,6 +88,10 @@
   --blob-brand:  rgba(18, 212, 196, 0.10);
   --blob-indigo: rgba(129, 140, 248, 0.10);
   --story-goals-bg: linear-gradient(135deg, #DBEAFE 0%, #FCE7F3 100%);
+  /* Tarjetas de vidrio de la historia 1 (Ingresos vs. gastos). */
+  --story-glass-bg:     rgba(255, 255, 255, 0.55);
+  --story-glass-border: rgba(255, 255, 255, 0.7);
+  --story-glass-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
 
   /* ---------- Login: glassmorfismo (DESIGN.md § Fondo — autenticación) ----------
      Manchas al 45% en el centro; el vidrio al 72%. Medido en el peor caso,
@@ -215,6 +219,9 @@
   --blob-brand:  rgba(18, 212, 196, 0.14);
   --blob-indigo: rgba(129, 140, 248, 0.14);
   --story-goals-bg: linear-gradient(135deg, #16223F 0%, #2A1530 100%);
+  --story-glass-bg:     rgba(255, 255, 255, 0.06);
+  --story-glass-border: rgba(255, 255, 255, 0.10);
+  --story-glass-shadow: none;
 
   /* Login sobre azul marino: los mismos colores, manchas al 35% y vidrio al 65%. */
   --auth-base:        #0B1120;
@@ -292,6 +299,9 @@
     --blob-brand:  rgba(18, 212, 196, 0.14);
     --blob-indigo: rgba(129, 140, 248, 0.14);
     --story-goals-bg: linear-gradient(135deg, #16223F 0%, #2A1530 100%);
+    --story-glass-bg:     rgba(255, 255, 255, 0.06);
+    --story-glass-border: rgba(255, 255, 255, 0.10);
+    --story-glass-shadow: none;
 
     --auth-base:        #0B1120;
     --auth-blob-aqua:   rgba(18, 212, 196, 0.35);

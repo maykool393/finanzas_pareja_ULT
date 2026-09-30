@@ -1,0 +1,131 @@
+/* DESIGN.md § Resumen, historia 1: Ingresos vs. gastos. */
+
+.center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ring {
+  position: relative;
+  width: 210px;
+  height: 210px;
+}
+
+.track {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 14;
+}
+
+.arc {
+  fill: none;
+  stroke-width: 14;
+  stroke-linecap: round;
+  /* Se dibuja desde su comienzo, en sincronía con el balance: 1000ms con el
+     mismo ease-out cúbico que la cuenta (excepción de DESIGN.md § Transiciones). */
+  animation: draw 1000ms cubic-bezier(0.33, 1, 0.68, 1) both;
+}
+
+@keyframes draw {
+  from { stroke-dashoffset: var(--length); }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arc {
+    animation: fade-in var(--duration-base) ease both;
+  }
+}
+
+.incomeArc { stroke: var(--gain-color); }
+.expenseArc { stroke: var(--loss-color); }
+
+.ringCenter {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.balanceLabel {
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.balance {
+  font-size: var(--text-4xl);
+  font-weight: var(--weight-medium);
+  line-height: 1.1;
+  white-space: nowrap;
+  color: var(--text-primary);
+}
+
+.balanceMedium { font-size: var(--text-3xl); }
+.balanceSmall { font-size: var(--text-2xl); }
+
+.gain { color: var(--gain-text); }
+.loss { color: var(--loss-text); }
+
+/* ---------- Tarjetas de vidrio ---------- */
+.cards {
+  display: flex;
+  gap: 10px;
+}
+
+.glass {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px var(--space-md);
+  border: 1px solid var(--story-glass-border);
+  border-radius: var(--radius-card);
+  background: var(--story-glass-bg);
+  box-shadow: var(--story-glass-shadow);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+.cardLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-secondary);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+}
+
+.incomeDot { background: var(--gain-color); }
+.expenseDot { background: var(--loss-color); }
+
+.cardAmount {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.cardMeta {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+}

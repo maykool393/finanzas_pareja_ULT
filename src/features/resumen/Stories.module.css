@@ -1,0 +1,151 @@
+/* DESIGN.md § Resumen: las historias del mes, a pantalla completa entre la
+   cabecera y la barra inferior. */
+
+.story {
+  position: relative;
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  color: var(--text-primary);
+  /* Fondo con manchas (DESIGN.md § Fondos con manchas), como el onboarding. */
+  background-color: var(--surface-page);
+  background-image:
+    radial-gradient(circle 170px at 40px 50px, var(--blob-brand), transparent),
+    radial-gradient(circle 170px at calc(100% - 55px) calc(100% - 55px), var(--blob-indigo), transparent),
+    var(--gradient-page);
+}
+
+/* Gastos compartidos: oscura en ambos modos. Los tokens de texto pasan a los
+   de la cabecera, así todo lo de adentro (píldoras, anillo de foco) se adapta. */
+.dark {
+  color-scheme: dark;
+  background: var(--story-shared-bg);
+  --text-primary: var(--text-on-header);
+  --text-secondary: var(--text-on-header-muted);
+  --text-muted: var(--text-on-header-muted);
+  --focus-ring: var(--text-on-header);
+}
+
+/* ---------- Indicador: un segmento por historia (decorativo) ---------- */
+.segments {
+  position: absolute;
+  top: 16px;
+  left: var(--gutter);
+  right: var(--gutter);
+  z-index: 2;
+  display: flex;
+  gap: 6px;
+  pointer-events: none;
+}
+
+.segment {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--text-primary);
+  opacity: 0.2;
+  transition: opacity var(--duration-base) ease;
+}
+
+.segmentDone {
+  opacity: 1;
+}
+
+/* ---------- Contenido ---------- */
+/* Encima del botón que avanza, pero sin tomar los toques: pasan al botón,
+   salvo en los controles propios de la historia. */
+.body {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 40px var(--gutter) 88px; /* abajo, lugar para el botón flotante */
+  pointer-events: none;
+}
+
+.body :is(a, button) {
+  pointer-events: auto;
+}
+
+.watermark {
+  position: absolute;
+  top: 40px;
+  right: 4px;
+  font-size: var(--text-watermark);
+  font-weight: var(--weight-light);
+  line-height: 1;
+  color: color-mix(in srgb, var(--text-primary) 6%, transparent);
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  /* Deja libre el número de la esquina. */
+  max-width: 270px;
+}
+
+.title {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  line-height: 1.25;
+}
+
+.help {
+  font-size: var(--text-sm);
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+/* Toda el área: avanza a la historia siguiente. */
+.advance {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  border-radius: inherit;
+  cursor: pointer;
+}
+
+.advance:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -4px;
+}
+
+/* ---------- Entrada: "pop" (excepción de DESIGN.md § Transiciones) ---------- */
+@keyframes pop {
+  0% { transform: scale(0.4); opacity: 0; }
+  65% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.pop {
+  animation: pop 500ms var(--ease-spring) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pop {
+    animation: fade-in var(--duration-base) ease both;
+  }
+}
+
+/* ---------- Escritorio: un panel, no toda la ventana ---------- */
+@media (min-width: 641px) {
+  .story {
+    min-height: 640px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+
+  .body {
+    padding-bottom: var(--space-xl);
+  }
+}

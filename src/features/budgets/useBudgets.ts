@@ -1,21 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useHouseholdId } from '../../hooks/useHouseholdId'
+import { currentPeriodMonth, endOfMonth } from '../../lib/month'
 import type { Budget, BudgetProgress } from '../../types/domain'
 import { listTransactions } from '../transactions/api'
 import { type BudgetInput, createBudget, deleteBudget, listBudgets, updateBudgetAmount } from './api'
-
-export function currentPeriodMonth(): string {
-  const now = new Date()
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`
-}
-
-/** Último día del mes de `monthStart` ('YYYY-MM-01') — para acotar el rango de transacciones. */
-function endOfMonth(monthStart: string): string {
-  const date = new Date(`${monthStart}T00:00:00Z`)
-  date.setUTCMonth(date.getUTCMonth() + 1)
-  date.setUTCDate(0)
-  return date.toISOString().slice(0, 10)
-}
 
 export function useBudgets() {
   const { householdId } = useHouseholdId()

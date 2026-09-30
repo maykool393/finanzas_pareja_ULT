@@ -11,6 +11,7 @@ type TransactionRow = {
   amount: number
   description: string | null
   occurred_at: string
+  settlement_id: string | null
   created_at: string
   updated_at: string
 }
@@ -26,6 +27,8 @@ function mapRow(row: TransactionRow): Transaction {
     amount: row.amount,
     description: row.description,
     occurredAt: row.occurred_at,
+    // ?? null: antes de correr la migración de R7 la columna no existe.
+    settlementId: row.settlement_id ?? null,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   }

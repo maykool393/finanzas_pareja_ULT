@@ -78,8 +78,29 @@ export interface Transaction {
   amount: number // negativo = gasto, positivo = ingreso
   description: string | null
   occurredAt: string
+  /**
+   * Mitad de una transferencia entre la pareja al saldar los gastos
+   * compartidos (ver Settlement). No es ingreso ni gasto: el Resumen, el
+   * reparto y los presupuestos la dejan fuera. null = movimiento normal.
+   */
+  settlementId: string | null
   createdAt: string
   updatedAt: string
+}
+
+/**
+ * Saldo de los gastos compartidos de un mes: `fromMemberId` le transfirió
+ * `amount` a `toMemberId` (DESIGN.md § Resumen, historia 2). Lo acompañan dos
+ * movimientos con su `settlementId`: la salida y la entrada.
+ */
+export interface Settlement {
+  id: string
+  householdId: string
+  periodMonth: string // 'YYYY-MM-01'
+  fromMemberId: string | null
+  toMemberId: string | null
+  amount: number
+  createdAt: string
 }
 
 export interface TransactionFilters {

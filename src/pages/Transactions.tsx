@@ -10,6 +10,7 @@ import { LoadStatus } from '../components/ui/LoadStatus'
 import { SkeletonRows } from '../components/ui/Skeleton'
 import { useAccounts } from '../features/accounts/useAccounts'
 import { useCategories } from '../features/categories/useCategories'
+import { SettlementDetails } from '../features/settlements/SettlementDetails'
 import { TransactionFiltersBar } from '../features/transactions/TransactionFiltersBar'
 import { TransactionForm } from '../features/transactions/TransactionForm'
 import { TransactionList } from '../features/transactions/TransactionList'
@@ -23,8 +24,20 @@ import styles from './Transactions.module.css'
 export function Transactions() {
   useDocumentTitle('Movimientos')
   const [filters, setFilters] = useState<TransactionFilters>({})
-  const { transactions, hasMore, loading, error, retry, loadMore, loadingMore, loadMoreError, create, update, remove } =
-    useTransactions(filters)
+  const {
+    transactions,
+    hasMore,
+    loading,
+    error,
+    retry,
+    loadMore,
+    loadingMore,
+    loadMoreError,
+    create,
+    update,
+    remove,
+    removeSettlement,
+  } = useTransactions(filters)
   const { accounts, loading: accountsLoading } = useAccounts()
   const navigate = useNavigate()
   const { categories } = useCategories()
@@ -43,6 +56,9 @@ export function Transactions() {
   }
   const [editing, setEditing] = useState<Transaction | null>(null)
   const [deleting, setDeleting] = useState<Transaction | null>(null)
+  // Un saldo de gastos compartidos: sus mitades cargadas. Se ve y se elimina, no se edita.
+  const [transfer, setTransfer] = useState<Transaction[] | null>(null)
+  const [deletingSettlement, setDeletingSettlement] = useState<string | null>(null)
 
   return (
     <div className={styles.page}>
@@ -71,7 +87,11 @@ export function Transactions() {
           accounts={accounts}
           categories={categories}
           members={members}
-          onSelect={(transaction) => setEditing(transaction)}
+          onSelect={(transaction) =>
+            transaction.settlementId
+              ? setTransfer(transactions.filter((t) => t.settlementId === transaction.settlementId))
+              : setEditing(transaction)
+          }
           empty={
             hasFilters ? (
               <EmptyState
@@ -151,6 +171,38 @@ export function Transactions() {
           </>
         )}
       </Dialog>
+
+      <Dialog open={transfer !== null} onClose={() => setTransfer(null)} title="Saldo de gastos compartidos">
+        {transfer && (
+          <>
+            <SettlementDetails legs={transfer} accounts={accounts} members={members} />
+            <DangerRow>
+              <button
+                type="button"
+                onClick={() => {
+                  setDeletingSettlement(transfer[0].settlementId)
+                  setTransfer(null)
+                }}
+              >
+                Eliminar saldo
+              </button>
+            </DangerRow>
+          </>
+        )}
+      </Dialog>
+
+      <ConfirmDialog
+        open={deletingSettlement !== null}
+        onClose={() => setDeletingSettlement(null)}
+        onConfirm={async () => {
+          if (!deletingSettlement) return
+          await removeSettlement(deletingSettlement)
+          setDeletingSettlement(null)
+        }}
+        title="Eliminar saldo"
+        description="Se eliminan la transferencia y sus dos movimientos, y los saldos de las cuentas vuelven atrás. El mes vuelve a quedar por saldar en el Resumen."
+        tone="delete"
+      />
 
       <ConfirmDialog
         open={deleting !== null}

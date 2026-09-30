@@ -313,8 +313,8 @@ Las etapas se llaman **R1–R8** para no confundirlas con las fases de módulos 
 | R3 | Componentes compartidos | R1, R2 | 🟨 Commit hecho — falta tu revisión visual |
 | R4 | Estructura: navegación, cabecera, login | R3 | ✅ Commit hecho |
 | R5 | Onboarding nuevo | R3, R4 | 🟨 Commit hecho — falta verificar en vivo |
-| R6 | Patrimonio | R3, R4 | 🟨 Implementado — falta correr la migración, verificar en vivo y commit |
-| R7 | Resumen (historias) | R3, R4 | ⬜ Pendiente |
+| R6 | Patrimonio | R3, R4 | 🟨 Commit hecho — falta verificar en vivo |
+| R7 | Resumen (historias) | R3, R4 | 🟨 Implementado — falta correr la migración, verificar en vivo y commit |
 | R8 | Limpieza y verificación final | R1–R7 | ⬜ Pendiente |
 
 R5, R6 y R7 no dependen entre sí: se pueden hacer en cualquier orden. Las decisiones que tenían pendientes ya están cerradas (ver abajo).
@@ -489,28 +489,32 @@ Pedido el 2026-09-28: el código de 36 caracteres no se podía dictar.
 - [x] `Dashboard.tsx` pasó a ser `Patrimonio.tsx`, y `features/dashboard` a `features/patrimonio`.
 - [x] Build, lint y `tsc`. Revisión con Playwright en 390px (claro y oscuro, con scroll para ver el apilado y la hoja abierta desde un segmento) y en escritorio: sin errores de consola ni scroll horizontal.
 - [ ] **Verificar en vivo** (después de la migración): marcar una cuenta principal y cambiarla; crear un grupo desde una inversión, editarlo y eliminarlo; el apilado en el teléfono.
-- [ ] Commit.
+- [x] Commit ("Aplicación de mejora R6 REAL").
 
-### R7 — Resumen (historias) ⬜
-- [ ] **Estructura:**
-  - 3 historias en pareja; 2 en un hogar de una persona o con reparto "Indiferente", porque no hay nada que consolidar. El prototipo mostraba la historia 2 también en individual: era un error. Metas espera (decisión 6).
-  - Un `<button>` real que cubre el área; flechas del teclado; título anunciado con `aria-live`.
-  - Indicador de segmentos y número decorativo.
-- [ ] **Navegador de mes:** los datos de las historias son del mes elegido.
-- [ ] **Historia 1, Ingresos vs. gastos:** anillo con arcos separados, balance que cuenta hasta el valor y tarjetas de vidrio.
-- [ ] **Historia 2, Gastos compartidos** (oscura en ambos modos): semicírculo por persona, "por saldar", tarjeta por persona y "Saldar".
-  - El cálculo está en DESIGN.md § Resumen (decisión 4): gastos sin titular del mes; quién pagó según el dueño de la cuenta; parte de cada uno según `expense_split`; proporcional por los ingresos del mes, con 50 / 50 si falta alguno.
-  - No necesita columnas nuevas: `memberId` vacío ya marca un gasto como compartido, y `ownerId` de la cuenta dice quién pagó.
-- [ ] **"Saldar"**, con el modelo propuesto (se confirma al empezar R7, con la skill `supabase-postgres-best-practices`):
-  - **Transferencia:** dos movimientos enlazados, la salida de la cuenta de quien debe y la entrada en la de quien pagó de más. Mueven los saldos de las cuentas, pero no cuentan como ingreso ni como gasto (ni en el Resumen, ni en los presupuestos, ni en el reparto). Columnas nuevas en `transactions`: `kind` (`'movement'` | `'transfer'`) y `transfer_id`.
-  - **Registro del saldo:** tabla `settlements` (hogar, mes, de quién, a quién, monto y la transferencia). Con el mes saldado por el total, la historia muestra "Saldado".
-  - **Formulario "Saldar":** monto pendiente ya puesto, cuenta de origen y de destino.
-  - **Movimientos:** la lista muestra las transferencias como tales, no como un gasto y un ingreso.
-- [ ] **Historia 3, Presupuestos** (decisión 5): barra "Gasto" (total de los presupuestos de gasto del mes) y las dos categorías con presupuesto más cerca de su límite. Sin presupuestos, un estado vacío con "Crear el primero".
-- [ ] **Animaciones de las excepciones de DESIGN.md:**
-  - Con reducir movimiento: sin desplazamientos, y los números muestran directo el valor final.
-  - El conteo actualiza el nodo, no hace render, y el valor final es accesible desde el primer momento.
-- [ ] **Resumen en texto** (`visually-hidden`) de cada gráfico.
+### R7 — Resumen (historias) 🟨
+- [x] **Migración** `20260930195443_settlements.sql`, probada con PGlite (23 comprobaciones, con el trigger de saldos real). **Hay que correrla en el SQL Editor de Supabase.** Hasta entonces el Resumen funciona, pero sin saldos, y "Saldar" falla.
+- [x] **Estructura** (`features/resumen/Stories`):
+  - 3 historias en pareja; 2 en un hogar de una persona o con reparto "Indiferente". Metas espera (decisión 6).
+  - Un `<button>` real cubre el área, debajo del contenido, que deja pasar los toques salvo en sus botones. Flechas del teclado; "Historia 2 de 3: …" anunciado con `aria-live`.
+  - Indicador de segmentos y número decorativo. En móvil va de borde a borde (AppShell quita el relleno de `<main>` en `/resumen`); en escritorio, un panel de 560px.
+- [x] **Navegador de mes** en la cabecera (`HeaderExtension`): empieza en el mes actual y no pasa de él. Los datos (`useMonthSummary`) son del mes elegido: movimientos completos, presupuestos y saldos. Los meses pasaron a `lib/month.ts`, que también usa Presupuesto.
+- [x] **Historia 1, Ingresos vs. gastos:** anillo con dos arcos separados que se dibujan mientras el balance cuenta; tarjetas de vidrio con la cantidad de movimientos (el "€/h" del prototipo no se puede calcular).
+- [x] **Historia 2, Gastos compartidos** (oscura en ambos modos): semicírculo por persona, "por saldar", tarjeta por persona y "Saldar".
+  - El cálculo (`summary.ts`) sigue DESIGN.md § Resumen, probado con 18 comprobaciones: el ejemplo del prototipo (Mayk le debe $196 a Mery), saldo parcial, transferir de más, 50 / 50, proporcional sin ingresos de alguno, cuenta compartida, redondeo.
+  - Estados: debe, "Están a mano", "Saldado" y sin gastos compartidos.
+- [x] **"Saldar"**, con el modelo confirmado y simplificado:
+  - **Tabla `settlements`** (hogar, mes, de quién, a quién, monto): los saldos del mes restan de lo pendiente. Sin update: un saldo se elimina y se vuelve a hacer.
+  - **Transferencia:** dos movimientos con `transactions.settlement_id` (clave compuesta con el hogar, `on delete cascade`). Mueven los saldos de las cuentas con el trigger de siempre y no tienen categoría (una restricción lo asegura), así que tampoco entran en un presupuesto. Cambio respecto del plan: sin columna `kind` ni `transfer_id`, porque `settlement_id` ya dice que es una transferencia; si algún día hay transferencias sueltas entre cuentas, se agrega entonces.
+  - **`create_settlement`** (security invoker) crea el saldo y sus dos movimientos en una sola transacción. De quién y a quién salen de los dueños de las cuentas: tienen que ser propias y de personas distintas.
+  - **Formulario "Saldar":** monto pendiente ya puesto, cuenta de origen y de destino, fecha.
+  - **Movimientos:** un saldo es una sola fila ("Saldo de gastos compartidos", "Caixa → Banesco"); al tocarla se ve el detalle y se puede eliminar, lo que borra los dos movimientos y devuelve los saldos.
+  - Ninguna historia cuenta las transferencias como ingreso o gasto.
+- [x] **Historia 3, Presupuestos** (decisión 5): barra "Gasto" y las dos categorías más cerca de su límite, con el aviso en tres pasos y "Excedido" al pasarse. Sin presupuestos, "Crear el primero".
+- [x] **Animaciones de las excepciones de DESIGN.md:** "pop" al entrar a cada historia; conteo que escribe el nodo sin render (`useCountUp`), con el valor final en `visually-hidden`; barras con `translateX` en vez de `scaleX` (DESIGN.md actualizado). Con reducir movimiento, sin desplazamientos y los números directo en su valor.
+- [x] **Resumen en texto** de cada gráfico: el anillo y el semicírculo tienen `role="img"` con su `aria-label`; las barras ya dicen todo en texto.
+- [x] Build, lint y `tsc`. Revisión con Playwright en 390px (claro y oscuro: las tres historias, saldado, sin presupuestos, el formulario y la fila de Movimientos) y en escritorio: sin errores de consola ni scroll horizontal. Tocar avanza, "Saldar" no avanza, flechas y anuncio funcionan.
+- [ ] **Verificar en vivo** (después de la migración): el Resumen con datos reales de un mes; saldar, ver el mes "Saldado" y la fila en Movimientos; eliminar el saldo y ver que vuelve a estar pendiente.
+- [ ] Commit.
 
 ### R8 — Limpieza y verificación final ⬜
 - [ ] **Borrar lo que quede sin uso:**

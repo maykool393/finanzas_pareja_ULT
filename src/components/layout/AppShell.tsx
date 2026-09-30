@@ -32,6 +32,9 @@ const VIEW_TITLES: Record<string, [string, string]> = {
   '/movimientos': ['Nuestros movimientos', 'Mis movimientos'],
 }
 
+/** Pantallas que en móvil llenan todo el alto entre la cabecera y la barra inferior, sin relleno. */
+const FULL_BLEED = new Set(['/resumen'])
+
 export function AppShell({ children }: { children: ReactNode }) {
   // La cabecera azul marino queda pegada arriba: la barra del celular toma su color.
   useThemeColor('--surface-header')
@@ -97,7 +100,11 @@ export function AppShell({ children }: { children: ReactNode }) {
       </header>
 
       {/* tabIndex -1: el enlace de arriba le pasa el foco, sin sumarlo al orden de Tab. */}
-      <main id="contenido" tabIndex={-1} className={styles.main}>
+      <main
+        id="contenido"
+        tabIndex={-1}
+        className={FULL_BLEED.has(pathname) ? `${styles.main} ${styles.mainBleed}` : styles.main}
+      >
         <HeaderSlotContext.Provider value={slot}>{children}</HeaderSlotContext.Provider>
       </main>
 

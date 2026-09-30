@@ -131,6 +131,12 @@
   display: none;
 }
 
+/* Resumen: la historia llena el alto disponible (flex: 1 en la pantalla). */
+.mainBleed {
+  display: flex;
+  flex-direction: column;
+}
+
 /* ---------- Móvil: título de la vista arriba, pestañas abajo ---------- */
 @media (max-width: 640px) {
   .shell {
@@ -162,6 +168,11 @@
   .main {
     padding: var(--space-lg) var(--gutter)
       calc(var(--space-xl) + var(--tab-bar-height) + env(safe-area-inset-bottom));
+  }
+
+  /* De borde a borde: solo deja lugar para la barra inferior. */
+  .mainBleed {
+    padding: 0 0 calc(var(--tab-bar-height) + env(safe-area-inset-bottom));
   }
 
   .tabBar {

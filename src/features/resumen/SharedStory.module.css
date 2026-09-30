@@ -1,0 +1,131 @@
+/* DESIGN.md § Resumen, historia 2: Gastos compartidos (oscura en ambos modos).
+   El texto usa los tokens que la historia oscura redefine (Stories.module.css). */
+
+.center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.arc {
+  fill: none;
+  stroke-width: 17;
+  stroke-linecap: round;
+}
+
+.status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+}
+
+.label {
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.pending {
+  font-size: var(--text-4xl);
+  font-weight: var(--weight-bold);
+  line-height: 1.2;
+  white-space: nowrap;
+  color: var(--text-primary);
+}
+
+.line {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-secondary);
+}
+
+.check {
+  width: 16px;
+  height: 16px;
+  color: var(--brand);
+}
+
+.note {
+  font-size: var(--text-xs);
+  line-height: 1.4;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ---------- Una tarjeta por persona ---------- */
+.cards {
+  display: flex;
+  gap: 10px;
+}
+
+.card {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: 14px var(--space-md);
+  border-radius: var(--radius-card);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.name {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  column-gap: var(--space-sm);
+  font-size: var(--text-xs);
+}
+
+.row dt {
+  color: var(--text-muted);
+}
+
+.row dd {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+}
+
+.settle {
+  width: 100%;
+  height: 48px;
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+}
+
+.settle svg {
+  width: 18px;
+  height: 18px;
+}

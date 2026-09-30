@@ -371,7 +371,7 @@ Cada color de estado tiene dos usos con requisitos distintos: como relleno o gr�
 **Cabecera de la app:** bloque `--surface-header` (fijo en ambos modos) arriba de las cinco pestañas, con dos círculos blancos al 7% que se cruzan en la esquina derecha, como decoración.
 - A la izquierda va el **título de la vista**: una píldora `--surface-on-header` con radio `--radius-card`, los avatares del hogar y el nombre ("Nuestro resumen", "Nuestro patrimonio"; "Mi…" en un hogar de una persona). **Por ahora es solo un título** (decidido el 2026-09-28): sin chevron, y no es un botón. El prototipo tenía un chevron que sugería un menú para ver el resumen de una sola persona; ese filtro queda para después.
 - A la derecha va el **cambio de tema**: botón circular de 34px (44 de zona táctil). Es el toggle de modo oscuro, que tiene que estar a mano desde la pantalla principal. **Cerrar sesión:** en móvil, como una fila más al final de "Ver más", con ícono; en escritorio, además, como "Salir" en la cabecera, a la derecha del tema. En el onboarding hay un "Cerrar sesión" al pie del primer paso, para quien entró con la cuenta equivocada.
-- **Resumen** agrega debajo el navegador de mes: "SEPTIEMBRE 2026" en `--text-xs` bold con `--tracking-label`, entre dos flechas (`aria-label` "Mes anterior" / "Mes siguiente") en `--text-on-header-muted`.
+- **Resumen** agrega debajo el navegador de mes: "SEPTIEMBRE 2026" en `--text-xs` bold con `--tracking-label`, entre dos flechas de 16px con zona de toque de 44px (`aria-label` "Mes anterior" / "Mes siguiente") en `--text-on-header-muted`. Empieza en el mes actual, que es el último: ahí "Mes siguiente" queda apagada (blanco al 25%) con `aria-disabled`, no `disabled`, para no perder el foco al llegar. El mes se anuncia al cambiar (`aria-live`).
 - **Patrimonio** agrega el total y la barra de composición (ver Patrimonio).
 - **Cómo se agrega:** la cabecera deja un hueco debajo de la fila del título, y la pantalla pone ahí su contenido con `HeaderExtension` (un portal). Así ese contenido queda dentro de la cabecera fija, con su fondo y su anillo de foco blanco. El hueco vacío no ocupa lugar. La cabecera publica su alto en `--app-header-height`, que usan los elementos fijos de la página para quedar justo debajo.
 - Sobre la cabecera, el anillo de foco es blanco: el `--text-primary` del modo claro sería invisible.
@@ -424,7 +424,7 @@ Un flujo por pasos, con el fondo de manchas y sin hoja inferior ni encabezado de
 
 ### Resumen
 
-Las historias del mes, a pantalla completa entre la cabecera y la barra inferior. Se avanza tocando la historia.
+Las historias del mes elegido en la cabecera, a pantalla completa entre la cabecera y la barra inferior: en móvil, `<main>` no lleva relleno en esta pantalla. En escritorio es un panel centrado de hasta 560px, con borde `--border` y 640px de alto mínimo. Se avanza tocando la historia; después de la última vuelve a la primera.
 - **Hogar de pareja:** tres historias (Ingresos vs. gastos, Gastos compartidos, Presupuestos).
 - **Hogar de una persona, o de pareja con reparto "Indiferente":** dos, sin Gastos compartidos. Si no se comparten cuentas, o si todo se maneja en conjunto sin dividir, no hay nada que consolidar. El prototipo mostraba esta historia también en un hogar individual; era un error.
 - **Metas** será la cuarta cuando exista su módulo (decidido el 2026-09-28: espera). Su diseño queda definido abajo.
@@ -432,7 +432,8 @@ Las historias del mes, a pantalla completa entre la cabecera y la barra inferior
 - **Indicador:** un segmento de 4px por historia, arriba, con separación de 6px. Los cumplidos van en el color de texto de la historia; los pendientes, en ese mismo color al 18–25%. Es decorativo (`aria-hidden`), porque la posición se anuncia con el título.
 - **Número de la historia** ("01", "02"…): marca de agua en `--text-watermark` light, al 5–8%.
 - **Título:** `<h2>` en `--text-2xl` bold, con una ayuda debajo en `--text-sm` `--text-secondary`.
-- **Accesibilidad:** la historia avanza con un `<button>` real que cubre el área, con `aria-label` "Siguiente: Gastos compartidos". Las flechas del teclado avanzan y retroceden. El título de la historia nueva se anuncia con `aria-live="polite"`. Los botones dentro de una historia (como "Saldar") no la avanzan.
+- **Accesibilidad:** la historia avanza con un `<button>` real que cubre el área, con `aria-label` "Siguiente: Gastos compartidos". Está debajo del contenido, que no toma los toques (`pointer-events: none`) salvo sus enlaces y botones: por eso "Saldar" no la avanza. Las flechas del teclado avanzan y retroceden, y el foco vuelve al botón que avanza (el enfocado podía no existir en la historia nueva). "Historia 2 de 3: Gastos compartidos" se anuncia con `aria-live="polite"`.
+- **Cargando o con error:** cada historia muestra su fondo y su título; en el lugar del contenido, un anillo gris de 180px mientras carga, o el mensaje de error con "Reintentar".
 
 | # | Historia | Fondo claro | Fondo oscuro |
 |---|---|---|---|
@@ -442,15 +443,18 @@ Las historias del mes, a pantalla completa entre la cabecera y la barra inferior
 | 4 | Metas (pendiente) | `linear-gradient(135deg, #DBEAFE, #FCE7F3)` | `linear-gradient(135deg, #16223F, #2A1530)` |
 
 1. **Ingresos vs. gastos:**
-   - Anillo de 210px con trazo de 14px: el arco de ingresos en `--gain-color` sobre el de gastos en `--loss-color`.
-   - Al centro, "BALANCE" como etiqueta y el balance en `--text-4xl` medium, en `--gain-text` o `--loss-text` según el signo.
-   - Abajo, dos tarjetas de vidrio: Ingresos y Gastos, cada una con un punto de su color, el monto en `--text-xl` bold y una línea secundaria en su color de texto.
-   - Vidrio en claro: `rgba(255,255,255,0.55)` con `backdrop-filter: blur(14px)` y borde 1px `rgba(255,255,255,0.7)`. En oscuro: blanco al 6% con borde blanco al 10%.
+   - Anillo de 210px con trazo de 14px y extremos redondeados: dos arcos separados por 6px, cada uno según su parte de lo que se movió en el mes. Ingresos en `--gain-color` desde arriba, en sentido horario; gastos en `--loss-color` a continuación. Si solo hay uno, el anillo entero es de su color; sin movimientos, un riel `--border`.
+   - Al centro, "BALANCE" como etiqueta y el balance con signo en `--text-4xl` medium, en `--gain-text` o `--loss-text` según el signo (`--text-primary` en cero). Si el monto es largo baja a `--text-3xl` (más de 8 caracteres) o `--text-2xl` (más de 10), para caber en el anillo.
+   - Abajo, dos tarjetas de vidrio: Ingresos y Gastos, cada una con un punto de su color, el monto en `--text-xl` bold y debajo cuántos movimientos fueron ("2 movimientos"), en `--text-xs` bold de su color de texto. El prototipo decía "€/h ganados", un dato que no se puede calcular.
+   - Vidrio (`--story-glass-bg`, `-border` y `-shadow`): en claro, `rgba(255,255,255,0.55)` con `backdrop-filter: blur(14px)`, borde 1px `rgba(255,255,255,0.7)` y sombra `0 8px 24px` al 6%. En oscuro: blanco al 6% con borde blanco al 10%, sin sombra.
+   - Las transferencias de "Saldar" no cuentan: no son ingreso ni gasto.
 2. **Gastos compartidos** (oscura siempre):
-   - Semicírculo con dos arcos, uno por persona (`--brand` e índigo `#818CF8`), según cuánto le toca a cada uno.
-   - Debajo, "POR SALDAR", el monto en `--text-4xl` bold blanco y "Mayk le debe a Mery".
-   - Una tarjeta por persona (blanco al 6%): avatar de 25px, nombre, píldora de porcentaje, "Le tocaba" y "Pagó".
-   - Botón de contorno "Saldar".
+   - La historia redefine `--text-primary`, `--text-secondary`, `--text-muted` y `--focus-ring` a los de la cabecera: lo que va adentro (píldoras, anillo de foco) se adapta solo.
+   - Semicírculo de 215px con trazo de 17px: dos arcos separados por 6px, uno por persona (`--brand` desde la izquierda e índigo `--person-b` desde la derecha), según cuánto le toca a cada uno.
+   - Debajo, "POR SALDAR", el monto en `--text-4xl` bold blanco y una línea en `--text-sm` medium: "Mayk le debe a Mery", "Están a mano", "Saldado" (con un check `--brand`) o "Sin gastos compartidos en septiembre". Si hubo saldos en el mes, "Transferido este mes: $196.000" en `--text-xs`.
+   - Una tarjeta por persona (blanco al 6%): avatar de 25px, nombre de pila, píldora de porcentaje con el tinte de su color, "Le tocaba" y "Pagó" (etiqueta en `--text-xs`, monto en `--text-sm` bold).
+   - En reparto proporcional, si alguien no registró ingresos en el mes, una nota: "Mayk no registró ingresos en septiembre: se reparte 50 / 50."
+   - Botón de contorno "Saldar" (`Button` `onDark`, 48px, con el ícono de dinero), solo si alguien debe.
    - Todo el texto de apoyo en `--text-on-header-muted`.
 
    **Cómo se calcula** (decidido el 2026-09-28):
@@ -462,11 +466,15 @@ Las historias del mes, a pantalla completa entre la cabecera y la barra inferior
      - **Indiferente:** todo se maneja en conjunto y no se divide, así que esta historia no aparece.
    - **Por saldar:** lo que pagó cada uno menos lo que le tocaba. Quien pagó de menos le debe la diferencia a quien pagó de más. Sin diferencia, la historia dice "Están a mano" y no muestra "Saldar".
    - **"Saldar"** registra que quien debe le transfirió a la otra persona el monto pendiente. La transferencia real se hace en el banco; la app la anota para que los saldos de las cuentas sigan siendo correctos, y el mes queda "Saldado". El modelo de datos está en el README (R7).
+   - **Formulario "Saldar gastos compartidos"** (un diálogo): una explicación de qué se anota, el monto con lo pendiente ya puesto (se puede cambiar: un saldo parcial deja el resto pendiente), "Desde la cuenta de Mayk" y "Hacia la cuenta de Mery" (solo cuentas propias de cada uno, la principal primero) y la fecha, hoy por defecto. Si alguno no tiene una cuenta propia, lo dice con un enlace a Patrimonio en lugar de los selectores.
+   - **En Movimientos**, un saldo es una sola fila: ícono de flechas sobre `--surface-sunken`, "Saldo de gastos compartidos", "Caixa → Banesco" y el monto sin signo ni color de ingreso o gasto. Si solo está cargada una mitad (un filtro por cuenta), la fila muestra esa cuenta y el monto con signo. Al tocarla se ve qué se transfirió y se puede eliminar ("Eliminar saldo" borra los dos movimientos y el mes vuelve a quedar por saldar). No se edita.
 3. **Presupuestos:** tres barras de 36px con radio `--radius-bar` sobre un riel `--border` en claro, `#243047` en oscuro.
    - Gasto en `--series-indigo`, Inversión en `--gain-color` y Deuda en `--text-primary` (3.2 a 14.5:1 contra el riel).
    - Cada barra lleva encima el nombre (`--text-lg` bold) con el porcentaje, y debajo los montos ("Gastado", "Disponible") en `--text-sm`.
    - Una deuda saldada muestra un check y "Saldada".
-   - **Mientras no existan los presupuestos de Inversión y Deuda** (esperan, decidido el 2026-09-28): la primera barra es "Gasto" (el total de los presupuestos de gasto del mes) y las otras dos son las dos categorías con presupuesto más cerca de su límite, con su nombre. Cuando exista el módulo, esas dos pasan a ser Inversión y Deuda. Sin presupuestos creados, la historia muestra su estado vacío con "Crear el primero".
+   - **Mientras no existan los presupuestos de Inversión y Deuda** (esperan, decidido el 2026-09-28): la primera barra es "Gasto" (el total de los presupuestos de gasto del mes) y las otras dos son las dos categorías con presupuesto más cerca de su límite, con su nombre. Con un solo presupuesto va solo "Gasto": la categoría lo repetiría. Cuando exista el módulo, esas dos pasan a ser Inversión y Deuda.
+   - Las barras de categoría usan el aviso en tres pasos de los presupuestos: `--gain-color` hasta el 80%, `--text-primary` hasta el 100% y `--loss-color` al pasarse. Pasada, el porcentaje real va en `--loss-text` ("120 %") y "Disponible" cambia a "Excedido $90.000", también en `--loss-text`.
+   - Sin presupuestos de gasto en el mes: "Sin presupuestos en septiembre", una línea de para qué sirven y el botón "Crear el primero", que lleva a Presupuesto.
 4. **Metas** (pendiente, espera a su módulo): cuadrícula de 2 columnas con frascos de 80×107px. El líquido sube hasta el porcentaje, en `--gain-color`, `--series-indigo` y `--series-pink`.
    - Encima de cada frasco, la píldora de porcentaje; debajo, el nombre (`--text-sm` bold) y "480 € / 1.000 €" en `--text-xs`.
    - El último lugar es "Nueva meta", un botón con borde punteado (decorativo), ícono + y texto.
@@ -529,7 +537,7 @@ Las historias del mes, a pantalla completa entre la cabecera y la barra inferior
   - En las historias se usan las barras gruesas del Resumen.
 - Radio `--radius-full`.
 - Es un `<span>` con `display: block`, no un `<div>`: va dentro de la tarjeta, que es un botón, y un botón solo admite contenido en línea.
-- Largo proporcional a lo pagado o gastado. El relleno mide siempre el 100% del riel y se desplaza con `transform: translateX(-(1 − proporción) × 100%)`; el riel (`overflow: hidden`) recorta lo que sobra. Nunca animar `width` (recalcula layout). Tampoco `scaleX` en una barra que cambia de valor: aplasta el extremo redondeado. La única excepción es la entrada de las barras gruesas del Resumen (ver Transiciones).
+- Largo proporcional a lo pagado o gastado. El relleno mide siempre el 100% del riel y se desplaza con `transform: translateX(-(1 − proporción) × 100%)`; el riel (`overflow: hidden`) recorta lo que sobra. Nunca animar `width` (recalcula layout). Tampoco `scaleX`: aplasta el extremo redondeado. Las barras gruesas del Resumen entran igual, con `translateX` desde −100% (ver Transiciones).
 
 **Píldora de porcentaje**
 - `--text-xs` bold, relleno 2–3px × 8–10px, `--radius-full`.
@@ -668,8 +676,8 @@ Esta es una app de uso diario: el movimiento comunica un cambio de estado, no de
 | | Filas de funciones | Suben 12px con fundido, 450ms, escalonadas cada 140ms desde 200ms |
 | | Casa y moneda flotando | Casa ±3px en 3.4s (1 vez); moneda ±9px en 2.4s (2 veces). Empiezan a los 600ms |
 | Resumen | Contenido de cada historia | "Pop" desde `scale(0.4)`, 500ms `--ease-spring`, cada vez que se cambia de historia |
-| | Balance y "por saldar" | Cuentan de 0 al valor en 1000ms (`ease-out` cúbico). El anillo se dibuja en sincronía |
-| | Barras de presupuesto | Crecen con `scaleX` desde la izquierda, 900ms `--ease-fill`, escalonadas cada 120ms |
+| | Balance y "por saldar" | Cuentan de 0 al valor en 1000ms (`ease-out` cúbico). Los dos arcos del anillo se dibujan en sincronía, cada uno desde su comienzo (`stroke-dashoffset`, `cubic-bezier(0.33, 1, 0.68, 1)`) |
+| | Barras de presupuesto | Entran desde la izquierda con `translateX` (el extremo redondeado no se deforma), 900ms `--ease-fill`, escalonadas cada 120ms |
 | | Frascos de metas | El líquido sube con `scaleY` desde abajo, 1000ms `--ease-fill`, escalonados cada 100ms |
 | Patrimonio | Pista bajo la barra de composición | El chevron baja 3px y vuelve, 1.8s, 2 veces |
 | | Barra de composición | Al presionarla se estira en alto (`scaleY(1.4)`) |
