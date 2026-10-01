@@ -1,5 +1,5 @@
 import { type CSSProperties, type ReactNode, useEffect, useState } from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useHouseholdMembers } from '../../hooks/useHouseholdMembers'
 import { supabase } from '../../lib/supabase'
 import { useThemeColor } from '../../hooks/useThemeColor'
@@ -20,8 +20,13 @@ const NAV = [
   { to: '/mas', label: 'Ver más', Icon: GridDotsIcon, also: ['/categorias', '/ajustes', '/invitar'] },
 ]
 
-function tabActive(isActive: boolean, pathname: string, also?: string[]) {
-  return isActive || (also?.includes(pathname) ?? false)
+/**
+ * Activa en su ruta y en sus subpantallas. Con Link y no NavLink: NavLink pone
+ * aria-current solo si la ruta coincide, y en Categorías "Ver más" se veía
+ * activa sin que un lector de pantalla la anunciara como la actual.
+ */
+function tabActive(to: string, pathname: string, also?: string[]) {
+  return pathname === to || pathname.startsWith(`${to}/`) || (also?.includes(pathname) ?? false)
 }
 
 /** Título de la cabecera: [en pareja, de una persona]. Las subpantallas de "Ver más" dicen "Ver más". */
@@ -77,15 +82,14 @@ export function AppShell({ children }: { children: ReactNode }) {
           {/* Misma etiqueta que la barra inferior: nunca se ven las dos a la vez (display: none). */}
           <nav className={styles.nav} aria-label="Navegación principal">
             {NAV.map(({ to, label, also }) => (
-              <NavLink
+              <Link
                 key={to}
                 to={to}
-                className={({ isActive }) =>
-                  tabActive(isActive, pathname, also) ? `${styles.link} ${styles.linkActive}` : styles.link
-                }
+                aria-current={tabActive(to, pathname, also) ? 'page' : undefined}
+                className={tabActive(to, pathname, also) ? `${styles.link} ${styles.linkActive}` : styles.link}
               >
                 {label}
-              </NavLink>
+              </Link>
             ))}
           </nav>
 
@@ -110,14 +114,15 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       <nav className={styles.tabBar} aria-label="Navegación principal">
         {NAV.map(({ to, label, Icon, also }) => (
-          <NavLink
+          <Link
             key={to}
             to={to}
-            className={({ isActive }) => (tabActive(isActive, pathname, also) ? `${styles.tab} ${styles.tabActive}` : styles.tab)}
+            aria-current={tabActive(to, pathname, also) ? 'page' : undefined}
+            className={tabActive(to, pathname, also) ? `${styles.tab} ${styles.tabActive}` : styles.tab}
           >
             <Icon className={styles.tabIcon} aria-hidden="true" />
             <span>{label}</span>
-          </NavLink>
+          </Link>
         ))}
       </nav>
     </div>

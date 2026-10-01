@@ -70,7 +70,8 @@ export function SharedStory({ summary, members, currency, monthName, hasSettleme
         <div className={styles.status}>
           <span className={styles.label}>Por saldar</span>
           <span ref={pendingRef} className={`amount ${styles.pending}`} aria-hidden="true" />
-          <span className="visually-hidden">Por saldar: {formatCurrency(pending, currency)}.</span>
+          {/* Solo el monto: "Por saldar" ya se lee arriba. */}
+          <span className="visually-hidden">{formatCurrency(pending, currency)}.</span>
           <span className={styles.line}>
             {!debt && hasSettlements && <CheckIcon className={styles.check} aria-hidden="true" />}
             {status}

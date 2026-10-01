@@ -9,11 +9,12 @@ Finanzas compartidas en pareja. React + TypeScript + Vite + Supabase (Postgres +
 Ya construido y en producción de desarrollo:
 
 - **Autenticación**: login, registro, recuperar/restablecer contraseña (`src/pages/Login.tsx`, `ForgotPassword.tsx`, `ResetPassword.tsx`), sesión vía `useSession`, rutas protegidas vía `RequireAuth`.
-- **Onboarding**: `Welcome.tsx` en `/`, solo la primera vez (`hasSeenOnboarding` en `localStorage`).
-- **Sistema de diseño**: tokens claro/oscuro (`src/styles/tokens.css`), `RippleBackground`, `AppShell` con nav de 5 secciones, `Card`, `ItemCard`, `SectionHeader`, `ProgressBar`.
+- **Bienvenida**: `Welcome.tsx` en `/`, solo la primera vez (`hasSeenOnboarding` en `localStorage`). Después, el onboarding del hogar en tres pasos (`HouseholdSetup`).
+- **Sistema de diseño Twoney** (DESIGN.md): tokens claro/oscuro (`src/styles/tokens.css`), `AppShell` con cabecera azul marino y cinco pestañas (Resumen, Patrimonio, Presupuesto, Movimientos, Ver más), y los componentes compartidos de `src/components/ui/` (`ItemCard`, `IconButton`, `FloatingButton`, `OptionRows`, `PercentPill`, `Checkbox`, `Dialog`…).
 - **Esquema base en Supabase**: `households`, `profiles`, `categories`, `accounts`, `debts`, `investments`, `transactions` (columnas mínimas — este plan las extiende), con RLS por household en todas.
-- **Dashboard** (`src/pages/Dashboard.tsx`): todo con datos reales de Supabase. La sección "Ahorro" con una meta de ejemplo fija en el código (900.000) se eliminó el 2026-09-27; si se quiere un módulo de metas de ahorro, se construye como los demás (tabla propia + `src/features/`).
-- **Rediseño Twoney en curso** (desde el 2026-09-28): nueva identidad visual en toda la app. Ver "Plan de rediseño Twoney" más abajo.
+- **Resumen** (`src/pages/Resumen.tsx`): las historias del mes (ingresos vs. gastos, gastos compartidos con "Saldar", presupuestos). Reemplaza al dashboard.
+- **Patrimonio** (`src/pages/Patrimonio.tsx`): total y composición en la cabecera, cuentas y deudas en tarjetas que se apilan, inversiones agrupadas.
+- **Rediseño Twoney** (2026-09-28 a 2026-10-01): R1–R8 implementados. Falta verificar en vivo R5–R7. Ver "Plan de rediseño Twoney" más abajo.
 
 Este documento es el plan de los 7 módulos que faltan. Se actualiza el **Estado** de cada fase a medida que se completa — no se implementa nada de lo descrito aquí hasta acordarlo fase por fase.
 
@@ -30,9 +31,9 @@ Este documento es el plan de los 7 módulos que faltan. Se actualiza el **Estado
 | 4 | Inversiones | Fase 0 | ✅ Completo — verificado en vivo |
 | 5 | Registro de transacciones | Fases 1, 2 | ✅ Completo — verificado en vivo |
 | 6 | Presupuestos | Fases 1, 5 | ✅ Completo — verificado en vivo |
-| 7 | Gráfico del dashboard | Fases 2, 3, 4, 5 (idealmente 6) | 🟨 Construido — falta verificar en vivo |
+| 7 | Gráfico del dashboard | Fases 2, 3, 4, 5 (idealmente 6) | ↪ Reemplazado: los gráficos se eliminaron en el rediseño (R6) y su lugar lo tomaron las historias del Resumen (R7) |
 
-Leyenda: ⬜ Pendiente · 🟨 En progreso · ✅ Completo
+Leyenda: ⬜ Pendiente · 🟨 En progreso · ✅ Completo · ↪ Reemplazado
 
 **Por qué este orden:** Cuentas, Deudas e Inversiones (2–4) no dependen entre sí ni de Categorías — solo comparten los primitivos de la Fase 0, así que se pueden reordenar libremente entre ellas sin romper nada. Categorías va primero porque Transacciones la necesita y es el módulo más simple para validar los primitivos de formulario/ícono/color de la Fase 0. Transacciones necesita Cuentas (para el saldo) y Categorías (para clasificar). Presupuestos necesita Categorías (qué límite) y Transacciones (qué se ha gastado). El gráfico del dashboard cierra el plan porque es el único módulo que **no aporta datos nuevos**, solo los visualiza — necesita que el resto ya tenga filas reales.
 
@@ -314,8 +315,8 @@ Las etapas se llaman **R1–R8** para no confundirlas con las fases de módulos 
 | R4 | Estructura: navegación, cabecera, login | R3 | ✅ Commit hecho |
 | R5 | Onboarding nuevo | R3, R4 | 🟨 Commit hecho — falta verificar en vivo |
 | R6 | Patrimonio | R3, R4 | 🟨 Commit hecho — falta verificar en vivo |
-| R7 | Resumen (historias) | R3, R4 | 🟨 Implementado — falta correr la migración, verificar en vivo y commit |
-| R8 | Limpieza y verificación final | R1–R7 | ⬜ Pendiente |
+| R7 | Resumen (historias) | R3, R4 | 🟨 Commit hecho — falta correr la migración y verificar en vivo |
+| R8 | Limpieza y verificación final | R1–R7 | 🟨 Implementado — falta commit |
 
 R5, R6 y R7 no dependen entre sí: se pueden hacer en cualquier orden. Las decisiones que tenían pendientes ya están cerradas (ver abajo).
 
@@ -514,16 +515,29 @@ Pedido el 2026-09-28: el código de 36 caracteres no se podía dictar.
 - [x] **Resumen en texto** de cada gráfico: el anillo y el semicírculo tienen `role="img"` con su `aria-label`; las barras ya dicen todo en texto.
 - [x] Build, lint y `tsc`. Revisión con Playwright en 390px (claro y oscuro: las tres historias, saldado, sin presupuestos, el formulario y la fila de Movimientos) y en escritorio: sin errores de consola ni scroll horizontal. Tocar avanza, "Saldar" no avanza, flechas y anuncio funcionan.
 - [ ] **Verificar en vivo** (después de la migración): el Resumen con datos reales de un mes; saldar, ver el mes "Saldado" y la fila en Movimientos; eliminar el saldo y ver que vuelve a estar pendiente.
-- [ ] Commit.
+- [x] Commit ("Aplicación de mejora R7").
 
-### R8 — Limpieza y verificación final ⬜
-- [ ] **Borrar lo que quede sin uso:**
-  - Página de Estadísticas.
-  - `public/logo.svg`, que ya no se usa (el logo es un componente).
-  - Tokens sin consumidores.
-- [ ] **Verificar con Playwright en claro y oscuro a 390px, en todas las pantallas:** contraste, foco visible y áreas táctiles.
-- [ ] **Lector de pantalla:** historias, cabecera, grupos de opciones y barra de composición.
-- [ ] **Actualizar "Estado actual"** de este README, y DESIGN.md si algo cambió al implementar.
+### R8 — Limpieza y verificación final 🟨
+- [x] **Borrar lo que quedó sin uso:**
+  - La página de Estadísticas ya no existía; queda su redirección `/estadisticas` → `/resumen`.
+  - `public/logo.svg` (el logo es un componente) y `public/icons.svg` (sobrante de la plantilla de Vite).
+  - `Card` (sin importar desde que Patrimonio dejó "Últimos movimientos") y `CURRENCY_OPTIONS` (lo reemplazó el selector de moneda).
+  - Tokens sin consumidores: `--series-indigo-text` y `--tone-rosa-border` (rosa solo lo usan las categorías, sin borde). `--brand-end` pasa a armar `--gradient-brand`. `--series-pink` y `--story-goals-bg` se quedan, marcados como reservados para Metas.
+  - Se revisó con scripts: archivos sin importar, exports sin uso, clases de CSS Modules sin leer (las que quedan se usan con `styles[variante]`), colores sueltos fuera de los tokens (solo capas blancas sobre fondos oscuros fijos, comentadas) y nombres de la identidad o las rutas viejas.
+- [x] **Verificación con Playwright a 390px, en claro y oscuro:** la app real con Supabase simulado (sesión falsa y datos de ejemplo). 23 estados por modo: las tres historias y "Saldar", Patrimonio con la hoja, la elección y un formulario, Presupuesto, Movimientos con su formulario y un saldo, Ver más, Categorías, Ajustes, Invitar, el onboarding, la bienvenida, el login, el registro, recuperar contraseña y 404. Con las sondas de la skill `ux-ui-audit`: 1.318 textos medidos sin fallas de contraste, ningún control sin nombre, 388 pasos de Tab, sin errores de consola ni scroll horizontal. Corregido:
+  - **Foco invisible en las muestras de color:** su contorno decorativo le ganaba al `:focus-visible` global (1.2:1). Ahora el anillo de 2px.
+  - **Zona táctil de las muestras de color:** medía 40px, no 44: el `::before` se mide desde dentro del borde. `inset: -8px`.
+  - **Anillo de foco en la bienvenida:** azul marino sobre la foto, 1.9:1. Ahora blanco, 9.6:1.
+  - **Dos enlaces de 21px de alto** ("¿Ya tienes cuenta? Iniciar sesión", "Volver a iniciar sesión"): ahora 24px, el piso de WCAG 2.5.8.
+  - **"Nuevo presupuesto" partido en dos líneas** a 390px: los botones van en una línea.
+  - **Iniciales tapadas:** con dos letras, el solape de un tercio tapaba la segunda inicial del primer avatar. Ahora un 15%.
+  - Lo que las sondas marcan y está bien: enlaces de texto de 24px dentro de una fila (DESIGN.md lo permite), el "Continuar" deshabilitado (exento), el campo subrayado del onboarding (el foco es su línea de 2px, 3.8 y 9.7:1) y el anillo blanco de la historia oscura (16.5 a 17.9:1; la sonda no lee fondos degradados).
+- [x] **Lector de pantalla** (árbol de accesibilidad de Playwright): las historias son regiones con su título y el gráfico con su texto; la cabecera anuncia el mes y "Mes siguiente" deshabilitado; los grupos de opciones son `radiogroup` con su elegido; la barra de composición dice los tres porcentajes. Corregido:
+  - Se leía "Balance Balance: +$1.299.000" y "Por saldar Por saldar…": el texto oculto ya no repite la etiqueta.
+  - Los íconos dentro de los botones se anunciaban como imágenes sin nombre: ahora son decorativos por defecto (`aria-hidden` en `icons.tsx`).
+  - En Categorías, Ajustes e Invitar, "Ver más" se veía activa sin `aria-current`: la pestaña activa se calcula a mano (`NavLink` solo lo pone con la ruta exacta).
+- [x] **"Estado actual"** de este README y DESIGN.md al día (solape de avatares, tokens).
+- [ ] Commit.
 
 ### Decisiones
 Se cierran antes de la etapa que las necesita. Todas resueltas el 2026-09-28.
@@ -549,6 +563,7 @@ Decidido esperar; no entra en R1–R8.
 - **Metas:** módulo nuevo (tabla `goals` con RLS, `src/features/goals/`, formulario) y la historia 4 del Resumen, ya diseñada en DESIGN.md.
 - **Presupuestos de Inversión y Deuda:** es un módulo propio. Hay que definir qué se presupuesta en una deuda o una inversión, de dónde sale lo pagado o invertido en el mes, el formulario y la migración. Cuando exista, reemplaza a las dos barras de categorías de la historia 3.
 - **Filtro por persona en la cabecera:** "Nuestro resumen" / "Mi resumen" / el de la otra persona.
+- **Presupuesto, Movimientos y Categorías con el diseño del prototipo:** el plan R1–R8 no las incluía. Ya tienen la identidad nueva (tokens, cabecera, pestañas), pero conservan su estructura anterior: título visible con un botón al lado, filas con "Editar / Eliminar" de texto. El prototipo tiene versiones nuevas de Presupuesto (por pilares, con teclado numérico) y Movimientos (agrupados por día).
 
 ---
 
@@ -948,7 +963,9 @@ Nuevos: `BudgetList.tsx` (una fila por categoría con `ProgressBar` + "$X de $Y"
 
 ---
 
-## Fase 7 — Gráfico del dashboard ✅ construida
+## Fase 7 — Gráfico del dashboard ↪ reemplazada
+
+> **Reemplazada en el rediseño:** los tres gráficos y recharts se eliminaron en R6 (decisión 1 del plan de rediseño). Lo que sigue es el registro de cómo se construyeron.
 
 **Resuelta la pregunta abierta**: se usó **Recharts**, la opción recomendada por el plan — SVG puro, sin Tailwind, y sus props de color (`fill`/`stroke`) aceptan directamente `"var(--token)"` igual que el resto de la app.
 

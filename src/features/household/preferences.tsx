@@ -1,5 +1,4 @@
 import { BoltIcon, ClockIcon, SlidersIcon } from '../../components/ui/icons'
-import { getCurrencySymbol, SUPPORTED_CURRENCIES } from '../../lib/format'
 
 /**
  * Opciones de las preferencias del hogar, compartidas por el onboarding (donde
@@ -7,11 +6,6 @@ import { getCurrencySymbol, SUPPORTED_CURRENCIES } from '../../lib/format'
  */
 
 export type ExpenseSplit = 'proporcional' | 'indiferente' | '50-50'
-
-export const CURRENCY_OPTIONS = SUPPORTED_CURRENCIES.map((code) => ({
-  value: code,
-  label: `${code} ${getCurrencySymbol(code)}`,
-}))
 
 export const SPLIT_OPTIONS = [
   {

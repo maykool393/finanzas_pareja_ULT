@@ -59,14 +59,21 @@
               transform var(--duration-fast) var(--ease-out);
 }
 
-/* Se ve de 32px, se toca en 44px. */
+/* Se ve de 32px, se toca en 44px. El pseudo-elemento se mide desde dentro
+   del borde de 2px (28px): con -8px sobresale 6px del borde y llega a 44. */
 .swatch::before {
   content: '';
   position: absolute;
-  inset: -6px;
+  inset: -8px;
   border-radius: var(--radius-full);
 }
 
 .swatchSelected {
   border-color: var(--text-primary);
+}
+
+/* El contorno de arriba es decorativo y, con la misma especificidad, le
+   ganaba al :focus-visible de reset.css: la muestra no mostraba el foco. */
+.swatch:focus-visible {
+  outline: 2px solid var(--focus-ring);
 }

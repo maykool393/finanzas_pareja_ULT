@@ -95,7 +95,8 @@ export function IncomeStory({ totals, currency, monthName }: IncomeStoryProps) {
           <div className={styles.ringCenter}>
             <span className={styles.balanceLabel}>Balance</span>
             <span ref={balanceRef} className={`amount ${styles.balance} ${sizeClass} ${toneClass}`} aria-hidden="true" />
-            <span className="visually-hidden">Balance: {balanceText}</span>
+            {/* Solo el monto: "Balance" ya se lee arriba. */}
+            <span className="visually-hidden">{balanceText}</span>
           </div>
         </div>
       </div>

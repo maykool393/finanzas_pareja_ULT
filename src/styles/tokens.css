@@ -75,7 +75,7 @@
   /* Fijos: el turquesa claro solo va de fondo, con texto oscuro encima. */
   --brand:          #12D4C4;
   --brand-end:      #10C2D8;
-  --gradient-brand: linear-gradient(135deg, #12D4C4 0%, #10C2D8 100%);
+  --gradient-brand: linear-gradient(135deg, var(--brand) 0%, var(--brand-end) 100%);
   --text-on-brand:  #0F172A;   /* 8.3–10.4:1 */
   /* Sobre superficie clara el turquesa no llega a 3:1: íconos, bordes y
      gráficos usan --brand-strong; el texto, --brand-text. */
@@ -87,6 +87,7 @@
   /* ---------- Fondos con manchas (decorativos) ---------- */
   --blob-brand:  rgba(18, 212, 196, 0.10);
   --blob-indigo: rgba(129, 140, 248, 0.10);
+  /* Reservado para la historia 4, Metas (diferida): ya medido. */
   --story-goals-bg: linear-gradient(135deg, #DBEAFE 0%, #FCE7F3 100%);
   /* Tarjetas de vidrio de la historia 1 (Ingresos vs. gastos). */
   --story-glass-bg:     rgba(255, 255, 255, 0.55);
@@ -115,7 +116,8 @@
   --tone-pizarra-bg:  #D9DEE7;  --tone-pizarra-border:  transparent;
   --tone-celeste-bg:  #BFE3F9;  --tone-celeste-border:  transparent;
   --tone-ambar-bg:    #FDE68A;  --tone-ambar-border:    transparent;
-  --tone-rosa-bg:     #FBCFE8;  --tone-rosa-border:     transparent;
+  /* Rosa solo lo usan las categorías, que no llevan borde. */
+  --tone-rosa-bg:     #FBCFE8;
 
   /* Riel y relleno de la barra de progreso sobre una tarjeta de tono (5–6.4:1). */
   --tone-track: rgba(255, 255, 255, 0.55);
@@ -139,8 +141,7 @@
   --gain-color: var(--brand-strong);
   --loss-color: #C61469;
   --series-indigo:      #6366F1;
-  --series-indigo-text: #4F46E5;
-  --series-pink:        #DB2777;
+  --series-pink:        #DB2777;   /* reservado para Metas (diferida) */
 
   /* Botón destructivo. Blanco fijo encima, también en oscuro. */
   --danger-bg:       #C61469;   /* 5.7:1 */
@@ -244,7 +245,6 @@
   --tone-pizarra-border:  rgba(148, 163, 184, 0.35);
   --tone-celeste-border:  rgba(56, 189, 248, 0.35);
   --tone-ambar-border:    rgba(245, 158, 11, 0.35);
-  --tone-rosa-border:     rgba(244, 114, 182, 0.35);
 
   --tone-track: rgba(255, 255, 255, 0.12);
   --tone-fill:  rgba(241, 245, 249, 0.8);
@@ -260,7 +260,6 @@
   --loss-text:  #F472B6;
   --loss-color: #EC4899;
   --series-indigo:      #818CF8;
-  --series-indigo-text: #A5B4FC;
   --series-pink:        #F472B6;
 
   --shadow-card:       none;
@@ -321,7 +320,6 @@
     --tone-pizarra-border:  rgba(148, 163, 184, 0.35);
     --tone-celeste-border:  rgba(56, 189, 248, 0.35);
     --tone-ambar-border:    rgba(245, 158, 11, 0.35);
-    --tone-rosa-border:     rgba(244, 114, 182, 0.35);
 
     --tone-track: rgba(255, 255, 255, 0.12);
     --tone-fill:  rgba(241, 245, 249, 0.8);
@@ -337,7 +335,6 @@
     --loss-text:  #F472B6;
     --loss-color: #EC4899;
     --series-indigo:      #818CF8;
-    --series-indigo-text: #A5B4FC;
     --series-pink:        #F472B6;
 
     --shadow-card:       none;

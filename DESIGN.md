@@ -141,7 +141,7 @@ El modo oscuro es **slate azulado**, no gris neutro: la misma familia fría del 
 ```css
 --brand:          #12D4C4;                                             /* fijo */
 --brand-end:      #10C2D8;                                             /* fijo */
---gradient-brand: linear-gradient(135deg, #12D4C4 0%, #10C2D8 100%);  /* fijo */
+--gradient-brand: linear-gradient(135deg, var(--brand) 0%, var(--brand-end) 100%);  /* fijo */
 --text-on-brand:  #0F172A;   /* texto e íconos sobre --brand o el degradado, fijo (8.3–10.4:1) */
 ```
 
@@ -168,7 +168,7 @@ El modo oscuro es **slate azulado**, no gris neutro: la misma familia fría del 
 
 - Avatar: círculo con las iniciales en `--text-2xs`, bold, `--text-on-brand` (9.6 y 6.0:1). **Siempre dos letras**, para distinguir a dos personas con la misma inicial: nombre y apellido ("Mery Farías" → MF), o las dos primeras letras si solo hay un nombre ("Mery" → ME). El registro pide "Nombre y apellido". Lleva un anillo de 2px del color de la superficie donde está, para que dos avatares solapados se separen: sobre la cabecera, `#0F172A`; sobre una tarjeta de tono, `--avatar-ring` (blanco al 70% en claro, `--surface-card` en oscuro, donde el blanco pesaba sobre el vidrio).
 - El orden sale de la fecha de registro (`useHouseholdMembers` los ordena), así cada persona tiene el mismo color para los dos.
-- Tamaños: 24px en la cabecera, 25px en la historia oscura y 28px en las tarjetas. Solapados −8px (24) o −10px (28).
+- Tamaños: 24px en la cabecera, 25px en la historia oscura y 28px en las tarjetas. Solapados un 15% del tamaño (−4px a 24px): con dos iniciales, el solape del prototipo (un tercio) tapaba la segunda letra del primero.
 - Una cuenta de una persona muestra su avatar; una compartida, los dos solapados.
 - En una cuenta individual (hogar de una persona) se muestra solo `--person-a`.
 
@@ -204,7 +204,7 @@ Seis tonos para tarjetas de patrimonio y categorías. El texto encima es siempre
 - **Oscuro:** en vez de un pastel, el tono se mezcla con la tarjeta, lo que da un acabado de vidrio tintado. El fondo es `linear-gradient(160deg, rgba(base, 0.22), rgba(base, 0.10)), var(--surface-card)`, con borde 1px `rgba(base, 0.35)` y sin sombra.
   - La capa de `--surface-card` debajo hace la tarjeta **opaca**. Hace falta porque las tarjetas se apilan al hacer scroll, y con transparencia real se vería el contenido de la de abajo.
   - Texto primario, 9.6 a 13.3:1; secundario, 5.7 a 7.9:1.
-- Tokens: `--tone-<nombre>-bg` (en claro, un color; en oscuro, el `background` completo) y `--tone-<nombre>-border` (en claro, `transparent`).
+- Tokens: `--tone-<nombre>-bg` (en claro, un color; en oscuro, el `background` completo) y `--tone-<nombre>-border` (en claro, `transparent`). Rosa no tiene borde: solo lo usan las categorías, que no lo llevan.
 
 **Asignación:**
 - Cuentas: `a` turquesa, `b` lavanda.
@@ -226,8 +226,7 @@ Cada color de estado tiene dos usos con requisitos distintos: como relleno o gr�
 | `--gain-color` | `--brand-strong` | `#12D4C4` | Ingresos y cuentas en gráficos |
 | `--loss-color` | `#C61469` | `#EC4899` | Gastos y deudas en gráficos (4.3–5.3:1 en oscuro) |
 | `--series-indigo` | `#6366F1` | `#818CF8` | Segunda serie: persona b, inversiones, gasto del presupuesto (4.1–4.5 / 5.1–6.3:1) |
-| `--series-indigo-text` | `#4F46E5` | `#A5B4FC` | Texto índigo |
-| `--series-pink` | `#DB2777` | `#F472B6` | Tercera serie (metas) |
+| `--series-pink` | `#DB2777` | `#F472B6` | Tercera serie: reservada para Metas (diferida), como `--story-goals-bg` |
 | `--danger-bg` | `#C61469` | igual | Fondo de botones destructivos |
 | `--danger-bg-hover` | `#A3105A` | igual | Hover destructivo (7.6:1: el hover sube el contraste) |
 | `--text-on-danger` | `#FFFFFF` | igual | Texto sobre `--danger-bg` (5.7:1) |

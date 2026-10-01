@@ -1,6 +1,9 @@
 .base {
   height: 44px;
   padding: 0 var(--space-lg);
+  /* Una línea: el alto es fijo. Junto a un título (ej. "Nuevo presupuesto" a
+     390px) el que se parte es el título, no el botón. */
+  white-space: nowrap;
   border-radius: var(--radius-control);
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);

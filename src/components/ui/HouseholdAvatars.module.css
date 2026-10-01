@@ -17,9 +17,10 @@
   color: var(--text-on-brand);
 }
 
-/* Solapados: un poco más de un tercio del tamaño. */
+/* Solapados un 15% del tamaño. Con dos iniciales ("MF"), el tercio del
+   prototipo tapaba la segunda letra del primero con el borde del segundo. */
 .avatar + .avatar {
-  margin-left: calc(var(--avatar-size) * -0.36);
+  margin-left: calc(var(--avatar-size) * -0.15);
 }
 
 .personA {

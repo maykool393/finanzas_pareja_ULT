@@ -13,6 +13,9 @@
      en vez del fondo de la página. La imagen es la de las ondas, recoloreada
      a la paleta nueva (DESIGN.md § Bienvenida). */
   background-color: #2f4475;
+  /* El anillo de --text-primary (azul marino en claro) no se ve sobre la
+     foto: 1.9:1. Blanco, como en la cabecera: 9.6:1 sobre el promedio. */
+  --focus-ring: #ffffff;
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
@@ -124,6 +127,10 @@
 }
 
 .secondary {
+  /* 24px de alto, el piso de WCAG 2.5.8 (DESIGN.md § Botones): la línea sola daba 21px. */
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
   font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.85);
   transition: color var(--duration-fast) var(--ease-out);
