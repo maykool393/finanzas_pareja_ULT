@@ -16,11 +16,14 @@
     var(--gradient-page);
 }
 
-/* En pantallas anchas el fondo cubre toda la ventana, no solo la columna. */
+/* En pantallas anchas el fondo cubre toda la ventana, no solo la columna.
+   La columna ocupa ~50% del ancho, con tope para que el formulario no se
+   estire de más en monitores grandes. */
 @media (min-width: 481px) {
   .page {
     max-width: none;
-    padding-inline: calc((100% - 480px) / 2);
+    --column: clamp(480px, 50vw, 720px);
+    padding-inline: calc((100% - var(--column)) / 2);
   }
 }
 
@@ -73,8 +76,9 @@
   color: var(--text-primary);
 }
 
-/* Línea de 2px con un punto de 8px que avanza de paso en paso. El punto es lo
-   que informa: --brand-strong (3.6:1 o más); la línea es decorativa. */
+/* Línea de 2px con un punto de 8px que avanza de paso en paso. El punto va en
+   --brand (el turquesa del CTA) por decisión de marca: el paso actual también
+   lo anuncia aria-valuetext, así que el color no es la única señal. */
 .track {
   position: relative;
   height: 2px;
@@ -93,7 +97,7 @@
   width: 8px;
   height: 8px;
   border-radius: var(--radius-full);
-  background: var(--brand-strong);
+  background: var(--brand);
   transform: translateX(calc(var(--progress, 0) * 100cqw - 4px));
   transition: transform var(--duration-base) var(--ease-out);
 }

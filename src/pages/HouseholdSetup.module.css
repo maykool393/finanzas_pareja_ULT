@@ -10,6 +10,14 @@
   margin-inline: calc(var(--space-lg) * -1);
 }
 
+/* En escritorio son dos tarjetas lado a lado (ver OptionRows): se alinean con
+   el resto del paso en vez de sangrar hasta el borde. */
+@media (min-width: 600px) {
+  .bleed {
+    margin-inline: 0;
+  }
+}
+
 .split {
   display: flex;
   flex-direction: column;
@@ -29,8 +37,7 @@
   gap: var(--space-xs);
 }
 
-.joinLink,
-.quietLink {
+.joinLink {
   min-height: 44px;
   font-size: var(--text-sm);
   color: var(--text-secondary);
@@ -45,7 +52,7 @@
   text-underline-offset: 3px;
 }
 
-.quietLink:hover {
+.joinLink:hover {
   color: var(--text-primary);
 }
 

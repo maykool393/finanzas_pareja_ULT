@@ -154,6 +154,7 @@ El modo oscuro es **slate azulado**, no gris neutro: la misma familia fría del 
 
 **Reglas de uso:**
 - **El turquesa claro solo va de fondo.** `--brand` y `--gradient-brand` se usan como relleno de algo que lleva texto o ícono oscuro encima (CTA, botón flotante, avatar), o sobre fondos oscuros. Sobre una superficie clara no llegan a 3:1, así que ahí un ícono, un borde o un gráfico turquesa usa `--brand-strong`, y un texto, `--brand-text`.
+  - **Excepción, decidida el 2026-10-01:** los adornos del onboarding —el punto de la barra de progreso y, en las filas de opción, la franja de 4px y el check— van en `--brand` para que peguen con el CTA. Se aceptó quedar bajo 3:1 ahí porque ninguno es la única señal de su estado: el paso lo anuncia `aria-valuetext` y la opción elegida, `aria-checked` más el tinte de fondo. **El texto no entra en la excepción:** sigue en `--brand-text` (el enlace "Únete a una", por ejemplo).
 - En oscuro los tres son el mismo `#12D4C4`, que sobre slate oscuro da 7 a 10:1.
 - Texto sobre el degradado: siempre `--text-on-brand` (oscuro), en ambos modos. Nunca `--text-primary`, que en oscuro pasa a claro.
 - Nunca texto con degradado: el énfasis se da con peso o tamaño.
@@ -380,13 +381,13 @@ Cada color de estado tiene dos usos con requisitos distintos: como relleno o gr�
 Un flujo por pasos, con el fondo de manchas y sin hoja inferior ni encabezado de color.
 
 **Estructura de cada paso:**
-- **Encabezado:** "Volver" a la izquierda (chevron de 20px en `--text-secondary`, 44px de zona táctil; no aparece en el primer paso ni en el final), el logo centrado y, debajo, la barra de progreso. Margen superior de 52px.
-- **Barra de progreso:** línea de 2px en `--border` con un punto de 8px en `--brand-strong` que avanza de paso en paso. Es un `role="progressbar"` con `aria-valuetext` "Paso 2 de 3". Mismo patrón para cualquier flujo de varios pasos.
+- **Encabezado:** "Volver" a la izquierda (chevron de 20px en `--text-secondary`, 44px de zona táctil; no aparece en la pantalla final), el logo centrado y, debajo, la barra de progreso. Margen superior de 52px.
+- **Barra de progreso:** línea de 2px en `--border` con un punto de 8px en `--brand` que avanza de paso en paso. Es un `role="progressbar"` con `aria-valuetext` "Paso 2 de 3". Mismo patrón para cualquier flujo de varios pasos.
 - **Número del paso** ("01", "02"): arriba a la derecha, detrás del título, en `--text-watermark` light, color `--surface-sunken`. Es decorativo (`aria-hidden`); el número real lo anuncia la barra.
 - **Título:** `<h1>` en `--text-3xl` bold, con una ayuda debajo en `--text-sm` `--text-secondary`, ambos con ancho máximo de unos 270px.
 - **Pie:** el CTA primario a todo el ancho, con 34px de margen inferior.
-- **"Volver":** solo donde volver no deshace nada: en el código (vuelve al paso 1) y en moneda y reparto de pareja (vuelve a la invitación). Después de crear el hogar no se vuelve al paso 1, porque se crearía otro.
-- **En escritorio** el flujo es una columna de 480px centrada; el fondo con manchas cubre toda la ventana.
+- **"Volver":** solo donde volver no deshace nada: en el paso 1 (sale del onboarding a `/registro`, cerrando la sesión: es la única pantalla anterior que existe), en el código (vuelve al paso 1) y en moneda y reparto de pareja (vuelve a la invitación). Después de crear el hogar no se vuelve al paso 1, porque se crearía otro: la invitación no lleva "Volver".
+- **En escritorio** el flujo es una columna de `clamp(480px, 50vw, 720px)` centrada; el fondo con manchas cubre toda la ventana. Desde 600px las dos filas de opción se ponen lado a lado (ver "Filas de opción").
 
 **Recorridos:**
 - **Solo yo:** tipo y nombre → moneda → final.
@@ -398,10 +399,10 @@ Un flujo por pasos, con el fondo de manchas y sin hoja inferior ni encabezado de
 **Pasos:**
 
 1. **Tipo y nombre** ("¿Cómo vas a usar Twoney?"):
-   - Dos filas de opción a todo el ancho (ver "Filas de opción"), "Solo yo" y "Crear en pareja", cada una con su ilustración de 72px.
-   - Debajo, el campo subrayado "Ponle nombre a tu hogar" (ver Campos), con el ejemplo "Ej. Casa Feliz".
+   - Dos filas de opción a todo el ancho (ver "Filas de opción"), "Solo yo" y "Crear en pareja", cada una con su ilustración de 72px. En escritorio van lado a lado.
+   - **Solo en pareja**, debajo aparece el campo subrayado "Ponle nombre a tu hogar" (ver Campos), con el ejemplo "Ej. Casa Feliz". No está al llegar al paso ni al elegir "Solo yo": un hogar de una persona no necesita nombrarse para empezar, así que toma `Hogar de <display_name>` (de `profiles`, que ya resuelve el nombre de Google/Apple o del formulario; `Mi hogar` si no hubiera). Se cambia después en Ajustes del hogar.
    - Al final, el enlace para unirse.
-   - "Continuar" se habilita con una opción elegida y un nombre escrito, y crea el hogar.
+   - "Continuar" se habilita con una opción elegida —y, en pareja, un nombre escrito— y crea el hogar.
 2. **Invitación**, solo en pareja ("Invita a tu pareja", con la ayuda "Puede sumarse cuando quiera con este código"): el bloque de invitación. Invitar es opcional: "Continuar" sigue igual.
 3. **Código** ("Ingresa el código"): campo de código, con la ayuda "¿No tienes código? Pídeselo a quien creó el hogar."
    - **Sin escáner dentro de la app** (decidido el 2026-09-28). El QR de la invitación es un link a `/unirse/<id>`, así que se abre con la cámara del teléfono.
@@ -545,6 +546,7 @@ Las historias del mes elegido en la cabecera, a pantalla completa entre la cabec
 
 **Diálogo**
 - En móvil es una hoja inferior (bottom sheet): radio `--radius-card` en las esquinas de arriba, un tirador de 36×4px en `--border-strong` y `--shadow-md`. Desde 640px, un diálogo centrado con radio `--radius-card`. Detrás, `--scrim`.
+- **Variante lateral** (`placement="side"`, decidida el 2026-10-01): desde 640px el panel se ancla al borde derecho, 420px de ancho, a lo alto de la ventana y sin radio, y entra deslizándose desde la derecha. En móvil no cambia nada: sigue siendo la hoja inferior. Es el mismo componente —mismo foco, Escape, velo y animación de salida—, no uno nuevo. La usa el "+" del selector de moneda.
 - Al abrir con teclado o mouse, el foco va al primer campo del contenido, no al botón de cerrar. En pantallas táctiles (`pointer: coarse`) va al panel: enfocar un input abriría el teclado encima de la hoja apenas aparece.
 - Mientras está abierto, Tab y Shift+Tab no salen del diálogo: desde un extremo saltan al otro. Al cerrar, el foco vuelve al elemento que lo abrió. Escape cierra, y tocar el velo también.
 - El efecto que maneja el foco depende solo de `open`. `onClose` se lee desde una ref: como suele ser una función nueva en cada render del padre, si fuera dependencia el efecto se reiniciaría y le quitaría el foco al campo en el que se está escribiendo.
@@ -559,14 +561,17 @@ Las historias del mes elegido en la cabecera, a pantalla completa entre la cabec
 - Placeholders en `--text-muted`. Todo campo tiene su `<label>`: en el campo subrayado, el título del paso hace de etiqueta (`aria-labelledby`).
 
 **Selector de moneda**
-- Un `radiogroup` con las siete monedas en una cuadrícula de 4 columnas (dos filas).
+- **Tres monedas a la vista y un botón "+"** en la cuarta celda (decidido el 2026-10-01): las siete en fila llenaban el paso sin que la mayoría se use. Las rápidas son las tres primeras de `SUPPORTED_CURRENCIES`; si la elegida no está entre ellas, ocupa el tercer lugar, para que lo elegido nunca quede escondido detrás del "+".
+- El "+" es un botón ghost: sin relleno, borde de 1.5px punteado en `--border-control`, radio `--radius-control` y el mismo alto que las opciones. Abre el resto en un panel (ver Diálogo, variante lateral) titulado "Elige tu moneda"; elegir ahí cierra el panel.
+- El `radiogroup` no maqueta (`display: contents`): la cuadrícula la arma el contenedor, para que el "+" sea hermano del grupo y no una opción dentro de él.
 - Cada opción muestra el símbolo en `--text-xl` bold y debajo el código en `--text-2xs` medium, con 44px de ancho mínimo.
-- **Elegida:** texto `--text-primary` y subrayado de 2px en `--brand-strong`. **Resto:** texto `--text-muted` y subrayado de 1px en `--border`.
+- **Elegida:** texto `--text-primary` y subrayado de 2px en `--brand` (ver la excepción de marca en § Marca). **Resto:** texto `--text-muted` y subrayado de 1px en `--border`.
 - Sobre el grupo, la etiqueta "MONEDA PRINCIPAL".
 
 **Filas de opción** (tipo de cuenta en el onboarding)
 - Filas a todo el ancho, sin margen lateral, separadas por un divisor `--border`. Contenido centrado: ilustración, título (`--text-lg` bold) y descripción (`--text-sm` `--text-secondary`).
-- **Seleccionada:** fondo `--brand-tint`, borde izquierdo de 4px en `--brand-strong` (el relleno izquierdo baja 4px para que el contenido no se mueva) y un check de 18px en `--brand-strong` arriba a la derecha. La ilustración pasa de `--text-secondary` a `--brand-strong`.
+- **Desde 600px van lado a lado**, como dos tarjetas de igual ancho con `--space-md` entre ellas y radio `--radius-card`: sin divisor, sin sangrar hasta el borde (se alinean con el resto del paso) y, sin seleccionar, sobre `--surface-card` para que no se pierdan contra el fondo de la página.
+- **Seleccionada:** fondo `--brand-tint`, borde izquierdo de 4px en `--brand` (el relleno izquierdo baja 4px para que el contenido no se mueva) y un check de 18px en `--brand` arriba a la derecha — ver la excepción de marca en § Marca. La ilustración pasa de `--text-secondary` a `--brand-strong`: es una forma grande y sobre el tinte claro el tono fuerte se lee mejor.
 
 **Tarjeta de selección (radio-card)**
 - El grupo es un `role="radiogroup"` con etiqueta; cada opción es un `<button>` real con `role="radio"` y `aria-checked`. Vale también para las filas de opción y el selector de moneda.

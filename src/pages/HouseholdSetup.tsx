@@ -1,4 +1,5 @@
 import { type FormEvent, type ReactNode, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { OnboardingLayout } from '../components/auth/OnboardingLayout'
 import { AccountTypeIllustration } from '../components/illustrations/AccountTypeIllustration'
 import { DoneIllustration } from '../components/illustrations/DoneIllustration'
@@ -79,6 +80,7 @@ function Cta({ label, busyLabel, busy, disabled, onClick }: CtaProps) {
 export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
   useDocumentTitle('Configura tu hogar')
   const { user } = useSession()
+  const navigate = useNavigate()
   const [step, setStep] = useState<Step>('choose')
   const [createMode, setCreateMode] = useState<CreateMode | null>(null)
   const [name, setName] = useState('')
@@ -106,6 +108,32 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
     setStep(next)
   }
 
+  /**
+   * Volver desde el primer paso: dentro del onboarding no hay paso anterior,
+   * así que se sale a la pantalla de registro. Cerrar la sesión es parte de
+   * volver — sin eso /registro redirige de vuelta a la app.
+   */
+  async function handleBackToSignup() {
+    await supabase.auth.signOut()
+    navigate('/registro', { replace: true })
+  }
+
+  /**
+   * En pareja el nombre lo escribe la persona; sola, no se le pregunta (un
+   * hogar de una persona no necesita nombrarse para empezar) y se arma con su
+   * nombre de perfil. Se puede cambiar después en Ajustes del hogar.
+   */
+  async function resolveHouseholdName(): Promise<string> {
+    if (createMode === 'pareja') return name.trim()
+    if (!user) return 'Mi hogar'
+
+    // display_name sale de profiles y no de user_metadata: el trigger
+    // handle_new_user ya resolvió ahí el nombre de Google/Apple o el del
+    // formulario, con el correo como último recurso.
+    const { data } = await supabase.from('profiles').select('display_name').eq('id', user.id).single()
+    return data?.display_name ? `Hogar de ${data.display_name}` : 'Mi hogar'
+  }
+
   async function handleCreate(event: FormEvent) {
     event.preventDefault()
     if (!user || !createMode) return
@@ -113,11 +141,12 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
     setSubmitting(true)
 
     const householdId = crypto.randomUUID()
+    const householdLabel = await resolveHouseholdName()
 
     // Se genera el id en el cliente en vez de leerlo de vuelta con .select():
     // households_select_member solo deja ver un household del que ya eres
     // miembro, y justo al crearlo tu perfil todavía no está vinculado.
-    const { error: insertError } = await supabase.from('households').insert({ id: householdId, name: name.trim() })
+    const { error: insertError } = await supabase.from('households').insert({ id: householdId, name: householdLabel })
 
     if (insertError) {
       console.error(insertError)
@@ -162,7 +191,7 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
     setSubmitting(false)
     setInviteCode(created.invite_code)
     setCreatedHouseholdId(householdId)
-    setHouseholdName(name.trim())
+    setHouseholdName(householdLabel)
     // El hogar ya existe: en pareja primero se comparte el código; en
     // individual no hay con quién compartirlo y se va directo a la moneda.
     goTo(createMode === 'pareja' ? 'invite' : 'preferences')
@@ -344,12 +373,13 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
     screen = {
       title: '¿Cómo vas a usar Twoney?',
       helper: 'Si empiezas por tu cuenta, podrás invitar a tu pareja más adelante.',
+      onBack: handleBackToSignup,
       footer: (
         <Cta
           label="Continuar"
           busyLabel="Creando…"
           busy={submitting}
-          disabled={!createMode || name.trim().length === 0}
+          disabled={!createMode || (createMode === 'pareja' && name.trim().length === 0)}
         />
       ),
       body: (
@@ -366,14 +396,18 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
               />
             </div>
 
-            <TextField
-              label="Ponle nombre a tu hogar"
-              value={name}
-              onChange={setName}
-              required
-              placeholder="Ej. Casa Feliz"
-              variant="underline"
-            />
+            {/* Solo en pareja: un hogar de una persona toma el nombre del perfil
+                (ver resolveHouseholdName) y no hace falta preguntarlo. */}
+            {createMode === 'pareja' && (
+              <TextField
+                label="Ponle nombre a tu hogar"
+                value={name}
+                onChange={setName}
+                required
+                placeholder="Ej. Casa Feliz"
+                variant="underline"
+              />
+            )}
 
             {error && <FormError>{error}</FormError>}
           </form>
@@ -381,10 +415,6 @@ export function HouseholdSetup({ onDone, joinError }: HouseholdSetupProps) {
           <div className={styles.links}>
             <button type="button" className={styles.joinLink} onClick={() => goTo('join')}>
               ¿Ya tienes pareja? <span className={styles.joinAccent}>Únete a una</span>
-            </button>
-            {/* Sin esto, quien entró con la cuenta equivocada no tenía cómo salir del onboarding. */}
-            <button type="button" className={styles.quietLink} onClick={() => supabase.auth.signOut()}>
-              Cerrar sesión
             </button>
           </div>
         </>

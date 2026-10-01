@@ -10,13 +10,18 @@ interface DialogProps {
   open: boolean
   onClose: () => void
   title: string
+  /**
+   * `side` ancla el panel al borde derecho en escritorio, a lo alto de la
+   * ventana. En móvil no cambia nada: sigue siendo la hoja que sube.
+   */
+  placement?: 'center' | 'side'
   children: ReactNode
 }
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
-export function Dialog({ open, onClose, title, children }: DialogProps) {
+export function Dialog({ open, onClose, title, placement = 'center', children }: DialogProps) {
   const panelRef = useRef<HTMLDivElement>(null)
   const bodyRef = useRef<HTMLDivElement>(null)
   const titleId = useId()
@@ -106,7 +111,7 @@ export function Dialog({ open, onClose, title, children }: DialogProps) {
 
   return createPortal(
     <div
-      className={styles.overlay}
+      className={placement === 'side' ? `${styles.overlay} ${styles.overlaySide}` : styles.overlay}
       data-state={closing ? 'closing' : 'open'}
       onMouseDown={(event) => {
         if (!closing && event.target === event.currentTarget) onClose()

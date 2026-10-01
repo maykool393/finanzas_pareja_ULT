@@ -37,10 +37,12 @@
   }
 }
 
-/* Tres señales, no solo color: tinte, borde de marca (≥3:1) y el check. */
+/* Tres señales, no solo color: tinte, franja de marca y el check. La franja y
+   el check van en --brand (el turquesa del CTA) por decisión de marca; el
+   estado lo anuncia igual aria-checked, así que el color no es la única señal. */
 .selected {
   background: var(--brand-tint);
-  border-left-color: var(--brand-strong);
+  border-left-color: var(--brand);
 }
 
 .check {
@@ -49,7 +51,7 @@
   right: var(--space-lg);
   width: 18px;
   height: 18px;
-  color: var(--brand-strong);
+  color: var(--brand);
 }
 
 .illustration {
@@ -76,4 +78,30 @@
 .description {
   font-size: var(--text-sm);
   color: var(--text-secondary);
+}
+
+/* En escritorio las dos opciones van una al lado de la otra, como tarjetas
+   separadas: el divisor horizontal sobra y cada una lleva su propia franja. */
+@media (min-width: 600px) {
+  .group {
+    flex-direction: row;
+    gap: var(--space-md);
+  }
+
+  .row {
+    flex: 1 1 0;
+    justify-content: flex-start;
+    border-radius: var(--radius-card);
+    padding: var(--space-lg);
+    padding-left: calc(var(--space-lg) - 4px);
+  }
+
+  .row + .row {
+    border-top: none;
+  }
+
+  /* Sin el tinte, las tarjetas se perderían sobre el fondo de la página. */
+  .row:not(.selected) {
+    background: var(--surface-card);
+  }
 }
